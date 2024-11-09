@@ -3,37 +3,33 @@ import axios from "axios";
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
-// Using Vite environment variable to set the API URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export const Auth = () => {
     return (
-        <div className="auth">
-            <Login />
-            <Register />
-        </div>
+    <div className="auth">
+        <Login />
+        <Register />
+    </div>
     );
 }
 
 const Login = () => { 
-    const [studentId, setStudentId] = useState("");
-    const [password, setPassword] = useState("");
-    const [_, setCookies] = useCookies(["access_token"]);
-    const navigate = useNavigate();
+    const [studentId, setStudentId] = useState("")
+    const [password, setPassword] = useState("")
+    const [_, setCookies] = useCookies(["access_token"])
+    const navigate = useNavigate()
 
     const onSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            // Using environment variable to set the request URL
-            const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+            const response = await axios.post("http://localhost:5002/auth/login", {
                 studentId,
                 password,
             });
 
-            setCookies("access_token", response.data.token);
-            window.localStorage.setItem("userId", response.data.user._id);
-            navigate("/");
+            setCookies("access_token", response.data.token)
+            window.localStorage.setItem("userId", response.data.user._id)
+            navigate("/")
         } catch (error) {
             console.error(error);
             alert("Login failed");
@@ -53,21 +49,20 @@ const Login = () => {
 };
 
 const Register = () => {
-    const [studentId, setStudentId] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [studentId, setStudentId] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
     
     const onSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            // Using environment variable to set the request URL
-            await axios.post(`${API_BASE_URL}/auth/register`, {
+            await axios.post("http://localhost:5002/auth/register", {
                 studentId,
                 email,
                 password,
             });
-            alert("Registration complete");
+            alert("Registration complete")
         } catch (error) {
             console.error(error);
         }
