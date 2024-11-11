@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap");
+
+.navbar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #DCDCDC;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: 1.2rem 2.5rem;
+	width: calc(100% - 2rem);
+	margin: 1rem;
+	border-radius: 35px;
+	z-index: 1000;
+}
+
+.navbar-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.navbar-title {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-family: "Playfair Display", serif;
+	font-size: 2.5rem;
+	font-weight: bolder;
+	margin: 0;
+	color: black;
+}
+
+.navbar-buttons {
+	display: flex;
+	gap: 1rem;
+}
+
+.navbar-button {
+	font-family: "Playfair Display", serif;
+	font-size: 1.7rem;
+	font-weight: 600;
+	background: none;
+	border: none;
+	padding: 0.8rem 1.5rem;
+	position: relative;
+	z-index: 1;
+}
+
+.navbar-button::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		45deg,
+		rgba(252, 49, 83, 0.2),
+		rgba(255, 223, 0, 0.2),
+		rgba(80, 141, 255, 0.2)
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
+	z-index: -1;
+	border-radius: 20px;
+}
+
+.navbar-button:hover::before {
+	opacity: 1;
+	background-size: 200% 200%;
+	animation: gradient 3s ease-in-out infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.logo {
+	width: 55px;
+	height: 55px;
+	object-fit: contain;
+	filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+}
