@@ -15,7 +15,7 @@ export const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:5002/auth/login", {
+            const response = await axios.post("http://localhost:5000/auth/login", {
                 studentId,
                 password,
             });
