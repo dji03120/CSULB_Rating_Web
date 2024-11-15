@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Form } from '../components/Form';
 
-export const Login = () => { 
+export const Login = ({ setIsAuthenticated }) => { 
     const [studentId, setStudentId] = useState("");
     const [password, setPassword] = useState("");
-    const [_, setCookies] = useCookies(["access_token"]);
+    const [cookies, setCookies] = useCookies(["access_token"]);
     const navigate = useNavigate();
+
+    // Check for token in localStorage on initial render
+    useEffect(() => {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+            setIsAuthenticated(true);
+        }
+    }, [setIsAuthenticated]);
 
     // Handles form submission for login
     const onSubmit = async (event) => {
@@ -21,8 +29,10 @@ export const Login = () => {
             });
 
             setCookies("access_token", response.data.token);
+            window.localStorage.setItem("access_token", response.data.token); // Store token in localStorage
             window.localStorage.setItem("userId", response.data.user._id);
-            navigate("/");
+            setIsAuthenticated(true); // Update authentication state
+            navigate("/"); // Redirect to home
         } catch (error) {
             console.error(error);
             alert("Login failed");
