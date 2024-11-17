@@ -5,6 +5,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import Navbar from './components/navbar'; // Import Navbar
 import './App.css';
+import CreateRating from './pages/create-rating'
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,6 +36,7 @@ function App() {
                     element={<Login setIsAuthenticated={setIsAuthenticated} />} // Pass setIsAuthenticated to Login
                 />
                 <Route path="/register" element={<Register />} />
+                <Route path="/create-rating" element={<CreateRating />} />
             </Routes>
         </Router>
     );

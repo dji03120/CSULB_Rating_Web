@@ -18,7 +18,10 @@ const UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    savedRatings: [{
+        type: mongoose.Schema.Types.ObjectId, ref: "ratings" 
+    }],
 });
 
 export const UserModel = mongoose.model('users', UserSchema);

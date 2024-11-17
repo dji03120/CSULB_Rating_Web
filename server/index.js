@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { userRouter } from './src/routes/users.js';
+import { ratingsRouter } from './src/routes/ratings.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', userRouter);
+app.use('/ratings', ratingsRouter);
 // app.use('/posts', postRouter);
 
 
