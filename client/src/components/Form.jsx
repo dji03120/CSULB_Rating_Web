@@ -1,11 +1,14 @@
+import "./Form.css";
+
 // Creates form for register and login
 export const Form = ({ studentId, setStudentId, email, setEmail, password, setPassword, label, onSubmit }) => {
     return (
         <form onSubmit={onSubmit}>
-            <h2>{label}</h2>
+            {/* <h2>{label}</h2> */}
             <div className="form-group">
-                <label htmlFor="studentId">Student ID: </label>
+                <label className="form-input-label" htmlFor="studentId">CSULB Student ID </label>
                 <input
+                    className="form-input"
                     type="text" 
                     id="studentId" 
                     value={studentId}
@@ -14,8 +17,9 @@ export const Form = ({ studentId, setStudentId, email, setEmail, password, setPa
             </div>
             {label === "Register" && (
                 <div className="form-group">
-                    <label htmlFor="email">Email: </label>
-                    <input 
+                    <label className="form-input-label" htmlFor="email">Email </label>
+                    <input
+                        className="form-input" 
                         type="text" 
                         id="email" 
                         value={email}
@@ -24,8 +28,9 @@ export const Form = ({ studentId, setStudentId, email, setEmail, password, setPa
                 </div>
             )}
             <div className="form-group">
-                <label htmlFor="password">Password: </label>
-                <input 
+                <label className="form-input-label" htmlFor="password">Password </label>
+                <input
+                    className="form-input" 
                     type="password" 
                     id="password" 
                     value={password}
@@ -33,7 +38,7 @@ export const Form = ({ studentId, setStudentId, email, setEmail, password, setPa
                 />
             </div>
             {/* Submits the form when button is clicked */}
-            <button type="submit">{label}</button>
+            <button className="form-submit" type="submit">{label}</button>
         </form>
     );
 };

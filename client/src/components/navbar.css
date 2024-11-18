@@ -4,7 +4,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #DCDCDC;
+	background-color: #dcdcdc;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	padding: 1.2rem 2.5rem;
 	width: calc(100% - 2rem);
@@ -46,6 +46,16 @@
 	padding: 0.8rem 1.5rem;
 	position: relative;
 	z-index: 1;
+}
+
+.navbar-button:focus {
+	outline: none;
+	border: none;
+}
+
+.navbar-button:focus-visible {
+	outline: none;
+	border: none;
 }
 
 .navbar-button::before {
@@ -90,4 +100,10 @@
 	height: 55px;
 	object-fit: contain;
 	filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+}
+
+.navbar-button.active::before {
+    opacity: 1;
+    background-size: 200% 200%;
+    animation: gradient 3s ease-in-out infinite;
 }
