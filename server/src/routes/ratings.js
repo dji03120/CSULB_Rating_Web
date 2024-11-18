@@ -7,6 +7,7 @@ import { UserModel } from "../models/Users.js";
 
 const router = express.Router();
 
+// Configures multer storage to store review images
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "./uploads");
@@ -16,13 +17,14 @@ const storage = multer.diskStorage({
     }
 })
 
+// Creates multer instance for handling image upload
 const upload = multer({
     storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
     fileFilter: (req, file, cb) => {
         const fileTypes = /jpeg|jpg|png/;
-        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimeType = fileTypes.test(file.mimetype);
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());  // Check file extension
+        const mimeType = fileTypes.test(file.mimetype); // Check MIME type
 
         if (extname && mimeType) {
             cb(null, true);
@@ -32,6 +34,7 @@ const upload = multer({
     },
 });
 
+// Route to get all ratings
 router.get("/", async (req, res) => {
     try {
         const response = await RatingModel.find({});  // Returns all the ratings
@@ -41,10 +44,12 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Route to create a review 
 router.post("/", upload.single("image"), async (req, res) => {
     try {
         const { name, rating, reviewText } = req.body;
 
+        // Image is optional
         let imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl || ""; 
 
         const newRating = new RatingModel({
@@ -60,18 +65,23 @@ router.post("/", upload.single("image"), async (req, res) => {
     }
 });
 
+// Router to save the rating to the user's ratings
 router.put("/", async (req, res) => {
     try {
+        // Finds the rating and user
         const rating = await RatingModel.findById(req.body.ratingID);
-        const user = await UserModel.findById(req.body.userID);   
+        const user = await UserModel.findById(req.body.userID);  
+
+        // Adds the rating to the user's ratings
         user.savedRatings.push(rating);
-        await user.save();  
+        await user.save();  // Saves the user
         res.json( { savedRatings: user.savedRatings });
     } catch (err) {
         res.json(err);
     }
 });
 
+// Route to get the IDs of a user's ratings
 router.get("/savedRatings/ids", async (req, res) => {
     try {
         const user = await UserModel.findById(req.body.userID);
@@ -81,6 +91,7 @@ router.get("/savedRatings/ids", async (req, res) => {
     }
 })
 
+// Route to get the details of a user's ratings
 router.get("/savedRatings", async (req, res) => {
     try {
         const user = await UserModel.findById(req.body.userID);

@@ -3,6 +3,7 @@ import axios from 'axios';
 import filledStar from '../assets/star.png'; // Path to your filled star image
 import emptyStar from '../assets/grayed-star.png';   // Path to your empty star image
 
+// Function to create a rating
 const CreateRating = () => {
     const [name, setName] = useState('');
     const [imageUrl, setImageUrl] = useState("");
@@ -12,6 +13,7 @@ const CreateRating = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
+    // Handles submission of the review
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -50,16 +52,19 @@ const CreateRating = () => {
     };
     
 
+    // Sets the rating when clicking on the stars
     const handleStarClick = (starValue) => {
         setRating(starValue);
     };
 
+    // Returns the Create Rating form
     return (
         <div>
             <h2>Create Rating</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Name:</label>
+                    {/* Name of the school location/event */}
+                    <label>Name of Place/Event: </label>
                     <input
                         type="text"
                         value={name}
@@ -68,14 +73,17 @@ const CreateRating = () => {
                     />
                 </div>
                 <div>
-                    <label>Upload Image:</label>
+                    {/* Upload an image from files */}
+                    <label>Upload Image: </label>
                     <input
                         type="file"
                         onChange={(e) => setImage(e.target.files[0])}
                     />
                 </div>
                 <div>
-                    <label>Rating:</label>
+                    {/* Rating of the place */}
+                    <label>Rating: </label>
+                    {/* Corresponds the number of stars to the rating number */}
                     <div style={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}>
                         {[1, 2, 3, 4, 5].map((star) => (
                             <img
@@ -89,13 +97,15 @@ const CreateRating = () => {
                     </div>
                 </div>
                 <div>
-                    <label>Review:</label>
+                    {/* Review Section */}
+                    <label>Review: </label>
                     <textarea
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
                         required
                     />
                 </div>
+                {/* Submit Button */}
                 <button type="submit">Submit Rating</button>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}

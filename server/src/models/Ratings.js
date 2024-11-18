@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Sets up the schema for a rating
 const RatingSchema = new mongoose.Schema({
     name: {
         type: String,
