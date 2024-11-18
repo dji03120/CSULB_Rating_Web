@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;200&display=swap");
+
+.register-container {
+    font-family: "Playfair Display", serif;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	gap: 4rem;
+}
+
+.register {
+    width: 642.11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5rem;
+    padding-right: 3rem;
+    padding-bottom: 5rem;
+}
+
+.register-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: black;
+}
+
+.register-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-title {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.register-description {
+    font-size: 15px;
+}
+
+.register-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.register-bottom-prompt {
+    font-family: "Playfair Display", serif;
+    font-size: 1rem;
+}
+
+.register-bottom-link {
+    cursor: pointer;
+    font-weight: 700;
+    color: black;
+}
+
+.register-bottom-link:hover {
+    color: rgb(37, 37, 37);
+    transition: ease-in-out 0.3s;
+    text-decoration: underline;
+}
