@@ -43,10 +43,9 @@ router.get("/", async (req, res) => {
 
 router.post("/", upload.single("image"), async (req, res) => {
     try {
-        console.log(req.file);
         const { name, rating, reviewText } = req.body;
 
-        let imagePath = req.file ? `uploads/${req.file.filename}` : req.body.imageUrl || ""; 
+        let imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl || ""; 
 
         const newRating = new RatingModel({
             name, 
@@ -55,9 +54,9 @@ router.post("/", upload.single("image"), async (req, res) => {
             reviewText
         });
         const response = await newRating.save(); // Saves the rating
-        res.json(response)
+        res.json(response);
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ error: err.message });
     }
 });
 

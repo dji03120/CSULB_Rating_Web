@@ -16,25 +16,39 @@ const CreateRating = () => {
         e.preventDefault();
         setError(null);
         setSuccess(false);
-
+    
+        // Create a new FormData object
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("rating", rating);
+        formData.append("reviewText", reviewText);
+        if (image) {
+            formData.append("image", image); // Attach the image file
+        } else {
+            formData.append("imageUrl", imageUrl); // Use imageUrl if no file is uploaded
+        }
+    
         try {
-            const response = await axios.post('http://localhost:5000/ratings', {
-                name,
-                imageUrl,
-                rating,
-                reviewText,
+            const response = await axios.post('http://localhost:5000/ratings', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
+    
             if (response.status === 200) {
                 setSuccess(true);
                 setName('');
                 setRating(0);
                 setReviewText('');
+                setImage(null); // Clear the image state
+                setImageUrl(''); // Clear the image URL state
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             setError('An error occurred while submitting your rating.');
         }
     };
+    
 
     const handleStarClick = (starValue) => {
         setRating(starValue);
@@ -58,14 +72,6 @@ const CreateRating = () => {
                     <input
                         type="file"
                         onChange={(e) => setImage(e.target.files[0])}
-                    />
-                </div>
-                <div>
-                    <label>Paste Image URL:</label>
-                    <input
-                        type="url"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
                     />
                 </div>
                 <div>

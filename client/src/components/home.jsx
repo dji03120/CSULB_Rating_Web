@@ -46,7 +46,7 @@ export const Home = () => {
 						<div>
 							<p>{rating.rating}</p>
 						</div>
-						<img src={rating.imageUrl} alt={rating.name} />
+						<img src={`http://localhost:5000${rating.imageUrl}`} alt={rating.name} />
 						<p>{rating.reviewText}</p>
 					</li>		
 				))}

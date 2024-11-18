@@ -1,11 +1,24 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path'; 
+import { fileURLToPath } from 'url';
 import { userRouter } from './src/routes/users.js';
 import { ratingsRouter } from './src/routes/ratings.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
+
+// Construct __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create the uploads directory if it doesn't exist
+const uploadsPath = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath);
+}
 
 const app = express();
 app.use(cors());
@@ -27,6 +40,8 @@ app.get('/', (req, res) => {
 
 app.use('/auth', userRouter);
 app.use('/ratings', ratingsRouter);
+app.use('/uploads', express.static('uploads'));
+
 // app.use('/posts', postRouter);
 
 
