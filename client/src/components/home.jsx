@@ -24,13 +24,18 @@ export const Home = () => {
 	}, []);
 
 	const gotoCreateRating = () => navigate("/create-rating")  // Navigates to page to create a rating
+	const gotoCreatePoll = () => navigate("/create-poll")  // Navigates to page to create a poll
+
 	return (
 		<div>
 			<div className="home-container">
 			<div className="home-content">
 				<h1 className="home-title">Welcome to CSULB Rates</h1>
-				<button onClick={gotoCreateRating}>Create a Rating</button>
+				{/* Create a Rating and Create a Poll buttons */}
+				<button onClick={gotoCreateRating}>Create a Rating</button>  
+				<button onClick={gotoCreatePoll}>Create a Poll</button>
 				<p className="home-description">New Ratings & Polls</p>
+				
 				<ul>
 					{ratings.map((rating) => (
 						<li key={rating._id}>

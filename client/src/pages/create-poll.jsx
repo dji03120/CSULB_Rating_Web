@@ -1,7 +1,6 @@
 // create poll
 import React, { useState } from 'react';
 import axios from 'axios';
-import './CreatePoll.css';
 
 const CreatePoll = () => {
     const [pollQuestion, setPollQuestion] = useState('');
