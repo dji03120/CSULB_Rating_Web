@@ -1,0 +1,124 @@
+/* Main title text */
+.page-title {
+    text-align: center;
+    margin-top: 35px;
+    font-size: 40px;
+}
+
+/* General container for the form */
+.create-rating-container {
+    max-width: 900px;
+    height: 430px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    gap: 35px;
+}
+
+/* Left section styles */
+.create-rating-left {
+    flex: 1.8;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Right section styles */
+.create-rating-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* To position the submit button */
+    gap: 15px;
+}
+
+/* Submit Button */
+.submit-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+/* Submit button hover */
+.submit-button:hover {
+    transform: translateY(-5px);
+    cursor: pointer;
+}
+
+/* Text box for title */
+.create-rating-container input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Section for uploading image file */
+.create-rating-container input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.image-preview {
+    max-width: 300px;  /* Set the maximum width */
+    max-height: 230px; /* Set the maximum height */
+    width: auto;       /* Maintain aspect ratio */
+    height: auto;      /* Maintain aspect ratio */
+    object-fit: contain; /* Ensures image scales without distortion */
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Section for typing in review */
+.create-rating-container textarea {
+    width: 100%;
+    padding: 10px;
+    height: 200px;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family:Arial, Helvetica, sans-serif
+}
+
+/* Rating stars */
+.rating-stars {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Align stars to the left */
+    width: 55px;
+    height: 55px;
+}
+
+/* Rating stars container */
+.rating-stars-container {
+    margin-top: 70px;
+    margin-left: 55px;
+}
+
+/* Success and error messages */
+.success-message,
+.error-message {
+    text-align: center;
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+}
+
+.error-message {
+    color: red;
+}
