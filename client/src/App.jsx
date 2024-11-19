@@ -6,6 +6,7 @@ import { Register } from './pages/Register';
 import Navbar from './components/navbar'; // Import Navbar
 import './App.css';
 import CreateRating from './pages/create-rating'
+import CreatePoll from './pages/create-poll'; // Import the CreatePoll component
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,6 +38,7 @@ function App() {
                 />
                 <Route path="/register" element={<Register />} />
                 <Route path="/create-rating" element={<CreateRating />} />
+                <Route path="/create-poll" element={<CreatePoll />} />
             </Routes>
         </Router>
     );
