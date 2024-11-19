@@ -30,27 +30,24 @@ export const Home = () => {
 			<div className="home-content">
 				<h1 className="home-title">Welcome to CSULB Rates</h1>
 				<button onClick={gotoCreateRating}>Create a Rating</button>
-				<p className="home-description">
-					This is the general homepage.
-				</p>
-				{/* WILL ADD MORE CONTENT HERE WHEN NECESSARY */}
+				<p className="home-description">New Ratings & Polls</p>
+				<ul>
+					{ratings.map((rating) => (
+						<li key={rating._id}>
+							<div>
+								<h2>{rating.name}</h2>
+							</div>
+							<div>
+								<p>{rating.rating}</p>
+							</div>
+							<img src={`http://localhost:5000${rating.imageUrl}`} alt={rating.name} />
+							<p>{rating.reviewText}</p>
+						</li>		
+					))}
+				</ul>
 			</div>
 		</div>
-			<h1 className="home-title"> New Ratings & Polls</h1>
-			<ul>
-				{ratings.map((rating) => (
-					<li key={rating._id}>
-						<div>
-							<h2>{rating.name}</h2>
-						</div>
-						<div>
-							<p>{rating.rating}</p>
-						</div>
-						<img src={`http://localhost:5000${rating.imageUrl}`} alt={rating.name} />
-						<p>{rating.reviewText}</p>
-					</li>		
-				))}
-			</ul>
+			
 		</div>
 	)
 		

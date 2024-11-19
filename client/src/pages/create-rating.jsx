@@ -64,7 +64,7 @@ const CreateRating = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     {/* Name of the school location/event */}
-                    <label>Name of Place/Event: </label>
+                    <label>Title: </label>
                     <input
                         type="text"
                         value={name}
@@ -91,7 +91,7 @@ const CreateRating = () => {
                                 src={star <= rating ? filledStar : emptyStar}
                                 alt={`${star} star`}
                                 onClick={() => handleStarClick(star)}
-                                style={{ width: '34px', height: '30px', marginRight: '5px' }}
+                                style={{ width: '34px', height: '32px', marginRight: '5px' }}
                             />
                         ))}
                     </div>
