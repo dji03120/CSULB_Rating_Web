@@ -1,6 +1,6 @@
-// create poll
 import React, { useState } from 'react';
 import axios from 'axios';
+import './CreatePoll.css'; // Custom CSS for CreatePoll
 
 const CreatePoll = () => {
     const [pollQuestion, setPollQuestion] = useState('');
@@ -8,14 +8,12 @@ const CreatePoll = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    // Handles form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccess(false);
 
-        // Ensure the poll question and options are valid
-        if (!pollQuestion || options.some(option => !option)) {
+        if (!pollQuestion.trim() || options.some(option => !option.trim())) {
             setError("Please provide a question and at least two valid options.");
             return;
         }
@@ -29,7 +27,7 @@ const CreatePoll = () => {
             if (response.status === 200) {
                 setSuccess(true);
                 setPollQuestion('');
-                setOptions(['', '']); // Reset options
+                setOptions(['', '']);
             }
         } catch (err) {
             console.error(err);
@@ -37,17 +35,8 @@ const CreatePoll = () => {
         }
     };
 
-    // Handles adding a new option
-    const addOption = () => {
-        setOptions([...options, '']);
-    };
-
-    // Handles removing an option
-    const removeOption = (index) => {
-        setOptions(options.filter((_, i) => i !== index));
-    };
-
-    // Handles changing an option
+    const addOption = () => setOptions([...options, '']);
+    const removeOption = (index) => setOptions(options.filter((_, i) => i !== index));
     const handleOptionChange = (index, value) => {
         const newOptions = [...options];
         newOptions[index] = value;
@@ -55,19 +44,24 @@ const CreatePoll = () => {
     };
 
     return (
-        <div className="create-poll-container">
-            <h2>Create Poll</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Poll Question:</label>
+        <div className="create-poll-wrapper">
+            <h1 className="page-title">Create a New Poll</h1>
+            <form onSubmit={handleSubmit} className="create-poll-form">
+                {/* Poll Question */}
+                <div className="poll-question">
+                    <label htmlFor="pollQuestion">Poll Question:</label>
                     <input
+                        id="pollQuestion"
                         type="text"
                         value={pollQuestion}
                         onChange={(e) => setPollQuestion(e.target.value)}
                         required
+                        placeholder="Enter your poll question"
                     />
                 </div>
-                <div>
+
+                {/* Poll Options */}
+                <div className="poll-options">
                     <label>Options:</label>
                     {options.map((option, index) => (
                         <div key={index} className="option-input">
@@ -76,22 +70,33 @@ const CreatePoll = () => {
                                 value={option}
                                 onChange={(e) => handleOptionChange(index, e.target.value)}
                                 required
+                                placeholder={`Option ${index + 1}`}
                             />
                             {options.length > 2 && (
-                                <button type="button" onClick={() => removeOption(index)}>
+                                <button
+                                    type="button"
+                                    onClick={() => removeOption(index)}
+                                    className="remove-option-button"
+                                >
                                     Remove
                                 </button>
                             )}
                         </div>
                     ))}
-                    <button type="button" onClick={addOption}>
+                    <button type="button" onClick={addOption} className="add-option-button">
                         Add Option
                     </button>
                 </div>
-                <button type="submit">Submit Poll</button>
+
+                {/* Messages */}
+                {error && <p className="error-message">{error}</p>}
+                {success && <p className="success-message">Poll created successfully!</p>}
+
+                {/* Submit Button */}
+                <button type="submit" className="submit-poll-button">
+                    Submit Poll
+                </button>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>Poll created successfully!</p>}
         </div>
     );
 };

@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { userRouter } from './src/routes/users.js';
 import { ratingsRouter } from './src/routes/ratings.js';
+import { pollsRouter } from './src/routes/polls.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -40,7 +41,9 @@ app.get('/', (req, res) => {
 
 app.use('/auth', userRouter);
 app.use('/ratings', ratingsRouter);
+app.use('/polls', pollsRouter);
 app.use('/uploads', express.static('uploads'));
+
 
 // app.use('/posts', postRouter);
 

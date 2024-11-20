@@ -1,0 +1,72 @@
+.create-poll-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.create-poll-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.poll-question label,
+.poll-options label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.poll-question input,
+.poll-options .option-input input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.add-option-button,
+.remove-option-button,
+.submit-button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-option-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.remove-option-button {
+    background-color: #dc3545;
+    color: white;
+    margin-left: 10px;
+}
+
+.submit-poll-button {
+    background-color: #28a745;
+    color: white;
+    width: 100%;
+    align-self: center; /* Center-align the button */
+    margin-top: 20px; /* Add space between options and the button */
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+}
+
+.success-message {
+    color: #28a745;
+    text-align: center;
+}

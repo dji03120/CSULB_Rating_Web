@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 export const Home = () => {
 	const navigate = useNavigate();
 	const [ratings, setRatings] = useState([])
+	const [polls, setPolls] = useState([])
 
 	useEffect(() => {
 		const fetchRating = async () => {
@@ -52,8 +53,7 @@ export const Home = () => {
 				</ul>
 			</div>
 		</div>
-			
-		</div>
+	</div>
 	)
 		
 };
