@@ -1,8 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap");
+
 /* Main title text */
 .page-title {
     text-align: center;
     margin-top: 35px;
     font-size: 40px;
+    font-family: "Playfair Display", serif;
 }
 
 /* General container for the form */
@@ -18,6 +21,7 @@
     display: flex;
     flex-direction: row; /* Arrange items horizontally */
     gap: 35px;
+    font-family: "Playfair Display", serif;
 }
 
 /* Left section styles */
@@ -60,6 +64,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    font-family: "Playfair Display", serif;
 }
 
 /* Section for uploading image file */
@@ -72,11 +77,11 @@
 }
 
 .image-preview {
-    max-width: 300px;  /* Set the maximum width */
-    max-height: 230px; /* Set the maximum height */
-    width: auto;       /* Maintain aspect ratio */
-    height: auto;      /* Maintain aspect ratio */
-    object-fit: contain; /* Ensures image scales without distortion */
+    max-width: 300px;  /* Set the maximum width of image */
+    max-height: 230px; /* Set the maximum height of image */
+    width: auto;
+    height: auto;
+    object-fit: contain;
     border-radius: 8px;
     margin-top: 10px;
 }
@@ -90,7 +95,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    font-family:Arial, Helvetica, sans-serif
+    font-family: "Playfair Display", serif;
 }
 
 /* Rating stars */
@@ -105,7 +110,7 @@
 /* Rating stars container */
 .rating-stars-container {
     margin-top: 70px;
-    margin-left: 55px;
+    margin-left: 40px;
 }
 
 /* Success and error messages */
@@ -122,3 +127,42 @@
 .error-message {
     color: red;
 }
+
+/* Popup Message */
+.popup-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 1000;
+    color: white;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Success Style */
+.popup-message.success {
+    background-color: #4caf50; /* Green */
+}
+
+/* Error Style */
+.popup-message.error {
+    background-color: #f44336; /* Red */
+}
+
+/* Fade-in animation for pop up message*/
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+

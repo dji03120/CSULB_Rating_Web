@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import filledStar from '../assets/star.png'; // Path to your filled star image
-import emptyStar from '../assets/grayed-star.png';   // Path to your empty star image
+import filledStar from '../assets/star.png'; // Path to star image
+import emptyStar from '../assets/grayed-star.png';   // Path to empty star image
 import rightArrow from '../assets/right-arrow.png';  // Path to right arrow image
 import './CreateRating.css';
 
@@ -12,47 +12,46 @@ const CreateRating = () => {
     const [image, setImage] = useState("");
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
+    const [popupMessage, setPopupMessage] = useState(null); // For popup message of submission status
+    const [popupType, setPopupType] = useState(''); // 'success' or 'error'
 
-    // Handles submission of the review
+    // Handles submission of the rating
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null);
-        setSuccess(false);
-    
-        // Create a new FormData object
+        setPopupMessage(null);
+
         const formData = new FormData();
         formData.append("name", name);
         formData.append("rating", rating);
         formData.append("reviewText", reviewText);
         if (image) {
-            formData.append("image", image); // Attach the image file
+            formData.append("image", image);
         } else {
-            formData.append("imageUrl", imageUrl); // Use imageUrl if no file is uploaded
+            formData.append("imageUrl", imageUrl);
         }
-    
+
         try {
             const response = await axios.post('http://localhost:5000/ratings', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
-    
+
             if (response.status === 200) {
-                setSuccess(true);
+                setPopupMessage('Rating submitted successfully!');
+                setPopupType('success');
                 setName('');
                 setRating(0);
                 setReviewText('');
-                setImage(null); // Clear the image state
-                setImageUrl(''); // Clear the image URL state
+                setImage(null);
+                setImageUrl('');
             }
         } catch (err) {
-            console.log(err);
-            setError('An error occurred while submitting your rating.');
+            setPopupMessage('Please fill out all required fields.');
+            setPopupType('error');
         }
+
+        // Popup disappears after 3 seconds
+        setTimeout(() => setPopupMessage(null), 3000);
     };
-    
 
     // Sets the rating when clicking on the stars
     const handleStarClick = (starValue) => {
@@ -68,18 +67,23 @@ const CreateRating = () => {
         }
     };
 
-    // Returns the Create Rating form
     return (
         <div className="create-rating-wrapper">
-            {/* Title Section */}
-            <h1 className="page-title">Create a New Rating</h1>
+            {/* Popup Message of success status*/}
+            {popupMessage && (
+                <div className={`popup-message ${popupType}`}>
+                    {popupMessage}
+                </div>
+            )}
 
-            {/* Form Container */}
+            {/* Title */}
+            <h1 className="page-title">Create a New Rating</h1>
             <div className="create-rating-container">
-                {/* Left side: Title and Image */}
+                {/* Left side of form */}
                 <div className="create-rating-left">
                     <div>
-                        <label>Title: </label>
+                        {/* Title of rating */}
+                        <label>*Title: </label>
                         <input
                             type="text"
                             value={name}
@@ -88,29 +92,21 @@ const CreateRating = () => {
                             placeholder="Name of cafe, concert, events, food, etc."
                         />
                     </div>
-                    {/* Image */}
+                    {/* Section to upload an image */}
                     <div>
                         <label>Upload Image: </label>
-                        <input
-                            type="file"
-                            onChange={handleImageUpload}
-                        />
-                        {/* Gives an image preview */}
+                        <input type="file" onChange={handleImageUpload} />
                         {imageUrl && <img src={imageUrl} alt="Image Preview" className="image-preview" />}
                     </div>
                 </div>
-
-                {/* Right side: Submit button, rating, and review */}
+                {/* Right side of form */}
                 <div className="create-rating-right">
                     {/* Submit button */}
-                    <img 
-                        src={rightArrow}
-                        className="submit-button"
-                        onClick={handleSubmit}
-                    />
-                    {/* Rating */}
-                    <div className="rating-stars-container"> 
+                    <img src={rightArrow} className="submit-button" onClick={handleSubmit} />
+                    {/* Stars for rating */}
+                    <div className="rating-stars-container">
                         <div className="rating-stars">
+                            <label>*</label>
                             {/* Correlates number of stars pressed to the rating number */}
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <img
@@ -123,9 +119,9 @@ const CreateRating = () => {
                             ))}
                         </div>
                     </div>
-                    {/* Review */}
+                    {/* Review Section */}
                     <div>
-                        <label>Review: </label>
+                        <label>*Review: </label>
                         <textarea
                             value={reviewText}
                             onChange={(e) => setReviewText(e.target.value)}
