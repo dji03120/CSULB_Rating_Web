@@ -14,6 +14,11 @@ const CreateRating = () => {
 	const [reviewText, setReviewText] = useState("");
 	const [popupMessage, setPopupMessage] = useState(null); // For popup message of submission status
 	const [popupType, setPopupType] = useState(""); // 'success' or 'error'
+	const [touched, setTouched] = useState({
+		name: false,
+		rating: false,
+		reviewText: false,
+	});
 
 	// Handles submission of the rating
 	const handleSubmit = async (e) => {
@@ -71,6 +76,10 @@ const CreateRating = () => {
 		}
 	};
 
+	const handleBlur = (field) => {
+		setTouched((prev) => ({ ...prev, [field]: true }));
+	};
+
 	return (
 		<div className="create-rating-wrapper">
 			{/* Popup Message of success status*/}
@@ -92,6 +101,10 @@ const CreateRating = () => {
 							type="text"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
+							onBlur={() => handleBlur("name")}
+							className={`${
+								touched.name && !name ? "invalid" : ""
+							}`}
 							required
 							placeholder="Name of cafe, concert, events, food, etc."
 						/>
@@ -115,7 +128,7 @@ const CreateRating = () => {
 							<img
 								src="src/assets/emptyimage.png"
 								alt="emptyimage"
-                                style={{ width: "200px", height: "200px" }}
+								style={{ width: "200px", height: "200px" }}
 							/>
 						)}
 					</div>
@@ -130,7 +143,13 @@ const CreateRating = () => {
 					/>
 					{/* Stars for rating */}
 					<div className="rating-stars-container">
-						<div className="rating-stars">
+						<div
+							className={`rating-stars ${
+								touched.rating && !rating
+									? "invalid-container"
+									: ""
+							}`}
+						>
 							<label>*</label>
 							{/* Correlates number of stars pressed to the rating number */}
 							{[1, 2, 3, 4, 5].map((star) => (
@@ -152,6 +171,12 @@ const CreateRating = () => {
 						<textarea
 							value={reviewText}
 							onChange={(e) => setReviewText(e.target.value)}
+							onBlur={() => handleBlur("reviewText")}
+							className={`${
+								touched.reviewText && !reviewText
+									? "invalid"
+									: ""
+							}`}
 							required
 							placeholder="Write your review here..."
 						/>
