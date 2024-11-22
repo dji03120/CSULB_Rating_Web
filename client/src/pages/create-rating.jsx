@@ -25,6 +25,19 @@ const CreateRating = () => {
 		e.preventDefault();
 		setPopupMessage(null);
 
+		setTouched({
+			name: true,
+			rating: true,
+			reviewText: true,
+		});
+
+		if (!name || !rating || !reviewText) {
+			setPopupMessage("Please fill out all required fields.");
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
+			return;
+		}
+
 		const formData = new FormData();
 		formData.append("name", name);
 		formData.append("rating", rating);
@@ -53,8 +66,11 @@ const CreateRating = () => {
 				setImage(null);
 				setImageUrl("");
 			}
+			setTouched({ name: false, rating: false, reviewText: false });
 		} catch (err) {
-			setPopupMessage("Please fill out all required fields.");
+			// setPopupMessage("Please fill out all required fields.");
+			// setPopupType("error");
+			setPopupMessage("An error occurred while submitting.");
 			setPopupType("error");
 		}
 
@@ -96,7 +112,7 @@ const CreateRating = () => {
 				<div className="create-rating-left">
 					<div>
 						{/* Title of rating */}
-						<label>*Title: </label>
+						<label>Title: </label>
 						<input
 							type="text"
 							value={name}
@@ -143,6 +159,7 @@ const CreateRating = () => {
 					/>
 					{/* Stars for rating */}
 					<div className="rating-stars-container">
+						{/* <label></label> */}
 						<div
 							className={`rating-stars ${
 								touched.rating && !rating
@@ -150,7 +167,6 @@ const CreateRating = () => {
 									: ""
 							}`}
 						>
-							<label>*</label>
 							{/* Correlates number of stars pressed to the rating number */}
 							{[1, 2, 3, 4, 5].map((star) => (
 								<img
@@ -161,13 +177,14 @@ const CreateRating = () => {
 									alt={`${star} star`}
 									onClick={() => handleStarClick(star)}
 									style={{ cursor: "pointer" }}
+									className="star"
 								/>
 							))}
 						</div>
 					</div>
 					{/* Review Section */}
 					<div>
-						<label>*Review: </label>
+						<label>Review: </label>
 						<textarea
 							value={reviewText}
 							onChange={(e) => setReviewText(e.target.value)}

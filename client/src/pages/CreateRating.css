@@ -136,8 +136,15 @@
 /* Rating stars */
 .rating-stars {
 	display: flex;
+    gap: 10px;
+    border: 1px transparent solid;
+    justify-content: center;
+}
+
+.star {
+	display: flex;
 	gap: 10px;
-	justify-content: flex-start; /* Align stars to the left */
+	justify-content: center; /* Align stars to the left */
 	width: 55px;
 	height: 55px;
 }
@@ -145,7 +152,9 @@
 /* Rating stars container */
 .rating-stars-container {
 	margin-top: 70px;
-	margin-left: 40px;
+	/* margin-left: 40px; */
+    display: flex;
+    justify-content: center;
 }
 
 /* Success and error messages */
@@ -213,10 +222,10 @@
 .invalid-container {
 	outline: 1px solid #ff4444;
 	border-radius: 4px;
-	padding: 4px;
 }
 
 input,
-textarea {
+textarea,
+.rating-stars {
 	transition: all 0.3s ease;
 }
