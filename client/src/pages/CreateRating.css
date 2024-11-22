@@ -86,6 +86,29 @@
     margin-top: 10px;
 }
 
+.image-area {
+    display: flex;
+    justify-content: center;
+    /* background-color: #4caf50; */
+    align-items: center;
+    width: 400px;
+    height: 300px;
+    border: dashed 2px rgb(204, 204, 204);
+    border-radius: 35px;
+    overflow: hidden;
+    /* padding: 2px; */
+}
+
+.image-area img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 35px;
+    transition: ease-in-out 0.3s;
+}
+
 /* Section for typing in review */
 .create-rating-container textarea {
     width: 100%;
