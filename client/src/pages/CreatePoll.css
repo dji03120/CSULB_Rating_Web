@@ -1,72 +1,120 @@
+/* Overall form wrapper style */
 .create-poll-wrapper {
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 900px;
+    margin: 30px auto;
     padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
+    position: relative; /* For positioning the arrow button */
 }
 
+/* Form title styling */
 .page-title {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
+    margin-top: 15px;
+    color: #333;
 }
 
-.create-poll-form {
+/* Header layout for Poll Question and End Date (side by side) */
+.form-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 20px;
 }
 
+/* Poll Question and End Date styling */
+.poll-question,
+.poll-end-date {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels for inputs in the header */
 .poll-question label,
-.poll-options label {
+.poll-end-date label {
+    font-size: 1rem;
     font-weight: bold;
-    display: block;
+    color: #555;
     margin-bottom: 8px;
 }
 
+/* Input fields for Poll Question and End Date */
 .poll-question input,
-.poll-options .option-input input {
+.poll-end-date input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     font-size: 1rem;
-    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: box-shadow 0.3s ease; /* Smooth focus effect */
 }
 
-.add-option-button,
-.remove-option-button,
-.submit-button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+/* Input field focus effect */
+.poll-question input:focus,
+.poll-end-date input:focus {
+    box-shadow: 0 0 8px rgba(100, 149, 237, 0.5);
+    outline: none;
 }
 
+/* Poll options section */
+.poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Individual option input styling */
+.option-input input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: box-shadow 0.3s ease; /* Smooth focus effect */
+}
+
+/* Option input focus effect */
+.option-input input:focus {
+    box-shadow: 0 0 8px rgba(100, 149, 237, 0.5);
+    outline: none;
+}
+
+/* Add option button (+ button) */
 .add-option-button {
-    background-color: #007bff;
-    color: white;
-}
-
-.remove-option-button {
-    background-color: #dc3545;
-    color: white;
-    margin-left: 10px;
-}
-
-.submit-poll-button {
-    background-color: #28a745;
-    color: white;
-    width: 100%;
-    align-self: center; /* Center-align the button */
-    margin-top: 20px; /* Add space between options and the button */
-}
-
-.error-message {
-    color: #dc3545;
+    background-color: #e5d1fc;
+    color: #6a0dad;
+    border: none;
+    width: 100%; /* Matches width of Poll Option */
+    padding: 12px; /* Matches height of Poll Option */
+    font-size: 1rem;
     text-align: center;
+    border-radius: 6px; /* Matches border radius of Poll Option */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.success-message {
-    color: #28a745;
-    text-align: center;
+/* Hover effect for the + button */
+.add-option-button:hover {
+    background-color: #d5baf2;
+}
+
+/* Submit button (arrow button) styling */
+.submit-button {
+    position: absolute; /* Positioned within the form */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    width: 60px; /* Fixed size for the button */
+    height: 60px;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+/* Hover effect for the submit button */
+.submit-button:hover {
+    transform: scale(1.1); /* Slight scaling effect */
 }

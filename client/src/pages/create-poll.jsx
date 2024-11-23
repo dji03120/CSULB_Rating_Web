@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import rightArrow from '../assets/right-arrow.png';  // Path to right arrow image
 import './CreatePoll.css'; // Custom CSS for CreatePoll
 
 const CreatePoll = () => {
@@ -7,6 +8,7 @@ const CreatePoll = () => {
     const [options, setOptions] = useState(['', '']);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [endDate, setEndDate] = useState(''); // add status of end date
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,7 +16,7 @@ const CreatePoll = () => {
         setSuccess(false);
 
         if (!pollQuestion.trim() || options.some(option => !option.trim())) {
-            setError("Please provide a question and at least two valid options.");
+            setError("-Please provide a question and at least two valid options-");
             return;
         }
 
@@ -22,12 +24,14 @@ const CreatePoll = () => {
             const response = await axios.post('http://localhost:5000/polls', {
                 question: pollQuestion,
                 options,
+                endDate,
             });
 
             if (response.status === 200) {
                 setSuccess(true);
                 setPollQuestion('');
                 setOptions(['', '']);
+                setEndDate('');
             }
         } catch (err) {
             console.error(err);
@@ -47,17 +51,32 @@ const CreatePoll = () => {
         <div className="create-poll-wrapper">
             <h1 className="page-title">Create a New Poll</h1>
             <form onSubmit={handleSubmit} className="create-poll-form">
-                {/* Poll Question */}
-                <div className="poll-question">
-                    <label htmlFor="pollQuestion">Poll Question:</label>
-                    <input
-                        id="pollQuestion"
-                        type="text"
-                        value={pollQuestion}
-                        onChange={(e) => setPollQuestion(e.target.value)}
-                        required
-                        placeholder="Enter your poll question"
-                    />
+                {/* Poll Question과 End Date를 한 줄에 배치 */}
+                <div className="form-header">
+                    {/* Poll Question */}
+                    <div className="poll-question">
+                        <label htmlFor="pollQuestion">Poll Question:</label>
+                        <input
+                            id="pollQuestion"
+                            type="text"
+                            value={pollQuestion}
+                            onChange={(e) => setPollQuestion(e.target.value)}
+                            required
+                            placeholder="Enter your poll question"
+                        />
+                    </div>
+
+                    {/* End Date */}
+                    <div className="poll-end-date">
+                        <label htmlFor="endDate">End Date:</label>
+                        <input
+                            id="endDate"
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            required
+                        />
+                    </div>
                 </div>
 
                 {/* Poll Options */}
@@ -70,7 +89,7 @@ const CreatePoll = () => {
                                 value={option}
                                 onChange={(e) => handleOptionChange(index, e.target.value)}
                                 required
-                                placeholder={`Option ${index + 1}`}
+                                placeholder={`Poll Option ${index + 1}`}
                             />
                             {options.length > 2 && (
                                 <button
@@ -78,13 +97,13 @@ const CreatePoll = () => {
                                     onClick={() => removeOption(index)}
                                     className="remove-option-button"
                                 >
-                                    Remove
+                                    -
                                 </button>
                             )}
                         </div>
                     ))}
                     <button type="button" onClick={addOption} className="add-option-button">
-                        Add Option
+                        +
                     </button>
                 </div>
 
@@ -92,10 +111,13 @@ const CreatePoll = () => {
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">Poll created successfully!</p>}
 
-                {/* Submit Button */}
-                <button type="submit" className="submit-poll-button">
-                    Submit Poll
-                </button>
+                {/* Submit Button (Arrow)*/}
+                <img
+                    src={rightArrow}
+                    alt="Submit"
+                    className="submit-button"
+                    onClick={handleSubmit}
+                />
             </form>
         </div>
     );
