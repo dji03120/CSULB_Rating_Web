@@ -18,16 +18,20 @@ router.get("/", async (req, res) => {
 
 // Create a new poll
 router.post('/', async (req, res) => {
-    const { question, options } = req.body;
+    const { question, options, endDate } = req.body;
 
     // Validate input
     if (!question || !options || options.length < 2 || options.some(option => !option.trim())) {
         return res.status(400).json({ error: 'Invalid input. Ensure a valid question and at least two options.' });
     }
 
+    if (!endDate || isNaN(new Date(endDate))) {
+        return res.status(400).json({ error: 'Invalid end date. Ensure it is a valid date format.' });
+    }
+
     try {
         // Save the poll to the database
-        const newPoll = new PollModel({ question, options });
+        const newPoll = new PollModel({ question, options, endDate: new Date(endDate) }); // ㅁㅇ
         const savedPoll = await newPoll.save();
 
         res.status(200).json(savedPoll);

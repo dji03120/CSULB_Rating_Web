@@ -14,19 +14,31 @@ const CreatePoll = () => {
         e.preventDefault();
         setError(null);
         setSuccess(false);
-
+    
         if (!pollQuestion.trim() || options.some(option => !option.trim())) {
             setError("-Please provide a question and at least two valid options-");
             return;
         }
-
+    
+        if (!endDate) {
+            setError("-Please select a valid end date-");
+            return;
+        }
+    
+        const selectedDate = new Date(endDate);
+        const today = new Date();
+        if (selectedDate < today) {
+            setError("-End date cannot be in the past-");
+            return;
+        }
+    
         try {
             const response = await axios.post('http://localhost:5000/polls', {
                 question: pollQuestion,
                 options,
-                endDate,
+                endDate: selectedDate.toISOString(), // UTC로 변환
             });
-
+    
             if (response.status === 200) {
                 setSuccess(true);
                 setPollQuestion('');
@@ -37,7 +49,7 @@ const CreatePoll = () => {
             console.error(err);
             setError('An error occurred while submitting your poll.');
         }
-    };
+    };    
 
     const addOption = () => setOptions([...options, '']);
     const removeOption = (index) => setOptions(options.filter((_, i) => i !== index));
