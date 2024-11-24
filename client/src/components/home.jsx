@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
 	const navigate = useNavigate();
-	const [ratings, setRatings] = useState([])
-	const [polls, setPolls] = useState([])
 	const [ratings, setRatings] = useState([]);
 
 	useEffect(() => {
@@ -27,9 +25,6 @@ export const Home = () => {
 		fetchRating();
 	}, []);
 
-	const gotoCreateRating = () => navigate("/create-rating")  // Navigates to page to create a rating
-	const gotoCreatePoll = () => navigate("/create-poll")  // Navigates to page to create a poll
-
 	const gotoCreateRating = () => navigate("/create-rating"); // Navigates to page to create a rating
 	return (
 		<div className="home-container">
@@ -37,17 +32,6 @@ export const Home = () => {
 				<input type="text" placeholder="Search" />
 			</div>
 			<div className="home-content">
-				<h1 className="home-title">Welcome to CSULB Rates</h1>
-				{/* Create a Rating and Create a Poll buttons */}
-				<button onClick={gotoCreateRating}>Create a Rating</button>  
-				<button onClick={gotoCreatePoll}>Create a Poll</button>
-				<p className="home-description">New Ratings & Polls</p>
-				
-				<ul>
-					{ratings.map((rating) => (
-						<li key={rating._id}>
-							<div>
-								<h2>{rating.name}</h2>
 				{/* <h1 className="home-title">Welcome to CSULB Rates</h1>
 				<button onClick={gotoCreateRating}>Create a Rating</button> */}
 				<span className="home-header">New Ratings & Polls</span>
@@ -110,8 +94,5 @@ export const Home = () => {
 				))}
 			</div>
 		</div>
-	</div>
-	)
-		
 	);
 };
