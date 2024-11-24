@@ -103,18 +103,18 @@
     background-color: #d5baf2;
 }
 
-/* Submit button (arrow button) styling */
+/* Submit Button */
 .submit-button {
-    position: absolute; /* Positioned within the form */
-    top: 20px; /* Distance from the top */
-    right: 20px; /* Distance from the right */
-    width: 60px; /* Fixed size for the button */
-    height: 60px;
-    cursor: pointer;
-    transition: transform 0.3s ease; /* Smooth hover effect */
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 50px;
+	height: 50px;
+	transition: transform 0.3s ease;
 }
 
-/* Hover effect for the submit button */
+/* Submit button hover */
 .submit-button:hover {
-    transform: scale(1.1); /* Slight scaling effect */
+	transform: translateY(-5px);
+	cursor: pointer;
 }
