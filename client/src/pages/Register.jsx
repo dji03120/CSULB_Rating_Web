@@ -39,6 +39,7 @@ export const Register = () => {
 				password,
 			});
 			alert("Registration complete"); // Success popup
+			navigate("/login");
 		} catch (error) {
 			console.error(error);
 
