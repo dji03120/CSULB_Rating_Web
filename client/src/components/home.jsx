@@ -30,6 +30,10 @@ export const Home = () => {
 		<div className="home-container">
 			<div className="search-bar-container">
 				<input type="text" placeholder="Search" />
+				<img
+					id="search-button"
+					src="src/assets/search.png"
+				/>
 			</div>
 			<div className="home-content">
 				{/* <h1 className="home-title">Welcome to CSULB Rates</h1>

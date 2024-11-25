@@ -12,15 +12,17 @@
 	justify-content: center;
 	width: 700px;
 	margin-top: 0.5rem;
+	gap: 1rem;
 }
 
 .search-bar-container input {
 	width: 100%;
-	padding: 1rem;
-	font-size: 0.8rem;
-	border: none;
+	padding: 0.6rem;
+	border: 2px solid black;
+	font-size: 20px;
 	border-radius: 35px;
 	text-align: center;
+	font-family: "Playfair Display", serif;
 }
 
 .search-bar-container input::placeholder {
@@ -29,6 +31,18 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	font-family: "Playfair Display", serif;
+}
+
+.search-bar-container input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#search-button {
+	width: 60px;
+	height: 60px;
+	cursor: pointer;
 }
 
 .home-content {
@@ -121,7 +135,7 @@
 }
 
 .post-right img {
-	width: 40px;
+	width: 46px;
 	height: 40px;
 	cursor: pointer;
 }
