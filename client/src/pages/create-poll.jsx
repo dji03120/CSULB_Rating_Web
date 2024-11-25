@@ -1,3 +1,4 @@
+// Update CreatePoll.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import rightArrow from "../assets/right-arrow.png"; // Path to right arrow image
@@ -100,76 +101,78 @@ const CreatePoll = () => {
     return (
         <div className="create-poll-wrapper">
             <h1 className="page-title">Create a New Poll</h1>
-            <form onSubmit={handleSubmit} className="create-poll-form">
-                {/* Place Poll Question and End Date on the same row */}
-                <div className="form-header">
-                    {/* Poll Question */}
-                    <div className="poll-question">
-                        <label htmlFor="pollQuestion">Poll Question:</label>
-                        <input
-                            id="pollQuestion"
-                            type="text"
-                            value={pollQuestion}
-                            onChange={(e) => setPollQuestion(e.target.value)}
-                            required
-                            placeholder="Enter your poll question"
-                        />
-                    </div>
-
-                    {/* End Date */}
-                    <div className="poll-end-date">
-                        <label htmlFor="endDate">End Date:</label>
-                        <input
-                            id="endDate"
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            required
-                        />
-                    </div>
-                </div>
-
-                {/* Poll Options */}
-                <div className="poll-options">
-                    <label>Options:</label>
-                    {options.map((option, index) => (
-                        <div key={index} className="option-input">
+            <div className="create-poll-container">
+                <form onSubmit={handleSubmit} className="create-poll-form">
+                    {/* Place Poll Question and End Date on the same row */}
+                    <div className="form-header">
+                        {/* Poll Question */}
+                        <div className="poll-question">
+                            <label htmlFor="pollQuestion">Poll Question:</label>
                             <input
+                                id="pollQuestion"
                                 type="text"
-                                value={option}
-                                onChange={(e) => handleOptionChange(index, e.target.value)}
+                                value={pollQuestion}
+                                onChange={(e) => setPollQuestion(e.target.value)}
                                 required
-                                placeholder={`Poll Option ${index + 1}`}
+                                placeholder="Enter your poll question"
                             />
-                            {options.length > 2 && (
-                                <button
-                                    type="button"
-                                    onClick={() => removeOption(index)}
-                                    className="remove-option-button"
-                                >
-                                    -
-                                </button>
-                            )}
                         </div>
-                    ))}
-                    <button type="button" onClick={addOption} className="add-option-button">
-                        +
-                    </button>
-                </div>
 
-                {/* Messages */}
-                {error && <p className="error-message">{error}</p>} {/* Error message */}
-                {success && <p className="success-message">Poll created successfully! Redirecting...</p>} {/* Success message */}
-                {isLoading && <p className="loading-message">Submitting your poll...</p>} {/* Loading message */}
+                        {/* End Date */}
+                        <div className="poll-end-date">
+                            <label htmlFor="endDate">End Date:</label>
+                            <input
+                                id="endDate"
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                {/* Submit Button (Arrow) */}
-                <img
-                    src={rightArrow}
-                    alt="Submit"
-                    className={`submit-button ${isLoading ? "disabled" : ""}`}
-                    onClick={!isLoading ? handleSubmit : null} // Disable when loading
-                />
-            </form>
+                    {/* Poll Options */}
+                    <div className="poll-options">
+                        <label>Options:</label>
+                        {options.map((option, index) => (
+                            <div key={index} className="option-input">
+                                <input
+                                    type="text"
+                                    value={option}
+                                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                                    required
+                                    placeholder={`Poll Option ${index + 1}`}
+                                />
+                                {options.length > 2 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => removeOption(index)}
+                                        className="remove-option-button"
+                                    >
+                                        -
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                        <button type="button" onClick={addOption} className="add-option-button">
+                            +
+                        </button>
+                    </div>
+
+                    {/* Messages */}
+                    {error && <p className="error-message">{error}</p>} {/* Error message */}
+                    {success && <p className="success-message">Poll created successfully! Redirecting...</p>} {/* Success message */}
+                    {isLoading && <p className="loading-message">Submitting your poll...</p>} {/* Loading message */}
+
+                    {/* Submit Button (Arrow) */}
+                    <img
+                        src={rightArrow}
+                        alt="Submit"
+                        className={`submit-button ${isLoading ? "disabled" : ""}`}
+                        onClick={!isLoading ? handleSubmit : null} // Disable when loading
+                    />
+                </form>
+            </div>
         </div>
     );
 };

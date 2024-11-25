@@ -1,22 +1,37 @@
+/* Update CreatePoll.css */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap");
+
 /* Overall form wrapper style */
 .create-poll-wrapper {
-    max-width: 900px;
-    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* min-height: calc(100vh - 100px); Account for navbar */
     padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    position: relative; /* For positioning the arrow button */
+    /* background-color: rgba(227, 213, 243, 0.7); */
+    border-radius: 35px;
+	margin-top: 100px;
 }
 
 /* Form title styling */
 .page-title {
     text-align: center;
-    font-size: 2.5rem;
-    margin-top: 15px;
-    color: #333;
+    margin-bottom: 30px; /* Adjust spacing between title and card */
+    font-size: 40px;
+    font-family: "Playfair Display", serif;
+}
+
+/* General container for the form */
+.create-poll-container {
+    width: 700px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Playfair Display", serif;
+    position: relative; /* For positioning the arrow button */
 }
 
 /* Header layout for Poll Question and End Date (side by side) */
@@ -66,16 +81,21 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
 }
 
 /* Individual option input styling */
 .option-input input {
-    width: 125%;
+    width: 100%;
     padding: 12px;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
     transition: box-shadow 0.3s ease; /* Smooth focus effect */
+}
+
+.option-input {
+    width: 100%;
 }
 
 /* Option input focus effect */
@@ -89,7 +109,7 @@
     background-color: #e5d1fc;
     color: #6a0dad;
     border: none;
-    width: 125%; /* Matches width of Poll Option */
+    width: 100%; /* Matches width of Poll Option */
     padding: 12px; /* Matches height of Poll Option */
     font-size: 1rem;
     text-align: center;
@@ -105,16 +125,16 @@
 
 /* Submit Button */
 .submit-button {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 50px;
-	height: 50px;
-	transition: transform 0.3s ease;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
 }
 
 /* Submit button hover */
 .submit-button:hover {
-	transform: translateY(-5px);
-	cursor: pointer;
+    transform: translateY(-5px);
+    cursor: pointer;
 }
