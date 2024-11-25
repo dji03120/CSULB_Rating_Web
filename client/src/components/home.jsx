@@ -8,6 +8,8 @@ export const Home = () => {
 	const navigate = useNavigate();
 	const [ratings, setRatings] = useState([]); // State for ratings data
 	const [polls, setPolls] = useState([]); // State for poll data
+	const [searchQuery, setSearchQuery] = useState("");  // State for search query
+	const [finalSearchQuery, setFinalSearchQuery] = useState("");  // State for final search query that will be submitted
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -55,23 +57,66 @@ export const Home = () => {
 		}
 	};
 
-	// Navigate to the "Create Rating" page
-	const gotoCreateRating = () => navigate("/create-rating");
+	// Filters the ratings based on words in its name
+	const filteredRatings = ratings.filter(
+		(rating) =>
+			rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	);
+
+	// Filters the polls based on words in its question
+	const filteredPolls = polls.filter(
+		(poll) =>
+			poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	)
+
+	// If the user presses "Enter", the search will go through
+	const handleKeyDown = (e) => {
+		if (e.key === "Enter") {
+			setFinalSearchQuery(searchQuery);
+		}
+	};
+
+	// Handles search for when search button is pressed
+	const handleSearchClick = () => {
+		setFinalSearchQuery(searchQuery);
+	};
+
+	// Clears search by resetting search queries
+	const clearSearch = () => {
+		setSearchQuery("");
+		setFinalSearchQuery("");
+	}
 
 	return (
 		<div className="home-container">
 			<div className="search-bar-container">
-				<input type="text" placeholder="Search" />
+				<input
+					type="text"
+					placeholder="Search" 
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					onKeyDown={handleKeyDown}
+				/>
 				<img
 					id="search-button"
 					src="src/assets/search.png"
+					onClick={handleSearchClick}
 				/>
 			</div>
+
+			{/* Displays Clear Search button if final query is not empty */}
+			{finalSearchQuery && (
+				<button
+					className="clear-search-button" 
+					onClick={clearSearch}>
+					Clear Search
+				</button>
+			)}
 			<div className="home-content">
 				<span className="home-header">New Ratings & Polls</span>
 
 				{/* Ratings Section */}
-				{ratings.map((rating) => (
+				{filteredRatings.map((rating) => (
 					<div key={rating._id} className="post-card">
 						<div className="post-header">
 							<div className="post-votes">
@@ -130,7 +175,7 @@ export const Home = () => {
 				))}
 
 				{/* Polls Section */}
-				{polls.map((poll) => (
+				{filteredPolls.map((poll) => (
 					<div key={poll._id} className="poll-card">
 						{/* Poll Title */}
 						<div className="poll-header">

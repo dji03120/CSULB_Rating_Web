@@ -45,6 +45,13 @@
 	cursor: pointer;
 }
 
+.clear-search-button {
+	margin-top: 20px;
+	margin-right: 50px;
+	border: 1px solid black;
+	font-family: "Playfair Display", serif;
+}
+
 .home-content {
 	display: flex;
 	flex-direction: column;
