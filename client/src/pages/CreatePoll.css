@@ -70,7 +70,7 @@
 
 /* Individual option input styling */
 .option-input input {
-    width: 100%;
+    width: 125%;
     padding: 12px;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -89,7 +89,7 @@
     background-color: #e5d1fc;
     color: #6a0dad;
     border: none;
-    width: 100%; /* Matches width of Poll Option */
+    width: 125%; /* Matches width of Poll Option */
     padding: 12px; /* Matches height of Poll Option */
     font-size: 1rem;
     text-align: center;

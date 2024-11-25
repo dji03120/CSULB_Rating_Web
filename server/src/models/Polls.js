@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 // Sets up the schema for a poll
-// required things always to be true. Becasue it is required.
 const PollSchema = new mongoose.Schema({
     question: {
         type: String,
@@ -11,11 +10,14 @@ const PollSchema = new mongoose.Schema({
         type: String,
         required: true, // Each option is required
     }],
+    votes: [{
+        type: Number,
+        default: 0, // Initialize each option's vote count to 0
+    }],
     createdAt: {
         type: Date,
         default: Date.now, // Automatically set the creation date
     },
-
     endDate: {
         type: Date,
         required: true, // Poll must have an end date

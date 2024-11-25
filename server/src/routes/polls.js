@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import path from "path";
 import { PollModel } from "../models/Polls.js";
 import { UserModel } from "../models/Users.js";
 
@@ -9,95 +8,154 @@ const router = express.Router();
 // Route to get all polls
 router.get("/", async (req, res) => {
     try {
-        const response = await PollModel.find({});  // Returns all the polls
-        res.json(response)
+        const response = await PollModel.find({}); // Fetch all polls from the database
+        res.json(response);
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ error: "Failed to fetch polls." });
     }
 });
 
-// Create a new poll
-router.post('/', async (req, res) => {
+// Route to create a new poll
+router.post("/", async (req, res) => {
     const { question, options, endDate } = req.body;
 
     // Validate input
-    if (!question || !options || options.length < 2 || options.some(option => !option.trim())) {
-        return res.status(400).json({ error: 'Invalid input. Ensure a valid question and at least two options.' });
+    if (!question || !options || options.length < 2 || options.some((option) => !option.trim())) {
+        return res.status(400).json({ error: "Invalid input. Ensure a valid question and at least two options." });
     }
 
     if (!endDate || isNaN(new Date(endDate))) {
-        return res.status(400).json({ error: 'Invalid end date. Ensure it is a valid date format.' });
+        return res.status(400).json({ error: "Invalid end date. Ensure it is a valid date format." });
     }
 
     try {
-        // Save the poll to the database
-        const newPoll = new PollModel({ question, options, endDate: new Date(endDate) }); // ㅁㅇ
-        const savedPoll = await newPoll.save();
+        // Initialize an array of votes with zeros for each option
+        const votes = Array(options.length).fill(0);
+
+        // Create a new poll document
+        const newPoll = new PollModel({ question, options, endDate: new Date(endDate), votes });
+        const savedPoll = await newPoll.save(); // Save the poll to the database
 
         res.status(200).json(savedPoll);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to save poll. Please try again later.' });
+        res.status(500).json({ error: "Failed to create poll. Please try again later." });
     }
 });
 
-// Save a poll to a user's saved polls
+// Route to add a vote to a poll
+router.put("/vote", async (req, res) => {
+    const { pollID, optionIndex } = req.body;
+
+    // Validate input
+    if (!pollID || typeof optionIndex !== "number") {
+        return res.status(400).json({ error: "Poll ID and a valid option index are required." });
+    }
+
+    try {
+        const poll = await PollModel.findById(pollID); // Fetch the poll by ID
+
+        if (!poll) {
+            return res.status(404).json({ error: "Poll not found." });
+        }
+
+        if (optionIndex < 0 || optionIndex >= poll.votes.length) {
+            return res.status(400).json({ error: "Invalid option index." });
+        }
+
+        // Increment the vote count for the selected option
+        poll.votes[optionIndex] += 1;
+
+        // Save the updated poll to the database
+        const updatedPoll = await poll.save();
+
+        res.status(200).json({
+            message: "Vote recorded successfully!",
+            updatedPoll,
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to record vote. Please try again later." });
+    }
+});
+
+// Route to save a poll to a user's saved polls
 router.put("/save", async (req, res) => {
+    const { pollID, userID } = req.body;
+
+    if (!pollID || !userID) {
+        return res.status(400).json({ error: "Poll ID and User ID are required." });
+    }
+
     try {
-        const { pollID, userID } = req.body;
+        const poll = await PollModel.findById(pollID); // Fetch the poll by ID
+        const user = await UserModel.findById(userID); // Fetch the user by ID
 
-        const poll = await PollModel.findById(pollID);
-        const user = await UserModel.findById(userID);
-
-        if (!poll || !user) {
-            return res.status(404).json({ error: "Poll or user not found." });
+        if (!poll) {
+            return res.status(404).json({ error: "Poll not found." });
         }
 
-        if (!user.savedPolls.includes(pollID)) {
-            user.savedPolls.push(pollID);
-            await user.save();
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
         }
 
-        res.json({ savedPolls: user.savedPolls });
+        if (user.savedPolls.includes(pollID)) {
+            return res.status(400).json({ error: "Poll already saved." });
+        }
+
+        // Add the poll ID to the user's saved polls array
+        user.savedPolls.push(pollID);
+        await user.save(); // Save the updated user document
+
+        res.status(200).json({ message: "Poll saved successfully!", savedPolls: user.savedPolls });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Failed to save poll. Please try again later." });
     }
 });
 
-// Get saved poll IDs for a user
+// Route to get the IDs of polls saved by a user
 router.get("/savedPolls/ids", async (req, res) => {
+    const { userID } = req.query;
+
+    if (!userID) {
+        return res.status(400).json({ error: "User ID is required." });
+    }
+
     try {
-        const { userID } = req.query;
-        const user = await UserModel.findById(userID);
+        const user = await UserModel.findById(userID); // Fetch the user by ID
 
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
 
-        res.json({ savedPolls: user.savedPolls });
+        res.status(200).json({ savedPolls: user.savedPolls });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Failed to fetch saved polls." });
     }
 });
 
-// Get details of saved polls
+// Route to get detailed data of polls saved by a user
 router.get("/savedPolls", async (req, res) => {
+    const { userID } = req.query;
+
+    if (!userID) {
+        return res.status(400).json({ error: "User ID is required." });
+    }
+
     try {
-        const { userID } = req.query;
-        const user = await UserModel.findById(userID);
+        const user = await UserModel.findById(userID); // Fetch the user by ID
 
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
 
+        // Fetch the details of polls saved by the user
         const savedPolls = await PollModel.find({
             _id: { $in: user.savedPolls },
         });
 
-        res.json(savedPolls);
+        res.status(200).json(savedPolls);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Failed to fetch saved poll details." });
     }
 });
 
-export { router as pollsRouter }; 
+export { router as pollsRouter };

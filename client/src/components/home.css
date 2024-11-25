@@ -44,7 +44,7 @@
 	font-size: 2.5rem;
 	font-family: "Playfair Display", serif;
 	font-weight: 700;
-	/* background-color: rgba(239, 231, 244, 0.7); */
+	/* Padding and underline style for the header */
 	padding: 0rem;
 	border-radius: 35px;
 	text-decoration: underline;
@@ -61,13 +61,12 @@
 	border-radius: 35px;
 	width: 1000px;
 	height: 600px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
 }
 
 .post-header {
 	margin-top: 20px;
 	width: 100%;
-	/* background-color: aliceblue; */
 	padding: 1rem;
 	display: flex;
 	align-items: center;
@@ -136,7 +135,6 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 1rem;
-	/* background-color: rgb(146, 229, 201, 0.4); */
 	width: 100%;
 	gap: 2rem;
 }
@@ -165,7 +163,6 @@
 	gap: 1rem;
 	width: 50%;
 	height: 100%;
-    /* background-color: rgb(243, 235, 224, 0.4); */
 }
 
 .rating-star {
@@ -174,13 +171,11 @@
 }
 
 .content-ratings {
-	height: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 1rem;
 	width: 100%;
-	/* background-color: rgb(175, 124, 222, 0.4); */
 	height: 30%;
 }
 
@@ -191,19 +186,95 @@
 	justify-content: baseline;
 	width: 100%;
 	height: 70%;
-	/* background-color: rgba(222, 124, 181, 0.4); */
 	font-family: "Playfair Display", serif;
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .content-description p {
 	font-size: 1rem;
 	font-weight: 700;
-    padding: 0.2rem 1rem 0rem 0rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 14; 
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0; 
+	padding: 0.2rem 1rem 0rem 0rem;
+	display: -webkit-box;
+	-webkit-line-clamp: 14; 
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0; 
+}
+
+.poll-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff; /* White background */
+	border: 1px solid #ccc; /* Thin border */
+	border-radius: 35px; /* Rounded corners */
+	padding: 20px;
+	margin: 20px 0;
+	width: 1000px; /* Poll card width */
+	height: 600px; /* Poll card height */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+	font-family: "Playfair Display", serif;
+	color: #333;
+}
+
+.poll-title {
+	font-size: 1.8rem; /* Increased font size for the title */
+	font-weight: 700; /* Bold font */
+	margin-bottom: 15px;
+	text-align: center;
+	color: #333;
+}
+
+.poll-instruction {
+	font-size: 1rem; /* Font size for instructions */
+	font-weight: 400; /* Lighter font weight */
+	margin-bottom: 20px;
+	color: #555;
+	font-family: "Playfair Display", serif;
+}
+
+.poll-options {
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* Gap between options */
+	width: 80%; /* Button width */
+	margin-top: 20px;
+}
+
+.poll-option {
+	background-color: #f9f9f9; /* Light gray background */
+	border: none; /* No border */
+	border-radius: 10px;
+	padding: 15px;
+	font-size: 1.5rem; /* Increased font size for options */
+	text-align: center;
+	font-weight: 700; /* Bold font */
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	color: #333;
+	font-family: "Playfair Display", serif;
+}
+
+.poll-option:hover {
+	background-color: #eaeaea;
+	transform: scale(1.02); /* Slight enlargement on hover */
+}
+
+.poll-footer {
+	font-size: 1rem; /* Font size for vote count and date */
+	font-weight: 400; /* Lighter font weight */
+	margin-top: 20px;
+	color: #777;
+	text-align: center;
+	font-family: "Playfair Display", serif;
+}
+
+.arrow-icon {
+	width: 35px; /* Increased arrow size */
+	height: 35px;
+	margin-top: 15px;
+	cursor: pointer;
+	animation: bounce 2s infinite;
 }
