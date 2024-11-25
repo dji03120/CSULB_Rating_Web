@@ -54,7 +54,7 @@
 }
 
 /* Submit Button */
-.submit-button {
+.submit-rating-button {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -64,7 +64,7 @@
 }
 
 /* Submit button hover */
-.submit-button:hover {
+.submit-rating-button:hover {
 	transform: translateY(-5px);
 	cursor: pointer;
 }

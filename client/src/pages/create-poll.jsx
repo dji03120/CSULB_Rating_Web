@@ -168,7 +168,7 @@ const CreatePoll = () => {
                     <img
                         src={rightArrow}
                         alt="Submit"
-                        className={`submit-button ${isLoading ? "disabled" : ""}`}
+                        className={`submit-poll-button ${isLoading ? "disabled" : ""}`}
                         onClick={!isLoading ? handleSubmit : null} // Disable when loading
                     />
                 </form>

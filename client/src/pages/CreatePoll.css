@@ -24,7 +24,8 @@
 
 /* General container for the form */
 .create-poll-container {
-    width: 700px;
+    width: 800px;
+    margin: 30px auto;
     padding: 20px;
     background-color: #ffffff;
     border: 1px solid #ddd;
@@ -36,6 +37,7 @@
 
 /* Header layout for Poll Question and End Date (side by side) */
 .form-header {
+    padding-top: 45px;
     display: flex;
     justify-content: space-between;
     gap: 20px;
@@ -124,17 +126,17 @@
 }
 
 /* Submit Button */
-.submit-button {
+.submit-poll-button {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 20px;
+    right: 20px;
     width: 50px;
     height: 50px;
     transition: transform 0.3s ease;
 }
 
 /* Submit button hover */
-.submit-button:hover {
+.submit-poll-button:hover {
     transform: translateY(-5px);
     cursor: pointer;
 }

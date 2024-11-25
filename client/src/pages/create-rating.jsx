@@ -154,7 +154,7 @@ const CreateRating = () => {
 					{/* Submit button */}
 					<img
 						src={rightArrow}
-						className="submit-button"
+						className="submit-rating-button"
 						onClick={handleSubmit}
 					/>
 					{/* Stars for rating */}
