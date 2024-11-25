@@ -62,6 +62,10 @@ export const Home = () => {
 		<div className="home-container">
 			<div className="search-bar-container">
 				<input type="text" placeholder="Search" />
+				<img
+					id="search-button"
+					src="src/assets/search.png"
+				/>
 			</div>
 			<div className="home-content">
 				<span className="home-header">New Ratings & Polls</span>
