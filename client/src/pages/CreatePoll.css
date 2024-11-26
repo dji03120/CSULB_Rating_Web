@@ -98,12 +98,39 @@
 
 .option-input {
     width: 100%;
+    position: relative;
 }
 
 /* Option input focus effect */
 .option-input input:focus {
     box-shadow: 0 0 8px rgba(100, 149, 237, 0.5);
     outline: none;
+}
+
+.remove-option-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    z-index: 1;
+    scale: 0.8;
+}
+
+.remove-option-button:hover {
+    background-color: #ff0000;
 }
 
 /* Add option button (+ button) */
