@@ -38,10 +38,13 @@ const CreateRating = () => {
 			return;
 		}
 
+		const userID = localStorage.getItem("userId");
+
 		const formData = new FormData();
 		formData.append("name", name);
 		formData.append("rating", rating);
 		formData.append("reviewText", reviewText);
+		formData.append("createdBy", userID)
 		if (image) {
 			formData.append("image", image);
 		} else {

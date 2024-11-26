@@ -20,6 +20,11 @@ const RatingSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

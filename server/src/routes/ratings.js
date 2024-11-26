@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
 // Route to create a review 
 router.post("/", upload.single("image"), async (req, res) => {
     try {
-        const { name, rating, reviewText } = req.body;
+        const { name, rating, reviewText, createdBy } = req.body;
 
         // Image is optional
         let imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl || ""; 
@@ -56,7 +56,8 @@ router.post("/", upload.single("image"), async (req, res) => {
             name, 
             imageUrl: imagePath,
             rating, 
-            reviewText
+            reviewText,
+            createdBy,
         });
         const response = await newRating.save(); // Saves the rating
         res.json(response);
@@ -103,5 +104,17 @@ router.get("/savedRatings", async (req, res) => {
         res.json(err)
     }
 })
+
+// Route to get the user's ratings
+router.get("/my-posts", async (req, res) => {
+    try {
+        const { userID } = req.query; // Getting userID from query params
+        const response = await RatingModel.find({ createdBy: userID });
+        res.json(response);
+    } catch (err) {
+        res.json(err)
+    }
+});
+
 
 export { router as ratingsRouter }; 
