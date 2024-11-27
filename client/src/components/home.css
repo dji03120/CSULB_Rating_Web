@@ -140,15 +140,16 @@
 	cursor: pointer;
 }
 
-.post-right img {
+.post-heart {
 	width: 46px;
 	height: 40px;
 	cursor: pointer;
 }
 
-.post-card img:hover button:hover {
-	transform: scale(1.1);
-	transition: ease-in-out 0.2s;
+.post-heart:hover,
+.post-right button:hover {
+	transform: scale(1.05);
+	transition: ease-in-out 0.1s;
 }
 
 .post-content {
@@ -158,6 +159,138 @@
 	padding: 1rem;
 	width: 100%;
 	gap: 2rem;
+}
+
+.poll-card {
+    display: flex;
+    flex-direction: column;  /* Stack elements vertically */
+    justify-content: space-between;  /* This will ensure content is spaced out */
+    width: 1000px;
+	min-height: auto;
+    background-color: white;
+    padding: 1rem;
+    margin: 2rem;
+    border-radius: 35px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.poll-content {
+    flex-grow: 1; /* Allow content to take available space */
+}
+
+.poll-header {
+	margin-top: 25px;
+	margin-bottom: 15px;
+	width: 100%;
+	padding: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.poll-votes {
+	display: flex;
+}
+
+.poll-votes img {
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+}
+
+.poll-title {
+    display: block; /* Change from flex to block to allow better text wrapping */
+    text-align: center; /* Center text horizontally */
+    font-size: 0.7rem; /* Adjust font size as needed */
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    word-wrap: break-word; /* Ensure the text breaks when necessary */
+    overflow-wrap: break-word; /* Handle long words and prevent overflow */
+    white-space: normal; /* Allow text to wrap to next line */
+    width: 100%; /* Ensure full width of the parent container */
+    padding: 0 10px; /* Add some padding to avoid text touching the edges */
+    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+
+.poll-right {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.poll-right button {
+	border-radius: 8px;
+	border: 1px solid black;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.poll-heart {
+	width: 46px;
+	height: 40px;
+	cursor: pointer;
+}
+
+.poll-heart:hover,
+.poll-right button:hover {
+	transform: scale(1.05);
+	transition: ease-in-out 0.1s;
+}
+
+.poll-instruction {
+	font-size: 1rem; /* Font size for instructions */
+	font-weight: 400; /* Lighter font weight */
+	margin-top: 20px;
+	margin-bottom: 20px;
+	color: #555;
+	font-family: "Playfair Display", serif;
+	text-align: center;
+}
+
+.poll-options {
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* Gap between options */
+	width: 100%; /* Button width */
+	margin-top: 20px;
+	align-items: center;
+}
+
+.poll-option {
+	background-color: #f9f9f9; /* Light gray background */
+	border: none; /* No border */
+	border-radius: 10px;
+	padding: 15px;
+	font-size: 1.5rem; /* Increased font size for options */
+	text-align: center;
+	font-weight: 700; /* Bold font */
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	color: #333;
+	font-family: "Playfair Display", serif;
+	width: 80%;
+}
+
+.poll-option:hover {
+	background-color: #eaeaea;
+	transform: scale(1.02); /* Slight enlargement on hover */
+}
+
+.poll-footer {
+	font-size: 1rem; /* Font size for vote count and date */
+	font-weight: 400; /* Lighter font weight */
+	margin-top: 20px;
+	margin-bottom: 10px;
+	color: #777;
+	text-align: center;
+	font-family: "Playfair Display", serif;
 }
 
 .content-left {
@@ -223,79 +356,3 @@
 	margin: 0; 
 }
 
-.poll-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	background-color: #fff; /* White background */
-	border: 1px solid #ccc; /* Thin border */
-	border-radius: 35px; /* Rounded corners */
-	padding: 20px;
-	margin: 20px 0;
-	width: 1000px; /* Poll card width */
-	height: 600px; /* Poll card height */
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-	font-family: "Playfair Display", serif;
-	color: #333;
-}
-
-.poll-title {
-	font-size: 1.8rem; /* Increased font size for the title */
-	font-weight: 700; /* Bold font */
-	margin-bottom: 15px;
-	text-align: center;
-	color: #333;
-}
-
-.poll-instruction {
-	font-size: 1rem; /* Font size for instructions */
-	font-weight: 400; /* Lighter font weight */
-	margin-bottom: 20px;
-	color: #555;
-	font-family: "Playfair Display", serif;
-}
-
-.poll-options {
-	display: flex;
-	flex-direction: column;
-	gap: 20px; /* Gap between options */
-	width: 80%; /* Button width */
-	margin-top: 20px;
-}
-
-.poll-option {
-	background-color: #f9f9f9; /* Light gray background */
-	border: none; /* No border */
-	border-radius: 10px;
-	padding: 15px;
-	font-size: 1.5rem; /* Increased font size for options */
-	text-align: center;
-	font-weight: 700; /* Bold font */
-	cursor: pointer;
-	transition: all 0.3s ease-in-out;
-	color: #333;
-	font-family: "Playfair Display", serif;
-}
-
-.poll-option:hover {
-	background-color: #eaeaea;
-	transform: scale(1.02); /* Slight enlargement on hover */
-}
-
-.poll-footer {
-	font-size: 1rem; /* Font size for vote count and date */
-	font-weight: 400; /* Lighter font weight */
-	margin-top: 20px;
-	color: #777;
-	text-align: center;
-	font-family: "Playfair Display", serif;
-}
-
-.arrow-icon {
-	width: 35px; /* Increased arrow size */
-	height: 35px;
-	margin-top: 15px;
-	cursor: pointer;
-	animation: bounce 2s infinite;
-}

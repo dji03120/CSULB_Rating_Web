@@ -141,6 +141,7 @@ export const Home = () => {
 								<img
 									src="src/assets/heart.png"
 									alt="like-icon"
+									className="post-heart"
 								/>
 							</div>
 						</div>
@@ -177,34 +178,58 @@ export const Home = () => {
 				{/* Polls Section */}
 				{filteredPolls.map((poll) => (
 					<div key={poll._id} className="poll-card">
-						{/* Poll Title */}
 						<div className="poll-header">
-							<h2 className="poll-title">POLL: {poll.question}</h2>
+							<div className="poll-votes">
+								<img
+									id="upvote-arrow"
+									src="src/assets/up-arrow.png"
+									alt="upvote"
+									style={{ transform: "rotate(100)" }}
+								/>
+								<img
+									id="downvote-arrow"
+									src="src/assets/down-arrow.png"
+									alt="downvote"
+									style={{}}
+								/>
+							</div>
+							<div className="poll-right">
+								<button>Share</button>
+								<img
+									src="src/assets/heart.png"
+									alt="like-icon"
+									className="post-heart"
+								/>
+							</div>
 						</div>
+						<div className="poll-content">
+							<div className="poll-title">
+								<h1>Poll: {poll.question}</h1>
+							</div>
+							{/* Poll Instructions */}
+							<p className="poll-instruction">Select one option:</p>
 
-						{/* Poll Instructions */}
-						<p className="poll-instruction">-Select one option-</p>
+							{/* Poll Options */}
+							<div className="poll-options">
+								{poll.options.map((option, index) => (
+									<button
+										key={index}
+										className="poll-option"
+										onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
+									>
+										{option}
+									</button>
+								))}
+							</div>
 
-						{/* Poll Options */}
-						<div className="poll-options">
-							{poll.options.map((option, index) => (
-								<button
-									key={index}
-									className="poll-option"
-									onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
-								>
-									{option}
-								</button>
-							))}
-						</div>
-
-						{/* Poll Footer */}
-						<div className="poll-footer">
-							<p>
-								{/* Perform reduce only if poll.votes is not undefined */}
-								{poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
-								{new Date(poll.endDate).toLocaleDateString()}
-							</p>
+							{/* Poll Footer */}
+							<div className="poll-footer">
+								<p>
+									{/* Perform reduce only if poll.votes is not undefined */}
+									{poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
+									{new Date(poll.endDate).toLocaleDateString()}
+								</p>
+							</div>
 						</div>
 					</div>
 				))}

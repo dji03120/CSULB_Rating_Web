@@ -52,11 +52,14 @@ const CreatePoll = () => {
 			return;
 		}
 
+		const userID = localStorage.getItem("userId");
+
 		try {
 			setIsLoading(true); // Activate loading state
 			const response = await axios.post("http://localhost:5000/polls", {
 				question: pollQuestion,
 				options,
+				createdBy: userID,
 				endDate: selectedDate.toISOString(), // Convert date to UTC
 			});
 

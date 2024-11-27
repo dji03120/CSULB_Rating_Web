@@ -106,7 +106,7 @@ router.get("/savedRatings", async (req, res) => {
 })
 
 // Route to get the user's ratings
-router.get("/my-posts", async (req, res) => {
+router.get("/my-ratings", async (req, res) => {
     try {
         const { userID } = req.query; // Getting userID from query params
         const response = await RatingModel.find({ createdBy: userID });

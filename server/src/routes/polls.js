@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 
 // Route to create a new poll
 router.post("/", async (req, res) => {
-    const { question, options, endDate } = req.body;
+    const { question, options, endDate, createdBy } = req.body;
 
     // Validate input
     if (!question || !options || options.length < 2 || options.some((option) => !option.trim())) {
@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
         const votes = Array(options.length).fill(0);
 
         // Create a new poll document
-        const newPoll = new PollModel({ question, options, endDate: new Date(endDate), votes });
+        const newPoll = new PollModel({ question, options, endDate: new Date(endDate), votes, createdBy });
         const savedPoll = await newPoll.save(); // Save the poll to the database
 
         res.status(200).json(savedPoll);
@@ -155,6 +155,17 @@ router.get("/savedPolls", async (req, res) => {
         res.status(200).json(savedPolls);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch saved poll details." });
+    }
+});
+
+// Route to get the user's polls
+router.get("/my-polls", async (req, res) => {
+    try {
+        const { userID } = req.query; // Getting userID from query params
+        const response = await PollModel.find({ createdBy: userID });
+        res.json(response);
+    } catch (err) {
+        res.json(err)
     }
 });
 
