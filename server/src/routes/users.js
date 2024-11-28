@@ -49,6 +49,29 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Route for user to save a post
+router.put("/savePost", async (req, res) => {
+    try {
+        const { postType, postId } = req.body;
+        const { userID } = req.query;
+
+        const user = await UserModel.findById(userID);
+
+        const alreadySaved = user.savedPosts.some(post => post.postId.toString() === postId.toString() && post.postType === postType);
+
+        if (alreadySaved) {
+            return res.status(400).json({ error: "Post already saved" });
+        }
+
+        user.savedPosts.push({ postType, postId});
+        await user.save();
+
+        res.json({ message: "Post saved successfully", savedPosts: user.savedPosts });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+})
+
 export { router as userRouter };
 
 

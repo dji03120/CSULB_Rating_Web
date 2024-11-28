@@ -57,6 +57,23 @@ export const Home = () => {
 		}
 	};
 
+	// Handler for saving a post
+	const handleSaveClick = async (postType, postId) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const response = await axios.put(`http://localhost:5000/auth/savePost?userID=${userID}`, {
+				postType,
+				postId,
+			});
+
+			if (response.status === 200) {
+				alert("Post saved successfully")
+			}
+		} catch (err) {
+			console.error("Failed to save post:", err);
+		}
+	};
+
 	// Filters the ratings based on words in its name
 	const filteredRatings = ratings.filter(
 		(rating) =>
@@ -142,6 +159,7 @@ export const Home = () => {
 									src="src/assets/heart.png"
 									alt="like-icon"
 									className="post-heart"
+									onClick={() => handleSaveClick("rating", rating._id)}
 								/>
 							</div>
 						</div>
@@ -199,6 +217,7 @@ export const Home = () => {
 									src="src/assets/heart.png"
 									alt="like-icon"
 									className="post-heart"
+									onClick={() => handleSaveClick("poll", poll._id)}
 								/>
 							</div>
 						</div>

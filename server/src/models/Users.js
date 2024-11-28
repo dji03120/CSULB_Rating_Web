@@ -19,8 +19,9 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    savedRatings: [{
-        type: mongoose.Schema.Types.ObjectId, ref: "ratings" 
+    savedPosts: [{
+        postType: { type: String, enum: ['rating', 'poll'], required: true },
+        postId: { type: mongoose.Schema.Types.ObjectId, refPath: 'postType', required: true },
     }],
 });
 
