@@ -1,74 +1,21 @@
-
 .my-posts-page-title {
-	text-align: center;
-	font-size: 50px;
+    text-align: center;
+	font-size: 40px;
 	font-family: "Playfair Display", serif;
 	padding: 20px;
+	margin-top: 50px;
 	background-color: rgba(227, 213, 243, 0.7);
 	border-radius: 35px;
 }
 
-.my-reviews-card {
+.post-card {
+	align-items: center;
+}
+
+.my-posts-content {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: white;
-	padding: 1rem;
-	margin: 2rem;
-	border-radius: 35px;
-	width: 1000px;
-	height: 600px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
-}
-
-.post-header {
-	margin-top: 20px;
-	width: 100%;
-	padding: 1rem;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.post-votes {
-	display: flex;
-}
-
-.post-votes img {
-	width: 40px;
-	height: 40px;
-	cursor: pointer;
-}
-
-.post-content {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1rem;
-	width: 100%;
-	gap: 2rem;
-}
-
-.post-title {
-	display: flex;
-	font-size: 0.7rem;
-	font-family: "Playfair Display", serif;
-	font-weight: 700;
-}
-
-
-
-.my-polls-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	background-color: white;
-	padding: 1rem;
-	margin: 2rem;
-	border-radius: 35px;
-	width: 1000px;
-	height: 600px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
+	padding-top: 1.5rem;
 }

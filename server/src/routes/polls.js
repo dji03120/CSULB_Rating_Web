@@ -169,4 +169,16 @@ router.get("/my-polls", async (req, res) => {
     }
 });
 
+// Route to delete a poll
+router.delete("/:id", async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedPoll = await PollModel.findByIdAndDelete(id);
+        res.json({ message: "Poll deleted successfully", deletedPoll });
+    } catch (err) {
+        res.json(err)
+    }
+});
+
 export { router as pollsRouter };

@@ -116,5 +116,16 @@ router.get("/my-ratings", async (req, res) => {
     }
 });
 
+// Route to delete a rating
+router.delete("/:id", async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedRating = await RatingModel.findByIdAndDelete(id);
+        res.json({ message: "Rating deleted successfully", deletedRating });
+    } catch (err) {
+        res.json(err)
+    }
+});
 
 export { router as ratingsRouter }; 
