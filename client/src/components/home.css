@@ -57,6 +57,49 @@
 	font-family: "Playfair Display", serif;
 }
 
+/* Style for the tab container */
+.tabs {
+	display: flex;
+	justify-content: center;
+  }
+  
+  /* Style for each tab button */
+  .tab {
+	border-radius: 8px;
+	border: 2px solid black;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: transparent;
+	cursor: pointer;
+	margin: 0 7px;
+	margin-top: 20px;
+	font-family: "Playfair Display", serif;
+  }
+  
+  /* Hover effect for tabs */
+  .tab:hover {
+	background: linear-gradient(
+		45deg,
+		rgba(255, 117, 140, 0.2),
+		rgba(255, 223, 0, 0.2),
+		rgba(24, 215, 248, 0.2)
+	);
+	border: 2px solid black;
+  }
+  
+  /* Style for the active tab */
+  .tab.active {
+	background: linear-gradient(
+		45deg,
+		rgba(255, 117, 140, 0.2),
+		rgba(255, 223, 0, 0.2),
+		rgba(24, 215, 248, 0.2)
+	);
+	
+  }
+  
 .home-content {
 	display: flex;
 	flex-direction: column;

@@ -8,6 +8,7 @@ const MyPosts = () => {
     const [userPolls, setUserPolls] = useState([]);
     const [loading, setLoading] = useState(true);  // State to track loading status
     const [savedPosts, setSavedPosts] = useState([]);
+    const [activeTab, setActiveTab] = useState("ratings"); // State to track the active tab
 
     useEffect(() => {
         const userID = localStorage.getItem("userId");  // Gets the current user's id
@@ -133,144 +134,163 @@ const MyPosts = () => {
     return (
         <div className="my-posts-content">
             <h1 className="my-posts-page-title">My Posts</h1>
-            <div>
-                {userRatings.length === 0 && userPolls.length === 0 ? (
-                    <p>No posts found.</p>
-                ) : (
-                    <>
-                        {/* Map through user ratings */}
-                        {userRatings.map((rating) => (
-                            <div key={rating._id} className="post-card">
-                                <div className="post-header">
-                                    <div className="post-votes">
-                                        <img
-                                            id="upvote-arrow"
-                                            src="src/assets/up-arrow.png"
-                                            alt="upvote"
-                                            style={{ transform: "rotate(100)" }}
-                                        />
-                                        <img
-                                            id="downvote-arrow"
-                                            src="src/assets/down-arrow.png"
-                                            alt="downvote"
-                                            style={{}}
-                                        />
-                                    </div>
-                                    <div className="post-title">
-                                        <h1>{rating.name}</h1>
-                                    </div>
-                                    <div className="post-right">
-                                        <button>Share</button>
-                                        <img
-                                            src={
-                                                isPostSaved("rating", rating._id)
-                                                    ? "src/assets/heart.png" // Show filled heart if saved
-                                                    : "src/assets/grayed-heart.png" // Show gray heart if not saved
-                                            }
-                                            alt="like-icon"
-                                            className="post-heart"
-                                            onClick={() => handleSaveClick("rating", rating._id)}
-                                        />
-                                        <button onClick={() => deleteRating(rating._id)}>Delete</button>
-                                    </div>
-                                </div>
-                                <div className="post-content">
-                                    <div className="content-left">
-                                        <img
-                                            src={`http://localhost:5000${rating.imageUrl}`}
-                                            alt={rating.name}
-                                        />
-                                    </div>
-                                    <div className="content-right">
-                                        <div className="content-ratings">
-                                            {Array.from(
-                                                { length: rating.rating },
-                                                (_, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src="src/assets/star.png"
-                                                        alt="star"
-                                                        className="rating-star"
-                                                    />
-                                                )
-                                            )}
-                                        </div>
-                                        <div className="content-description">
-                                            <h2>My Review:</h2>
-                                            <p>{rating.reviewText} </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
 
-                        {/* Map through user polls */}
-                        {userPolls.map((poll) => (
-                            <div key={poll._id} className="poll-card">
-                                <div className="poll-header">
-                                    <div className="poll-votes">
-                                        <img
-                                            id="upvote-arrow"
-                                            src="src/assets/up-arrow.png"
-                                            alt="upvote"
-                                            style={{ transform: "rotate(100)" }}
-                                        />
-                                        <img
-                                            id="downvote-arrow"
-                                            src="src/assets/down-arrow.png"
-                                            alt="downvote"
-                                            style={{}}
-                                        />
+            {/* Tab Navigation */}
+				<div className="tabs">
+					<button
+						className={`tab ${activeTab === "ratings" ? "active" : ""}`}
+						onClick={() => setActiveTab("ratings")}
+					>
+					Ratings
+					</button>
+					<button
+						className={`tab ${activeTab === "polls" ? "active" : ""}`}
+						onClick={() => setActiveTab("polls")}
+					>
+					Polls
+					</button>
+				</div>
+
+                <div className="tab-content">
+                    {activeTab === "ratings" && (
+                        <div>
+                            {/* Map through user ratings */}
+                            {userRatings.map((rating) => (
+                                <div key={rating._id} className="post-card">
+                                    <div className="post-header">
+                                        <div className="post-votes">
+                                            <img
+                                                id="upvote-arrow"
+                                                src="src/assets/up-arrow.png"
+                                                alt="upvote"
+                                                style={{ transform: "rotate(100)" }}
+                                            />
+                                            <img
+                                                id="downvote-arrow"
+                                                src="src/assets/down-arrow.png"
+                                                alt="downvote"
+                                                style={{}}
+                                            />
+                                        </div>
+                                        <div className="post-title">
+                                            <h1>{rating.name}</h1>
+                                        </div>
+                                        <div className="post-right">
+                                            <button>Share</button>
+                                            <img
+                                                src={
+                                                    isPostSaved("rating", rating._id)
+                                                        ? "src/assets/heart.png" // Show filled heart if saved
+                                                        : "src/assets/grayed-heart.png" // Show gray heart if not saved
+                                                }
+                                                alt="like-icon"
+                                                className="post-heart"
+                                                onClick={() => handleSaveClick("rating", rating._id)}
+                                            />
+                                            <button onClick={() => deleteRating(rating._id)}>Delete</button>
+                                        </div>
                                     </div>
-                                    <div className="poll-right">
-                                        <button>Share</button>
-                                        <img
-                                            src={
-                                                isPostSaved("poll", poll._id)
-                                                    ? "src/assets/heart.png" // Show filled heart if saved
-                                                    : "src/assets/grayed-heart.png" // Show gray heart if not saved
-                                            }
-                                            alt="like-icon"
-                                            className="post-heart"
-                                            onClick={() => handleSaveClick("poll", poll._id)}
-                                        />
-                                        <button onClick={() => deletePoll(poll._id)}>Delete</button>
+                                    <div className="post-content">
+                                        <div className="content-left">
+                                            <img
+                                                src={`http://localhost:5000${rating.imageUrl}`}
+                                                alt={rating.name}
+                                            />
+                                        </div>
+                                        <div className="content-right">
+                                            <div className="content-ratings">
+                                                {Array.from(
+                                                    { length: rating.rating },
+                                                    (_, index) => (
+                                                        <img
+                                                            key={index}
+                                                            src="src/assets/star.png"
+                                                            alt="star"
+                                                            className="rating-star"
+                                                        />
+                                                    )
+                                                )}
+                                            </div>
+                                            <div className="content-description">
+                                                <h2>My Review:</h2>
+                                                <p>{rating.reviewText} </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="poll-content">
-                                    <div className="poll-title">
-                                        <h1>Poll: {poll.question}</h1>
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === "polls" && (
+                        <div>
+                           {/* Map through user polls */}
+                            {userPolls.map((poll) => (
+                                <div key={poll._id} className="poll-card">
+                                    <div className="poll-header">
+                                        <div className="poll-votes">
+                                            <img
+                                                id="upvote-arrow"
+                                                src="src/assets/up-arrow.png"
+                                                alt="upvote"
+                                                style={{ transform: "rotate(100)" }}
+                                            />
+                                            <img
+                                                id="downvote-arrow"
+                                                src="src/assets/down-arrow.png"
+                                                alt="downvote"
+                                                style={{}}
+                                            />
+                                        </div>
+                                        <div className="poll-right">
+                                            <button>Share</button>
+                                            <img
+                                                src={
+                                                    isPostSaved("poll", poll._id)
+                                                        ? "src/assets/heart.png" // Show filled heart if saved
+                                                        : "src/assets/grayed-heart.png" // Show gray heart if not saved
+                                                }
+                                                alt="like-icon"
+                                                className="post-heart"
+                                                onClick={() => handleSaveClick("poll", poll._id)}
+                                            />
+                                            <button onClick={() => deletePoll(poll._id)}>Delete</button>
+                                        </div>
                                     </div>
-                                    {/* Poll Instructions */}
-                                    <p className="poll-instruction">Select one option:</p>
-        
-                                    {/* Poll Options */}
-                                    <div className="poll-options">
-                                        {poll.options.map((option, index) => (
-                                            <button
-                                                key={index}
-                                                className="poll-option"
-                                                onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
-                                            >
-                                                {option}
-                                            </button>
-                                        ))}
-                                    </div>
-        
-                                    {/* Poll Footer */}
-                                    <div className="poll-footer">
-                                        <p>
-                                            {/* Perform reduce only if poll.votes is not undefined */}
-                                            {poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
-                                            {new Date(poll.endDate).toLocaleDateString()}
-                                        </p>
+                                    <div className="poll-content">
+                                        <div className="poll-title">
+                                            <h1>Poll: {poll.question}</h1>
+                                        </div>
+                                        {/* Poll Instructions */}
+                                        <p className="poll-instruction">Select one option:</p>
+            
+                                        {/* Poll Options */}
+                                        <div className="poll-options">
+                                            {poll.options.map((option, index) => (
+                                                <button
+                                                    key={index}
+                                                    className="poll-option"
+                                                    onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
+                                                >
+                                                    {option}
+                                                </button>
+                                            ))}
+                                        </div>
+            
+                                        {/* Poll Footer */}
+                                        <div className="poll-footer">
+                                            <p>
+                                                {/* Perform reduce only if poll.votes is not undefined */}
+                                                {poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
+                                                {new Date(poll.endDate).toLocaleDateString()}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </>
-                )}
-            </div>
+                            ))} 
+                        </div>
+                    )}
+                </div>
         </div>
     );
 };

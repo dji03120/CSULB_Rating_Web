@@ -5,6 +5,7 @@ import "./Bookmarks.css";
 // Component to access a user's saved posts
 const Bookmarks = () => {
     const [savedPosts, setSavedPosts] = useState([]);
+    const [activeTab, setActiveTab] = useState("rating");  // State to track active tab
 
     useEffect(() => {
         // Fetches the user's saved posts
@@ -40,131 +41,152 @@ const Bookmarks = () => {
         }
     };
 
-    // Returns the user's saved posts
+    // Returns the user's saved posts based on active tab
+    const renderSavedPosts = () => {
+        const filteredPosts = savedPosts.filter((post) => post.postType === activeTab);
+
+        return filteredPosts.length === 0 ? (
+            <p>No saved {activeTab} posts yet.</p>
+        ) : (
+            filteredPosts.map(({ postType, postId }) => (
+                <div className="saved-post-cards" key={postId._id}>
+                    {/* Displays the user's saved ratings */}
+                    {postType === "rating" && (
+                        <div className="saved-rating-card">
+                            <div className="post-header">
+                                <div className="post-votes">
+                                    <img
+                                        id="upvote-arrow"
+                                        src="src/assets/up-arrow.png"
+                                        alt="upvote"
+                                        style={{ transform: "rotate(100)" }}
+                                    />
+                                    <img
+                                        id="downvote-arrow"
+                                        src="src/assets/down-arrow.png"
+                                        alt="downvote"
+                                    />
+                                </div>
+                                <div className="post-title">
+                                    <h1>{postId.name}</h1>
+                                </div>
+                                <div className="post-right">
+                                    <button>Share</button>
+                                    <img
+                                        src="src/assets/heart.png"
+                                        alt="like-icon"
+                                        className="post-heart"
+                                        onClick={() => handleUnsaveClick("rating", postId._id)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="post-content">
+                                <div className="content-left">
+                                    <img
+                                        src={`http://localhost:5000${postId.imageUrl}`}
+                                        alt={postId.name}
+                                    />
+                                </div>
+                                <div className="content-right">
+                                    <div className="content-ratings">
+                                        {Array.from({ length: postId.rating }, (_, index) => (
+                                            <img
+                                                key={index}
+                                                src="src/assets/star.png"
+                                                alt="star"
+                                                className="rating-star"
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className="content-description">
+                                        <h2>My Review:</h2>
+                                        <p>{postId.reviewText}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Display the user's saved polls */}
+                    {postType === "poll" && (
+                        <div className="saved-poll-card">
+                            <div className="poll-header">
+                                <div className="poll-votes">
+                                    <img
+                                        id="upvote-arrow"
+                                        src="src/assets/up-arrow.png"
+                                        alt="upvote"
+                                        style={{ transform: "rotate(100)" }}
+                                    />
+                                    <img
+                                        id="downvote-arrow"
+                                        src="src/assets/down-arrow.png"
+                                        alt="downvote"
+                                    />
+                                </div>
+                                <div className="poll-right">
+                                    <button>Share</button>
+                                    <img
+                                        src="src/assets/heart.png"
+                                        alt="like-icon"
+                                        className="post-heart"
+                                        onClick={() => handleUnsaveClick("poll", postId._id)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="poll-content">
+                                <div className="poll-title">
+                                    <h1>Poll: {postId.question}</h1>
+                                </div>
+                                <p className="poll-instruction">Select one option:</p>
+                                <div className="poll-options">
+                                    {postId.options.map((option, index) => (
+                                        <button
+                                            key={index}
+                                            className="poll-option"
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="poll-footer">
+                                    <p>
+                                        {postId.votes
+                                            ? postId.votes.reduce((a, b) => a + b, 0)
+                                            : 0}{" "}
+                                        Votes - Poll ends {new Date(postId.endDate).toLocaleDateString()}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ))
+        );
+    };
+
     return (
         <div className="my-posts-content">
             <h1 className="bookmarks-page-title">Bookmarks</h1>
+            {/* Tab Navigation */}
+            <div className="tabs">
+                <button
+                    className={`tab ${activeTab === "rating" ? "active" : ""}`}
+                    onClick={() => setActiveTab("rating")}
+                >
+                    Ratings
+                </button>
+                <button
+                    className={`tab ${activeTab === "poll" ? "active" : ""}`}
+                    onClick={() => setActiveTab("poll")}
+                >
+                    Polls
+                </button>
+            </div>
+
             <div className="saved-posts-list">
-                {savedPosts.length === 0 ? (
-                    <p>No saved posts yet.</p>
-                ) : (
-                    savedPosts.map(({ postType, postId }) => (
-                        <div className="saved-post-cards" key={postId._id}>
-                            {/* Displays the user's saved ratings */}
-                            {postType === "rating" && (
-                                <div className="saved-rating-card">
-                                    <div className="post-header">
-                                        <div className="post-votes">
-                                            <img
-                                                id="upvote-arrow"
-                                                src="src/assets/up-arrow.png"
-                                                alt="upvote"
-                                                style={{ transform: "rotate(100)" }}
-                                            />
-                                            <img
-                                                id="downvote-arrow"
-                                                src="src/assets/down-arrow.png"
-                                                alt="downvote"
-                                            />
-                                        </div>
-                                        <div className="post-title">
-                                            <h1>{postId.name}</h1>
-                                        </div>
-                                        <div className="post-right">
-                                            <button>Share</button>
-                                            <img
-                                                src="src/assets/heart.png"
-                                                alt="like-icon"
-                                                className="post-heart"
-                                                onClick={() => handleUnsaveClick("rating", postId._id)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="post-content">
-                                        <div className="content-left">
-                                            <img
-                                                src={`http://localhost:5000${postId.imageUrl}`}
-                                                alt={postId.name}
-                                            />
-                                        </div>
-                                        <div className="content-right">
-                                            <div className="content-ratings">
-                                                {Array.from({ length: postId.rating }, (_, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src="src/assets/star.png"
-                                                        alt="star"
-                                                        className="rating-star"
-                                                    />
-                                                ))}
-                                            </div>
-                                            <div className="content-description">
-                                                <h2>My Review:</h2>
-                                                <p>{postId.reviewText}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Display the user's saved polls */}
-                            {postType === "poll" && (
-                                <div className="saved-poll-card">
-                                    <div className="poll-header">
-                                        <div className="poll-votes">
-                                            <img
-                                                id="upvote-arrow"
-                                                src="src/assets/up-arrow.png"
-                                                alt="upvote"
-                                                style={{ transform: "rotate(100)" }}
-                                            />
-                                            <img
-                                                id="downvote-arrow"
-                                                src="src/assets/down-arrow.png"
-                                                alt="downvote"
-                                            />
-                                        </div>
-                                        <div className="poll-right">
-                                            <button>Share</button>
-                                            <img
-                                                src="src/assets/heart.png"
-                                                alt="like-icon"
-                                                className="post-heart"
-                                                onClick={() => handleUnsaveClick("poll", postId._id)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="poll-content">
-                                        <div className="poll-title">
-                                            <h1>Poll: {postId.question}</h1>
-                                        </div>
-                                        <p className="poll-instruction">Select one option:</p>
-                                        <div className="poll-options">
-                                            {postId.options.map((option, index) => (
-                                                <button
-                                                    key={index}
-                                                    className="poll-option"
-                                                    onClick={() => handleVoteClick(postId._id, index)} // Connect the poll voting handler
-                                                >
-                                                    {option}
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        <div className="poll-footer">
-                                            <p>
-                                                {postId.votes
-                                                    ? postId.votes.reduce((a, b) => a + b, 0)
-                                                    : 0}{" "}
-                                                Votes - Poll ends {new Date(postId.endDate).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ))
-                )}
+                {renderSavedPosts()}
             </div>
         </div>
     );
