@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     savedPosts: [{
         postType: { type: String, enum: ['rating', 'poll'], required: true },
-        postId: { type: mongoose.Schema.Types.ObjectId, refPath: 'postType', required: true },
+        postId: { type: mongoose.Schema.Types.ObjectId, refPath: 'savedPosts.postType', required: true },
     }],
 });
 

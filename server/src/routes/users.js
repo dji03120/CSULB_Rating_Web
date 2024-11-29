@@ -2,6 +2,8 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserModel } from "../models/Users.js";
+import { RatingModel } from "../models/Ratings.js";
+import { PollModel } from "../models/Polls.js";
 
 const router = express.Router();
 
@@ -72,8 +74,63 @@ router.put("/savePost", async (req, res) => {
     }
 })
 
+// Route for user to unsave a post
+router.put("/unsavePost", async (req, res) => {
+    try {
+        const { postType, postId } = req.body;
+        const { userID } = req.query;
+
+        const user = await UserModel.findById(userID);
+
+        // Find the index of the post to be removed
+        const postIndex = user.savedPosts.findIndex(
+            (post) => post.postId.toString() === postId.toString() && post.postType === postType
+        );
+
+        if (postIndex === -1) {
+            return res.status(400).json({ error: "Post not found in saved posts" });
+        }
+
+        // Remove the post from the savedPosts array
+        user.savedPosts.splice(postIndex, 1);
+        await user.save();
+
+        res.json({ message: "Post unsaved successfully", savedPosts: user.savedPosts });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
+// Route to get the user's saved posts
+router.get("/savedPosts", async (req, res) => {
+    try {
+        const { userID } = req.query;
+
+        // Find the user by userID
+        const user = await UserModel.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Populate posts based on their type
+        const savedPosts = await Promise.all(
+            user.savedPosts.map(async (savedPost) => {
+                if (savedPost.postType === "rating") {
+                    // Populate the Rating post
+                    savedPost.postId = await RatingModel.findById(savedPost.postId);
+                } else if (savedPost.postType === "poll") {
+                    // Populate the Poll post
+                    savedPost.postId = await PollModel.findById(savedPost.postId);
+                }
+                return savedPost;
+            })
+        );
+
+        res.json({ savedPosts });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 export { router as userRouter };
-
-
-
-

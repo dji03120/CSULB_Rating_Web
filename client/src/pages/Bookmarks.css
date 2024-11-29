@@ -1,0 +1,42 @@
+.bookmarks-page-title {
+    text-align: center;
+	font-size: 40px;
+	font-family: "Playfair Display", serif;
+	padding: 20px;
+	background-color: rgba(227, 213, 243, 0.7);
+	border-radius: 35px;
+}
+
+.saved-rating-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	margin: 2rem;
+	width: 1000px;
+	height: 600px;
+    border-radius: 25px;
+    background-color: white;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
+    overflow: hidden;
+    width: 1000px;
+	height: 600px;
+}
+
+.saved-poll-card {
+    display: flex;
+    flex-direction: column;  /* Stack elements vertically */
+    align-items: center;
+    justify-content: space-between;  /* This will ensure content is spaced out */
+    width: 1000px;
+    border-radius: 25px;
+	min-height: auto;
+    background-color: white;
+    padding: 1rem;
+    margin: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+

@@ -10,6 +10,7 @@ export const Home = () => {
 	const [polls, setPolls] = useState([]); // State for poll data
 	const [searchQuery, setSearchQuery] = useState("");  // State for search query
 	const [finalSearchQuery, setFinalSearchQuery] = useState("");  // State for final search query that will be submitted
+	const [savedPosts, setSavedPosts] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -25,6 +26,13 @@ export const Home = () => {
 					"http://localhost:5000/polls"
 				);
 				setPolls(pollResponse.data); // Store poll data in state
+
+				const userID = localStorage.getItem("userId");
+				const savedPostsResponse = await axios.get(
+					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+				);
+				console.log("Fetched Saved Posts:", savedPostsResponse.data.savedPosts);
+				setSavedPosts(savedPostsResponse.data.savedPosts)
 			} catch (err) {
 				console.error(err);
 			}
@@ -57,22 +65,54 @@ export const Home = () => {
 		}
 	};
 
-	// Handler for saving a post
+	// Check if a post is saved
+	const isPostSaved = (postType, postId) => {
+		const result = savedPosts.some(
+			(post) =>
+				post.postType === postType &&
+				post.postId._id === postId.toString()
+		);
+		console.log(`Checking (${postType}, ${postId}):`, result);
+		return result;
+	};
+	
+
+	// Toggle save/unsave functionality
 	const handleSaveClick = async (postType, postId) => {
 		try {
 			const userID = localStorage.getItem("userId");
-			const response = await axios.put(`http://localhost:5000/auth/savePost?userID=${userID}`, {
-				postType,
-				postId,
-			});
-
-			if (response.status === 200) {
-				alert("Post saved successfully")
+			const isSaved = isPostSaved(postType, postId);  // Check if it's saved or not
+	
+			if (isSaved) {
+				// Remove from saved posts
+				await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
+					postType,
+					postId,
+				});
+	
+				// Update the state
+				setSavedPosts((prev) =>
+					prev.filter((post) => !(post.postType === postType && post.postId._id === postId.toString()))
+				);
+			} else {
+				// Add to saved posts
+				const response = await axios.put(
+					`http://localhost:5000/auth/savePost?userID=${userID}`,
+					{ postType, postId }
+				);
+				if (response.status === 200) {
+					// Update the state
+					setSavedPosts((prev) => [
+						...prev,
+						{ postType, postId: { _id: postId }, _id: response.data.savedPostId },
+					]);
+				}
 			}
 		} catch (err) {
-			console.error("Failed to save post:", err);
+			console.error("Failed to toggle save post:", err);
 		}
 	};
+	
 
 	// Filters the ratings based on words in its name
 	const filteredRatings = ratings.filter(
@@ -156,7 +196,11 @@ export const Home = () => {
 							<div className="post-right">
 								<button>Share</button>
 								<img
-									src="src/assets/heart.png"
+									src={
+										isPostSaved("rating", rating._id)
+											? "src/assets/heart.png" // Show filled heart if saved
+											: "src/assets/grayed-heart.png" // Show gray heart if not saved
+									}
 									alt="like-icon"
 									className="post-heart"
 									onClick={() => handleSaveClick("rating", rating._id)}
@@ -214,7 +258,11 @@ export const Home = () => {
 							<div className="poll-right">
 								<button>Share</button>
 								<img
-									src="src/assets/heart.png"
+									src={
+										isPostSaved("poll", poll._id)
+											? "src/assets/heart.png" // Show filled heart if saved
+											: "src/assets/grayed-heart.png" // Show gray heart if not saved
+									}
 									alt="like-icon"
 									className="post-heart"
 									onClick={() => handleSaveClick("poll", poll._id)}

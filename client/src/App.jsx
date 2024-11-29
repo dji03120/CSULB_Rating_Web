@@ -8,6 +8,7 @@ import './App.css';
 import CreateRating from './pages/create-rating'
 import CreatePoll from './pages/create-poll'; // Import the CreatePoll component
 import MyPosts from './pages/my-posts';
+import Bookmarks from './pages/bookmarks'
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/create-rating" element={<CreateRating />} />
                 <Route path="/create-poll" element={<CreatePoll />} />
                 <Route path="/my-posts" element={<MyPosts />} />
+                <Route path="/bookmarks" element={<Bookmarks />} />
             </Routes>
         </Router>
     );
