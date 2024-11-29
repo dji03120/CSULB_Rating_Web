@@ -7,6 +7,7 @@ const MyPosts = () => {
     const [userRatings, setUserRatings] = useState([]);
     const [userPolls, setUserPolls] = useState([]);
     const [loading, setLoading] = useState(true);  // State to track loading status
+    const [savedPosts, setSavedPosts] = useState([]);
 
     useEffect(() => {
         const userID = localStorage.getItem("userId");  // Gets the current user's id
@@ -19,6 +20,12 @@ const MyPosts = () => {
                     params: { userID }
                 });
                 setUserRatings(response.data);  // Sets the user's ratings
+
+				const savedPostsResponse = await axios.get(
+					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+				);
+				console.log("Fetched Saved Posts:", savedPostsResponse.data.savedPosts);
+				setSavedPosts(savedPostsResponse.data.savedPosts)
             } catch (err) {
                 console.error("Error fetching user ratings:", err);
             } finally {
@@ -73,6 +80,53 @@ const MyPosts = () => {
 
         }
     }
+
+    // Check if a post is saved
+	const isPostSaved = (postType, postId) => {
+		const result = savedPosts.some(
+			(post) =>
+				post.postType === postType &&
+				post.postId._id === postId.toString()
+		);
+		console.log(`Checking (${postType}, ${postId}):`, result);
+		return result;
+	};
+
+    // Toggle save/unsave functionality
+	const handleSaveClick = async (postType, postId) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const isSaved = isPostSaved(postType, postId);  // Check if it's saved or not
+	
+			if (isSaved) {
+				// Remove from saved posts
+				await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
+					postType,
+					postId,
+				});
+	
+				// Update the state
+				setSavedPosts((prev) =>
+					prev.filter((post) => !(post.postType === postType && post.postId._id === postId.toString()))
+				);
+			} else {
+				// Add to saved posts
+				const response = await axios.put(
+					`http://localhost:5000/auth/savePost?userID=${userID}`,
+					{ postType, postId }
+				);
+				if (response.status === 200) {
+					// Update the state
+					setSavedPosts((prev) => [
+						...prev,
+						{ postType, postId: { _id: postId }, _id: response.data.savedPostId },
+					]);
+				}
+			}
+		} catch (err) {
+			console.error("Failed to toggle save post:", err);
+		}
+	};
     
 
     // Returns the user's posts
@@ -108,9 +162,14 @@ const MyPosts = () => {
                                     <div className="post-right">
                                         <button>Share</button>
                                         <img
-                                            src="src/assets/heart.png"
+                                            src={
+                                                isPostSaved("rating", rating._id)
+                                                    ? "src/assets/heart.png" // Show filled heart if saved
+                                                    : "src/assets/grayed-heart.png" // Show gray heart if not saved
+                                            }
                                             alt="like-icon"
                                             className="post-heart"
+                                            onClick={() => handleSaveClick("rating", rating._id)}
                                         />
                                         <button onClick={() => deleteRating(rating._id)}>Delete</button>
                                     </div>
@@ -166,9 +225,14 @@ const MyPosts = () => {
                                     <div className="poll-right">
                                         <button>Share</button>
                                         <img
-                                            src="src/assets/heart.png"
+                                            src={
+                                                isPostSaved("poll", poll._id)
+                                                    ? "src/assets/heart.png" // Show filled heart if saved
+                                                    : "src/assets/grayed-heart.png" // Show gray heart if not saved
+                                            }
                                             alt="like-icon"
-                                            className="poll-heart"
+                                            className="post-heart"
+                                            onClick={() => handleSaveClick("poll", poll._id)}
                                         />
                                         <button onClick={() => deletePoll(poll._id)}>Delete</button>
                                     </div>
