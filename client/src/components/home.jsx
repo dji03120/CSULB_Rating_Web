@@ -99,8 +99,13 @@ export const Home = () => {
 	
 				// Update the state
 				setSavedPosts((prev) =>
-					prev.filter((post) => !(post.postType === postType && post.postId._id === postId.toString()))
-				);
+                    prev.filter(
+                        (post) =>
+                            post.postType !== postType || 
+                            !post.postId ||
+                            post.postId._id !== postId.toString()
+                    )
+                );
 			} else {
 				// Add to saved posts
 				const response = await axios.put(
