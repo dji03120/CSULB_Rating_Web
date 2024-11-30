@@ -14,6 +14,9 @@ export const Home = () => {
 	const [activeTab, setActiveTab] = useState("ratings");  // State to track active tab
 	const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
 
+	const [shareOptions, setShareOptions] = useState(null); // Track the post for which share options are open
+
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -54,6 +57,35 @@ export const Home = () => {
 	
 		fetchData();
 	}, []);	
+
+	const handleShareClick = (postType, postId) => {
+		setShareOptions(shareOptions?.postId === postId ? null : { postType, postId });
+	};
+
+	const shareToPlatform = (platform, postType, postId) => {
+		const shareUrl = `${window.location.origin}/${postType}/${postId}`;
+		const encodedUrl = encodeURIComponent(shareUrl);
+	
+		switch (platform) {
+			case "facebook":
+				window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank");
+				break;
+			case "twitter":
+				window.open(`https://twitter.com/share?url=${encodedUrl}`, "_blank");
+				break;
+			case "linkedin":
+				window.open(`https://www.linkedin.com/shareArticle?url=${encodedUrl}`, "_blank");
+				break;
+			case "email":
+				window.location.href = `mailto:?subject=Check this out&body=${encodedUrl}`;
+				break;
+			default:
+				alert("Unsupported platform");
+		}
+	
+		setShareOptions(null); // Close the share options after selecting a platform
+	};
+	
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
@@ -246,7 +278,20 @@ export const Home = () => {
 										<h1>{rating.name}</h1>
 									</div>
 									<div className="post-right">
-										<button>Share</button>
+									{/* Share button */}
+										<button className="share-button" onClick={() => handleShareClick("rating", rating._id)}>
+											Share
+										</button>
+
+										{/* Share options (displayed when the Share button is clicked) */}
+										{shareOptions?.postId === rating._id && (
+											<div className="share-options">
+												<button onClick={() => shareToPlatform("facebook", "rating", rating._id)}>Facebook</button>
+												<button onClick={() => shareToPlatform("twitter", "rating", rating._id)}>Twitter</button>
+												<button onClick={() => shareToPlatform("linkedin", "rating", rating._id)}>LinkedIn</button>
+												<button onClick={() => shareToPlatform("email", "rating", rating._id)}>Email</button>
+											</div>
+										)}
 										<img
 											src={
 												isPostSaved("rating", rating._id)
@@ -315,8 +360,20 @@ export const Home = () => {
 									<div className="poll-right">
 										{/* Show "Voted" badge only if user has voted */}
 										{poll.hasVoted && <span className="voted-badge">Voted</span>}
-										{/* Always show the "Share" button */}
-										<button>Share</button>
+										{/* Share button */}
+											<button className="share-button" onClick={() => handleShareClick("poll", poll._id)}>
+												Share
+											</button>
+
+											{/* Share options (displayed when the Share button is clicked) */}
+											{shareOptions?.postId === poll._id && (
+												<div className="share-options">
+													<button onClick={() => shareToPlatform("facebook", "poll", poll._id)}>Facebook</button>
+													<button onClick={() => shareToPlatform("twitter", "poll", poll._id)}>Twitter</button>
+													<button onClick={() => shareToPlatform("linkedin", "poll", poll._id)}>LinkedIn</button>
+													<button onClick={() => shareToPlatform("email", "poll", poll._id)}>Email</button>
+												</div>
+											)}
 										<img
 											src={
 												isPostSaved("poll", poll._id)
