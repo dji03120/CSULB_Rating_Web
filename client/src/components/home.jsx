@@ -19,20 +19,29 @@ export const Home = () => {
 		const fetchData = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-
+	
 				// Fetch ratings
-				const ratingResponse = await axios.get(
-					"http://localhost:5000/ratings"
-				);
+				const ratingResponse = await axios.get("http://localhost:5000/ratings");
 				setRatings(ratingResponse.data);
-
+	
 				// Fetch polls with userID for hasVoted
-				const pollResponse = await axios.get(
-					"http://localhost:5000/polls",
-					{ params: { userID } } // Send userID to server
-				);
-				setPolls(pollResponse.data);
-
+				const pollResponse = await axios.get("http://localhost:5000/polls", {
+					params: { userID }, // Send userID to server
+				});
+	
+				// Update polls with the 'hasVoted' information
+				const updatedPolls = pollResponse.data.map((poll) => {
+					return {
+						...poll,
+						hasVoted: poll.voters.includes(userID),
+					};
+				});
+				setPolls(updatedPolls);
+	
+				// Retrieve voted polls from localStorage
+				const votedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+				setUserVotedPolls(votedPolls);
+	
 				// Fetch saved posts
 				const savedPostsResponse = await axios.get(
 					`http://localhost:5000/auth/savedPosts?userID=${userID}`
@@ -42,9 +51,9 @@ export const Home = () => {
 				console.error("Failed to fetch data:", err);
 			}
 		};
-
+	
 		fetchData();
-	}, []);
+	}, []);	
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
@@ -52,36 +61,36 @@ export const Home = () => {
 			alert("You have already voted on this poll.");
 			return;
 		}
-
+	
 		try {
 			const response = await axios.put("http://localhost:5000/polls/vote", {
 				pollID: pollId,
 				optionIndex: optionIndex,
-				userID: localStorage.getItem("userId"), // 사용자 ID
+				userID: localStorage.getItem("userId"),
 			});
-
+	
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
-
-				// 투표 결과를 업데이트
+	
+				// Update polls state with new vote count and mark as voted
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
-						poll._id === pollId ? { ...poll, hasVoted: true, votes: response.data.updatedPoll.votes } : poll
+						poll._id === pollId
+							? { ...poll, hasVoted: true, votes: response.data.updatedPoll.votes }
+							: poll
 					)
 				);
-
-				// 투표한 폴 ID를 상태와 localStorage에 저장
-				setUserVotedPolls((prev) => {
-					const updated = [...prev, pollId];
-					localStorage.setItem("userVotedPolls", JSON.stringify(updated));
-					return updated;
-				});
+	
+				// Update voted polls in localStorage and state
+				const updatedVotedPolls = [...userVotedPolls, pollId];
+				setUserVotedPolls(updatedVotedPolls);
+				localStorage.setItem("userVotedPolls", JSON.stringify(updatedVotedPolls));
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
 			alert("Failed to submit vote. Please try again.");
 		}
-	};
+	};	
 	
 
 	// Check if a post is saved
@@ -101,7 +110,7 @@ export const Home = () => {
 	const handleSaveClick = async (postType, postId) => {
 		try {
 			const userID = localStorage.getItem("userId");
-			const isSaved = isPostSaved(postType, postId);  // Check if it's saved or not
+			const isSaved = isPostSaved(postType, postId); // Check if it's saved or not
 	
 			if (isSaved) {
 				// Remove from saved posts
@@ -112,13 +121,13 @@ export const Home = () => {
 	
 				// Update the state
 				setSavedPosts((prev) =>
-                    prev.filter(
-                        (post) =>
-                            post.postType !== postType || 
-                            !post.postId ||
-                            post.postId._id !== postId.toString()
-                    )
-                );
+					prev.filter(
+						(post) =>
+							post.postType !== postType ||
+							!post.postId ||
+							post.postId._id !== postId.toString()
+					)
+				);
 			} else {
 				// Add to saved posts
 				const response = await axios.put(
@@ -136,7 +145,7 @@ export const Home = () => {
 		} catch (err) {
 			console.error("Failed to toggle save post:", err);
 		}
-	};
+	};	
 	
 
 	// Filters the ratings based on words in its name
@@ -304,11 +313,10 @@ export const Home = () => {
 										/>
 									</div>
 									<div className="poll-right">
-										{poll.hasVoted ? (
-										<span className="voted-badge">Voted</span> // 이미 투표했다는 배지
-									) : (
+										{/* Show "Voted" badge only if user has voted */}
+										{poll.hasVoted && <span className="voted-badge">Voted</span>}
+										{/* Always show the "Share" button */}
 										<button>Share</button>
-									)}
 										<img
 											src={
 												isPostSaved("poll", poll._id)
@@ -336,7 +344,7 @@ export const Home = () => {
 											const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
 
 											const now = new Date(); // Current time
-        									const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
+											const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
 
 											return (
 												<div key={index} className="poll-option-container">
@@ -349,15 +357,15 @@ export const Home = () => {
 
 													{/* Show Results */}
 													<div className="poll-results">
-													<div
-														className="poll-bar"
-														style={{
-															width: `${Math.max(percentage, 1)}%`,
-															background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
-															height: "10px",
-															marginTop: "5px",
-														}}
-													></div>
+														<div
+															className="poll-bar"
+															style={{
+																width: `${Math.max(percentage, 1)}%`,
+																background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
+																height: "10px",
+																marginTop: "5px",
+															}}
+														></div>
 														<span>{`${optionVotes} votes (${percentage}%)`}</span>
 													</div>
 												</div>
@@ -367,11 +375,11 @@ export const Home = () => {
 
 									{/* Poll Footer */}
 									<div className="poll-footer">
-										{/* 투표 종료된 경우 */}
+										{/* Poll ended message */}
 										{new Date(poll.endDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? (
 											<p className="poll-ended-message">This poll has ended.</p>
 										) : (
-											// 아직 투표 가능한 경우
+											// Still voting
 											<p>
 												{poll.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {new Date(poll.endDate).toLocaleDateString()}
 											</p>
