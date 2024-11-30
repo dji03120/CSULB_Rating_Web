@@ -12,6 +12,8 @@ export const Home = () => {
 	const [finalSearchQuery, setFinalSearchQuery] = useState("");  // State for final search query that will be submitted
 	const [savedPosts, setSavedPosts] = useState([]);
 	const [activeTab, setActiveTab] = useState("ratings");  // State to track active tab
+	const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -59,6 +61,9 @@ export const Home = () => {
 						poll._id === pollId ? response.data.updatedPoll : poll
 					)
 				);
+
+				// Add pollId to the list of polls the user has voted in
+				setUserVotedPolls((prev) => [...prev, pollId]);
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
@@ -302,21 +307,41 @@ export const Home = () => {
 
 									{/* Poll Options */}
 									<div className="poll-options">
-										{poll.options.map((option, index) => (
-											<button
-												key={index}
-												className="poll-option"
-												onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
-											>
-												{option}
-											</button>
-										))}
+										{poll.options.map((option, index) => {
+											const totalVotes = poll.votes.reduce((a, b) => a + b, 0); // Calculate total votes
+											const optionVotes = poll.votes[index]; // Get votes for the option
+											const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
+
+											return (
+												<div key={index} className="poll-option-container">
+													{/* Option Button */}
+													<button
+														disabled={userVotedPolls.includes(poll._id)} // Disable button if the user has voted
+														onClick={() => handleVoteClick(poll._id, index)}>
+														{option}
+													</button>
+
+													{/* Show Results */}
+													<div className="poll-results">
+														<span>{`${optionVotes} votes (${percentage}%)`}</span>
+														<div
+															className="poll-bar"
+															style={{
+																width: `${percentage}%`,
+																backgroundColor: "#4caf50",
+																height: "10px",
+																marginTop: "5px",
+															}}
+														></div>
+													</div>
+												</div>
+											);
+										})}
 									</div>
 
 									{/* Poll Footer */}
 									<div className="poll-footer">
 										<p>
-											{/* Perform reduce only if poll.votes is not undefined */}
 											{poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
 											{new Date(poll.endDate).toLocaleDateString()}
 										</p>
@@ -325,7 +350,8 @@ export const Home = () => {
 							</div>
 						))}
 					</div>
-				)}	
+				)}
+	
 			</div>
 		</div>
 	);
