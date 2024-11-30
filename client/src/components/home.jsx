@@ -18,29 +18,28 @@ export const Home = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				// Fetch ratings data
+				const userID = localStorage.getItem("userId");
+
+				// Fetch ratings
 				const ratingResponse = await axios.get(
 					"http://localhost:5000/ratings"
 				);
 				setRatings(ratingResponse.data);
 
-				const savedVotedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
-            	setUserVotedPolls(savedVotedPolls); // 투표한 폴 초기화
-
-				// Fetch poll data
+				// Fetch polls with userID for hasVoted
 				const pollResponse = await axios.get(
-					"http://localhost:5000/polls"
+					"http://localhost:5000/polls",
+					{ params: { userID } } // Send userID to server
 				);
-				setPolls(pollResponse.data); // Store poll data in state
+				setPolls(pollResponse.data);
 
-				const userID = localStorage.getItem("userId");
+				// Fetch saved posts
 				const savedPostsResponse = await axios.get(
 					`http://localhost:5000/auth/savedPosts?userID=${userID}`
 				);
-				console.log("Fetched Saved Posts:", savedPostsResponse.data.savedPosts);
-				setSavedPosts(savedPostsResponse.data.savedPosts)
+				setSavedPosts(savedPostsResponse.data.savedPosts);
 			} catch (err) {
-				console.error(err);
+				console.error("Failed to fetch data:", err);
 			}
 		};
 
@@ -53,24 +52,24 @@ export const Home = () => {
 			alert("You have already voted on this poll.");
 			return;
 		}
-	
+
 		try {
 			const response = await axios.put("http://localhost:5000/polls/vote", {
 				pollID: pollId,
 				optionIndex: optionIndex,
 				userID: localStorage.getItem("userId"), // 사용자 ID
 			});
-	
+
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
-	
+
 				// 투표 결과를 업데이트
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
-						poll._id === pollId ? response.data.updatedPoll : poll
+						poll._id === pollId ? { ...poll, hasVoted: true, votes: response.data.updatedPoll.votes } : poll
 					)
 				);
-	
+
 				// 투표한 폴 ID를 상태와 localStorage에 저장
 				setUserVotedPolls((prev) => {
 					const updated = [...prev, pollId];
@@ -82,7 +81,8 @@ export const Home = () => {
 			console.error("Failed to submit vote:", err);
 			alert("Failed to submit vote. Please try again.");
 		}
-	};	
+	};
+	
 
 	// Check if a post is saved
 	const isPostSaved = (postType, postId) => {
@@ -304,7 +304,11 @@ export const Home = () => {
 										/>
 									</div>
 									<div className="poll-right">
+										{poll.hasVoted ? (
+										<span className="voted-badge">Voted</span> // 이미 투표했다는 배지
+									) : (
 										<button>Share</button>
+									)}
 										<img
 											src={
 												isPostSaved("poll", poll._id)
@@ -331,11 +335,14 @@ export const Home = () => {
 											const optionVotes = poll.votes[index]; // Get votes for the option
 											const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
 
+											const now = new Date(); // Current time
+        									const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
+
 											return (
 												<div key={index} className="poll-option-container">
 													{/* Option Button */}
 													<button
-														disabled={userVotedPolls.includes(poll._id)} // Disable button if the user has voted
+														disabled={poll.hasVoted || isPollEnded} // disabled when it is voted or has ended
 														onClick={() => handleVoteClick(poll._id, index)}>
 														{option}
 													</button>
@@ -360,17 +367,21 @@ export const Home = () => {
 
 									{/* Poll Footer */}
 									<div className="poll-footer">
-										<p>
-											{poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
-											{new Date(poll.endDate).toLocaleDateString()}
-										</p>
+										{/* 투표 종료된 경우 */}
+										{new Date(poll.endDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? (
+											<p className="poll-ended-message">This poll has ended.</p>
+										) : (
+											// 아직 투표 가능한 경우
+											<p>
+												{poll.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {new Date(poll.endDate).toLocaleDateString()}
+											</p>
+										)}
 									</div>
 								</div>
 							</div>
 						))}
 					</div>
 				)}
-	
 			</div>
 		</div>
 	);
