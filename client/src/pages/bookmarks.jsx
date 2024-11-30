@@ -44,7 +44,9 @@ const Bookmarks = () => {
     // Returns the user's saved posts based on active tab
 
     const renderSavedPosts = () => {
-        const filteredPosts = savedPosts.filter((post) => post.postType === activeTab);
+        const filteredPosts = savedPosts.filter(
+            (post) => post.postType === activeTab && post.postId
+        );
     
         return filteredPosts.length === 0 ? (
             <p>No saved {activeTab} posts yet.</p>
