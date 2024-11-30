@@ -329,16 +329,16 @@ export const Home = () => {
 
 													{/* Show Results */}
 													<div className="poll-results">
+													<div
+														className="poll-bar"
+														style={{
+															width: `${Math.max(percentage, 1)}%`,
+															background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
+															height: "10px",
+															marginTop: "5px",
+														}}
+													></div>
 														<span>{`${optionVotes} votes (${percentage}%)`}</span>
-														<div
-															className="poll-bar"
-															style={{
-																width: `${percentage}%`,
-																backgroundColor: "#4caf50",
-																height: "10px",
-																marginTop: "5px",
-															}}
-														></div>
 													</div>
 												</div>
 											);
