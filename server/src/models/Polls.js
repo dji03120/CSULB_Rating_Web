@@ -14,6 +14,10 @@ const PollSchema = new mongoose.Schema({
         type: Number,
         default: 0, // Initialize each option's vote count to 0
     }],
+
+    voters: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',

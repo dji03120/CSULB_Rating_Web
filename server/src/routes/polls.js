@@ -44,38 +44,40 @@ router.post("/", async (req, res) => {
 
 // Route to add a vote to a poll
 router.put("/vote", async (req, res) => {
-    const { pollID, optionIndex } = req.body;
+    const { pollID, optionIndex, userID } = req.body;
 
-    // Validate input
-    if (!pollID || typeof optionIndex !== "number") {
-        return res.status(400).json({ error: "Poll ID and a valid option index are required." });
+    if (!pollID || typeof optionIndex !== "number" || !userID) {
+        return res.status(400).json({ error: "Poll ID, option index, and user ID are required." });
     }
 
     try {
-        const poll = await PollModel.findById(pollID); // Fetch the poll by ID
+        const poll = await PollModel.findById(pollID);
 
         if (!poll) {
             return res.status(404).json({ error: "Poll not found." });
         }
 
-        if (optionIndex < 0 || optionIndex >= poll.votes.length) {
+        // Check if user has already voted
+        if (poll.voters.includes(userID)) {
+            return res.status(403).json({ error: "You have already voted on this poll." });
+        }
+
+        if (optionIndex < 0 || optionIndex >= poll.options.length) {
             return res.status(400).json({ error: "Invalid option index." });
         }
 
-        // Increment the vote count for the selected option
+        // Increment vote count and record user as voter
         poll.votes[optionIndex] += 1;
+        poll.voters.push(userID);
 
-        // Save the updated poll to the database
-        const updatedPoll = await poll.save();
+        await poll.save();
 
-        res.status(200).json({
-            message: "Vote recorded successfully!",
-            updatedPoll,
-        });
+        res.status(200).json({ message: "Vote recorded successfully!", updatedPoll: poll });
     } catch (err) {
         res.status(500).json({ error: "Failed to record vote. Please try again later." });
     }
 });
+
 
 // Route to save a poll to a user's saved polls
 router.put("/save", async (req, res) => {

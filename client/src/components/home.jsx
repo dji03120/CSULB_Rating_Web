@@ -24,6 +24,9 @@ export const Home = () => {
 				);
 				setRatings(ratingResponse.data);
 
+				const savedVotedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+            	setUserVotedPolls(savedVotedPolls); // 투표한 폴 초기화
+
 				// Fetch poll data
 				const pollResponse = await axios.get(
 					"http://localhost:5000/polls"
@@ -46,30 +49,40 @@ export const Home = () => {
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
+		if (userVotedPolls.includes(pollId)) {
+			alert("You have already voted on this poll.");
+			return;
+		}
+	
 		try {
 			const response = await axios.put("http://localhost:5000/polls/vote", {
 				pollID: pollId,
 				optionIndex: optionIndex,
+				userID: localStorage.getItem("userId"), // 사용자 ID
 			});
-
+	
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
-
-				// Update the poll data with the new vote count
+	
+				// 투표 결과를 업데이트
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
 						poll._id === pollId ? response.data.updatedPoll : poll
 					)
 				);
-
-				// Add pollId to the list of polls the user has voted in
-				setUserVotedPolls((prev) => [...prev, pollId]);
+	
+				// 투표한 폴 ID를 상태와 localStorage에 저장
+				setUserVotedPolls((prev) => {
+					const updated = [...prev, pollId];
+					localStorage.setItem("userVotedPolls", JSON.stringify(updated));
+					return updated;
+				});
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
 			alert("Failed to submit vote. Please try again.");
 		}
-	};
+	};	
 
 	// Check if a post is saved
 	const isPostSaved = (postType, postId) => {
