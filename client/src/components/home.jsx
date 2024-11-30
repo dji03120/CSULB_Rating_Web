@@ -76,12 +76,13 @@ export const Home = () => {
 		const result = savedPosts.some(
 			(post) =>
 				post.postType === postType &&
+				post.postId && // Ensure postId is not null
 				post.postId._id === postId.toString()
 		);
 		console.log(`Checking (${postType}, ${postId}):`, result);
 		return result;
 	};
-	
+		
 
 	// Toggle save/unsave functionality
 	const handleSaveClick = async (postType, postId) => {

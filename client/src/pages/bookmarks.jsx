@@ -34,7 +34,7 @@ const Bookmarks = () => {
 
             // Update the state
             setSavedPosts((prev) =>
-                prev.filter((post) => !(post.postType === postType && post.postId._id === postId.toString()))
+                prev.filter((post) => !(post.postType === postType && post.postId && post.postId._id === postId.toString()))
             );
         } catch (err) {
             console.error("Failed to unsave post:", err);
@@ -42,17 +42,25 @@ const Bookmarks = () => {
     };
 
     // Returns the user's saved posts based on active tab
-    const renderSavedPosts = () => {
-        const filteredPosts = savedPosts.filter((post) => post.postType === activeTab);
 
+    const renderSavedPosts = () => {
+        const filteredPosts = savedPosts.filter(
+            (post) => post.postType === activeTab && post.postId
+        );
+    
         return filteredPosts.length === 0 ? (
             <p>No saved {activeTab} posts yet.</p>
         ) : (
-            filteredPosts.map(({ postType, postId }) => (
-                <div className="saved-post-cards" key={postId._id}>
-                    {/* Displays the user's saved ratings */}
-                    {postType === "rating" && (
-                        <div className="saved-rating-card">
+            filteredPosts.map(({ postType, postId }) => {
+                // Ensure postId is not null or undefined
+                if (!postId) {
+                    return null; // Skip rendering this post
+                }
+    
+                return (
+                    <div className="saved-post-cards" key={postId._id}>
+                        {postType === "rating" && (
+                            <div className="saved-rating-card">
                             <div className="post-header">
                                 <div className="post-votes">
                                     <img
@@ -105,12 +113,11 @@ const Bookmarks = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
-
-                    {/* Display the user's saved polls */}
-                    {postType === "poll" && (
-                        <div className="saved-poll-card">
-                            <div className="poll-header">
+                        )}
+    
+                        {postType === "poll" && (
+                            <div className="saved-poll-card">
+                                <div className="poll-header">
                                 <div className="poll-votes">
                                     <img
                                         id="upvote-arrow"
@@ -160,11 +167,13 @@ const Bookmarks = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
-                </div>
-            ))
+                        )}
+                    </div>
+                );
+            })
         );
     };
+    
 
     return (
         <div className="my-posts-content">
