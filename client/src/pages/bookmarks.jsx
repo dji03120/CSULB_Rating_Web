@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Bookmarks.css";
+import { ExternalLink } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Component to access a user's saved posts
 const Bookmarks = () => {
@@ -109,7 +112,27 @@ const Bookmarks = () => {
             alert("Failed to submit vote. Please try again.");
         }
     };
-    
+
+    const copyToClipboard = (postType, postId) => {
+        const shareLink = `${window.location.origin}/${postType}/${postId}`;
+        navigator.clipboard
+            .writeText(shareLink)
+            .then(() => {
+                toast.success("Link copied to clipboard!", {
+                    position: "bottom-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            })
+            .catch((err) => {
+                console.error("Clipboard write failed:", err);
+            });
+    };
     
 
     // Returns the user's saved posts based on active tab
@@ -135,13 +158,13 @@ const Bookmarks = () => {
                                 <div className="post-votes">
                                     <img
                                         id="upvote-arrow"
-                                        src="src/assets/up-arrow.png"
+                                        src="src/assets/grayed-up-arrow.png"
                                         alt="upvote"
                                         style={{ transform: "rotate(100)" }}
                                     />
                                     <img
                                         id="downvote-arrow"
-                                        src="src/assets/down-arrow.png"
+                                        src="src/assets/grayed-down-arrow.png"
                                         alt="downvote"
                                     />
                                 </div>
@@ -149,7 +172,17 @@ const Bookmarks = () => {
                                     <h1>{postId.name}</h1>
                                 </div>
                                 <div className="post-right">
-                                    <button>Share</button>
+                                    <ExternalLink
+                                        onClick={() =>
+                                            copyToClipboard("rating", postId._id)
+                                        }
+                                        className="share-icon"
+                                        size={25}
+                                        style={{
+                                            cursor: "pointer",
+                                            color: "pink",
+                                        }}
+                                    />
                                     <img
                                         src="src/assets/heart.png"
                                         alt="like-icon"
@@ -191,20 +224,30 @@ const Bookmarks = () => {
                                 <div className="poll-votes">
                                     <img
                                         id="upvote-arrow"
-                                        src="src/assets/up-arrow.png"
+                                        src="src/assets/grayed-up-arrow.png"
                                         alt="upvote"
                                         style={{ transform: "rotate(100)" }}
                                     />
                                     <img
                                         id="downvote-arrow"
-                                        src="src/assets/down-arrow.png"
+                                        src="src/assets/grayed-down-arrow.png"
                                         alt="downvote"
                                     />
                                 </div>
                                 <div className="poll-right">
                                     {/* Show "Voted" badge only if user has voted */}
 									{postId.hasVoted && <span className="voted-badge">Voted</span>}
-                                    <button>Share</button>
+                                    <ExternalLink
+                                        onClick={() =>
+                                            copyToClipboard("poll", postId._id)
+                                        }
+                                        className="share-icon"
+                                        size={25}
+                                        style={{
+                                            cursor: "pointer",
+                                            color: "pink",
+                                        }}
+                                    />
                                     <img
                                         src="src/assets/heart.png"
                                         alt="like-icon"
@@ -275,30 +318,29 @@ const Bookmarks = () => {
     };
     
 
-    return (
-        <div className="my-posts-content">
-            <h1 className="bookmarks-page-title">Bookmarks</h1>
-            {/* Tab Navigation */}
-            <div className="tabs">
-                <button
-                    className={`tab ${activeTab === "rating" ? "active" : ""}`}
-                    onClick={() => setActiveTab("rating")}
-                >
-                    Ratings
-                </button>
-                <button
-                    className={`tab ${activeTab === "poll" ? "active" : ""}`}
-                    onClick={() => setActiveTab("poll")}
-                >
-                    Polls
-                </button>
-            </div>
+  return (
+    <div className="my-posts-content">
+      <h1 className="bookmarks-page-title">Bookmarks</h1>
+      {/* Tab Navigation */}
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === "rating" ? "active" : ""}`}
+          onClick={() => setActiveTab("rating")}
+        >
+          Ratings
+        </button>
+        <button
+          className={`tab ${activeTab === "poll" ? "active" : ""}`}
+          onClick={() => setActiveTab("poll")}
+        >
+          Polls
+        </button>
+      </div>
 
-            <div className="saved-posts-list">
-                {renderSavedPosts()}
-            </div>
-        </div>
-    );
+      <div className="saved-posts-list">{renderSavedPosts()}</div>
+    <ToastContainer />
+    </div>
+  );
 };
 
 export default Bookmarks;

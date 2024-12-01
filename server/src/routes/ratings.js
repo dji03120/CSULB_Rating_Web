@@ -44,6 +44,17 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Route to get the user's ratings
+router.get("/my-ratings", async (req, res) => {
+    try {
+        const { userID } = req.query; // Getting userID from query params
+        const response = await RatingModel.find({ createdBy: userID });
+        res.json(response);
+    } catch (err) {
+        res.json(err)
+    }
+});
+
 router.get("/:id", async (req, res) => {
     try {
         const rating = await RatingModel.findById(req.params.id);
@@ -117,16 +128,6 @@ router.get("/savedRatings", async (req, res) => {
     }
 })
 
-// Route to get the user's ratings
-router.get("/my-ratings", async (req, res) => {
-    try {
-        const { userID } = req.query; // Getting userID from query params
-        const response = await RatingModel.find({ createdBy: userID });
-        res.json(response);
-    } catch (err) {
-        res.json(err)
-    }
-});
 
 // Route to delete a rating
 router.delete("/:id", async (req,res) => {

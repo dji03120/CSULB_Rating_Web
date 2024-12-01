@@ -23,47 +23,40 @@ export const Home = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			try {
-				const userID = localStorage.getItem("userId");
+		  try {
+			const userID = localStorage.getItem("userId");
 	
-				// Fetch ratings
-				const ratingResponse = await axios.get("http://localhost:5000/ratings");
-				setRatings(ratingResponse.data);
+			// Fetch ratings
+			const ratingResponse = await axios.get("http://localhost:5000/ratings");
+			setRatings(ratingResponse.data);
 	
-				// Fetch polls with userID for hasVoted
-				const pollResponse = await axios.get("http://localhost:5000/polls", {
-					params: { userID }, // Send userID to server
-				});
+			// Fetch polls
+			const pollResponse = await axios.get("http://localhost:5000/polls", {
+			  params: { userID },
+			});
 	
-				// Update polls with the 'hasVoted' information
-				const updatedPolls = pollResponse.data.map((poll) => {
-					return {
-						...poll,
-						hasVoted: poll.voters.includes(userID),
-					};
-				});
-				setPolls(updatedPolls);
+			const updatedPolls = pollResponse.data.map((poll) => ({
+			  ...poll,
+			  hasVoted: poll.voters.includes(userID),
+			}));
+			setPolls(updatedPolls);
 	
-				// Retrieve voted polls from localStorage
-				const votedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
-				setUserVotedPolls(votedPolls);
+			// Retrieve voted polls from localStorage
+			const votedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+			setUserVotedPolls(votedPolls);
 	
-				// Fetch saved posts
-				const savedPostsResponse = await axios.get(
-					`http://localhost:5000/auth/savedPosts?userID=${userID}`
-				);
-				console.log(
-					"Fetched Saved Posts:",
-					savedPostsResponse.data.savedPosts
-				);
-				setSavedPosts(savedPostsResponse.data.savedPosts);
-			} catch (err) {
-				console.error("Failed to fetch data:", err);
-			}
+			// Fetch saved posts
+			const savedPostsResponse = await axios.get(
+			  `http://localhost:5000/auth/savedPosts?userID=${userID}`
+			);
+			setSavedPosts(savedPostsResponse.data.savedPosts);
+		  } catch (err) {
+			console.error("Failed to fetch data:", err);
+		  }
 		};
 	
 		fetchData();
-	}, []);	
+	  }, []);	
 
 	const handleShareClick = (postType, postId) => {
 		setShareOptions(shareOptions?.postId === postId ? null : { postType, postId });
@@ -102,14 +95,12 @@ export const Home = () => {
 		}
 	
 		try {
-			const response = await axios.put(
-				"http://localhost:5000/polls/vote",
-				{
-					pollID: pollId,
-					optionIndex: optionIndex,
-				}
-			);
-
+			const response = await axios.put("http://localhost:5000/polls/vote", {
+				pollID: pollId,
+				optionIndex: optionIndex,
+				userID: localStorage.getItem("userId"),
+			});
+	
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
 	
@@ -131,7 +122,7 @@ export const Home = () => {
 			console.error("Failed to submit vote:", err);
 			alert("Failed to submit vote. Please try again.");
 		}
-	};	
+	};		
 	
 
 	// Check if a post is saved
@@ -293,13 +284,13 @@ export const Home = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/up-arrow.png"
+											src="src/assets/grayed-up-arrow.png"
 											alt="upvote"
 											style={{ transform: "rotate(100)" }}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/down-arrow.png"
+											src="src/assets/grayed-down-arrow.png"
 											alt="downvote"
 											style={{}}
 										/>
@@ -383,53 +374,49 @@ export const Home = () => {
 									<div className="poll-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/up-arrow.png"
+											src="src/assets/grayed-up-arrow.png"
 											alt="upvote"
 											style={{ transform: "rotate(100)" }}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/down-arrow.png"
+											src="src/assets/grayed-down-arrow.png"
 											alt="downvote"
 											style={{}}
 										/>
 									</div>
-									<div className="poll-right">
-										<ExternalLink
-											onClick={() =>
-												copyToClipboard(
-													"poll",
-													poll._id
-												)
-											}
-											className="share-icon"
-											size={25}
-											style={{
-												cursor: "pointer",
-												color: "pink",
-											}}
-										/>
-										<img
-											src={
-												isPostSaved("poll", poll._id)
-													? "src/assets/heart.png" // Show filled heart if saved
-													: "src/assets/grayed-heart.png" // Show gray heart if not saved
-											}
-											alt="like-icon"
-											className="post-heart"
-											onClick={() =>
-												handleSaveClick(
-													"poll",
-													poll._id
-												)
-											}
-										/>
+										<div className="poll-right">
+											{/* Voted Badge */}
+											{poll.hasVoted && (
+												<span className="voted-badge">Voted</span>
+											)}
+											<ExternalLink
+												onClick={() =>
+													copyToClipboard("poll", poll._id)
+												}
+												className="share-icon"
+												size={25}
+												style={{
+													cursor: "pointer",
+													color: "pink",
+												}}
+											/>
+											<img
+												src={
+													isPostSaved("poll", poll._id)
+														? "src/assets/heart.png" // Show filled heart if saved
+														: "src/assets/grayed-heart.png" // Show gray heart if not saved
+												}
+												alt="like-icon"
+												className="post-heart"
+												onClick={() => handleSaveClick("poll", poll._id)}
+											/>
+										</div>
 									</div>
-								</div>
-								<div className="poll-content">
-									<div className="poll-title">
-										<h1>Poll: {poll.question}</h1>
-									</div>
+									<div className="poll-content">
+										<div className="poll-title">
+											<h1>Poll: {poll.question}</h1>
+										</div>
 									{/* Poll Instructions */}
 									<p className="poll-instruction">
 										Select one option:

@@ -16,6 +16,12 @@ export const Register = () => {
 		return emailRegex.test(email);
 	};
 
+	// Function to validate student ID
+	// Checks if studentID is a 9-digit number
+	const validateStudentID = (studentID) => {
+		return studentID.length == 9 && /^\d+$/.test(str);
+	};
+
 	// Handles form submission for registration
 	const onSubmit = async (event) => {
 		event.preventDefault();
@@ -30,6 +36,11 @@ export const Register = () => {
 		if (!validateEmail(email)) {
 			alert("Please enter a valid email address."); // Popup alert for invalid email
 			return;
+		}
+
+		// Check for valid studentID
+		if  (!validateStudentID(studentId)) {
+			alert("Please enter a valid student ID.") // Popup alert for invalid student ID
 		}
 
 		try {

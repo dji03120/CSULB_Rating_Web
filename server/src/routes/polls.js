@@ -15,6 +15,17 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Route to get the user's polls
+router.get("/my-polls", async (req, res) => {
+    try {
+        const { userID } = req.query; // Getting userID from query params
+        const response = await PollModel.find({ createdBy: userID });
+        res.json(response);
+    } catch (err) {
+        res.json(err)
+    }
+});
+
 router.get("/:id", async (req, res) => {
     try {
         const poll = await PollModel.findById(req.params.id);
@@ -172,16 +183,6 @@ router.get("/savedPolls", async (req, res) => {
     }
 });
 
-// Route to get the user's polls
-router.get("/my-polls", async (req, res) => {
-    try {
-        const { userID } = req.query; // Getting userID from query params
-        const response = await PollModel.find({ createdBy: userID });
-        res.json(response);
-    } catch (err) {
-        res.json(err)
-    }
-});
 
 // Route to delete a poll
 router.delete("/:id", async (req,res) => {

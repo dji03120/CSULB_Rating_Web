@@ -7,4 +7,4 @@ Github Repository for the CECS 443 Semester Project on Fall 2024
 3. cd server then npm install to install all the server dependencies
 4. cd out
 5. cd client then npm install to install all the client dependencies
-6. npm run dev to run the localhost development site
+6. npm run dev on both server and client folders to run the localhost development site
