@@ -47,59 +47,32 @@ const Bookmarks = () => {
     }, []);
     
 
-    const handleUnsaveClick = async (postType, postId) => {
-        try {
-            const userID = localStorage.getItem("userId");
-
-            // Remove from saved posts
-            await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
-                postType,
-                postId,
-            });
-
-            // Update the state
-            setSavedPosts((prev) =>
-                prev.filter((post) => !(post.postType === postType && post.postId && post.postId._id === postId.toString()))
-            );
-        } catch (err) {
-            console.error("Failed to unsave post:", err);
-        }
-    };
-
-    // Handler for voting on a poll option
-	const handleVoteClick = async (pollId, optionIndex) => {
+    const handleVoteClick = async (pollId, optionIndex) => {
         if (userVotedPolls.includes(pollId)) {
             alert("You have already voted on this poll.");
             return;
         }
-    
+
         try {
             const response = await axios.put("http://localhost:5000/polls/vote", {
                 pollID: pollId,
                 optionIndex: optionIndex,
                 userID: localStorage.getItem("userId"),
             });
-    
+
             if (response.status === 200) {
+                const updatedPoll = response.data.updatedPoll;
+
                 alert("Vote submitted successfully!");
-    
-                // Update polls state with new vote count and mark as voted
-                setSavedPolls((prevPolls) => {
-                    const updatedPolls = prevPolls.map((poll) =>
+
+                setSavedPolls((prevPolls) =>
+                    prevPolls.map((poll) =>
                         poll._id === pollId
-                            ? {
-                                ...poll,
-                                hasVoted: true,
-                                votes: response.data.updatedPoll.votes,
-                            }
+                            ? { ...poll, votes: updatedPoll.votes, hasVoted: true }
                             : poll
-                    );
-                    console.log("Updated Polls:", updatedPolls); // Debugging state updates
-                    return updatedPolls;
-                });
-                
-    
-                // Update userVotedPolls in localStorage and state
+                    )
+                );
+
                 const updatedVotedPolls = [...userVotedPolls, pollId];
                 setUserVotedPolls(updatedVotedPolls);
                 localStorage.setItem("userVotedPolls", JSON.stringify(updatedVotedPolls));
@@ -109,6 +82,48 @@ const Bookmarks = () => {
             alert("Failed to submit vote. Please try again.");
         }
     };
+
+    const handleSaveClick = async (postType, postId) => {
+        try {
+            const userID = localStorage.getItem("userId");
+            const isSaved = savedPosts.some(
+                (post) =>
+                    post.postType === postType &&
+                    post.postId &&
+                    post.postId._id === postId.toString()
+            );
+
+            if (isSaved) {
+                await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
+                    postType,
+                    postId,
+                });
+
+                setSavedPosts((prev) =>
+                    prev.filter(
+                        (post) =>
+                            post.postType !== postType ||
+                            !post.postId ||
+                            post.postId._id !== postId.toString()
+                    )
+                );
+            } else {
+                const response = await axios.put(
+                    `http://localhost:5000/auth/savePost?userID=${userID}`,
+                    { postType, postId }
+                );
+                if (response.status === 200) {
+                    setSavedPosts((prev) => [
+                        ...prev,
+                        { postType, postId: { _id: postId }, _id: response.data.savedPostId },
+                    ]);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to toggle save post:", err);
+        }
+    };
+    
     
     
 
