@@ -3,20 +3,23 @@ import axios from "axios";
 import "./home.css";
 import Navbar from "./navbar";
 import { useNavigate } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Home = () => {
 	const navigate = useNavigate();
 	const [ratings, setRatings] = useState([]); // State for ratings data
 	const [polls, setPolls] = useState([]); // State for poll data
-	const [searchQuery, setSearchQuery] = useState("");  // State for search query
-	const [finalSearchQuery, setFinalSearchQuery] = useState("");  // State for final search query that will be submitted
+	const [searchQuery, setSearchQuery] = useState(""); // State for search query
+	const [finalSearchQuery, setFinalSearchQuery] = useState(""); // State for final search query that will be submitted
 	const [savedPosts, setSavedPosts] = useState([]);
-	const [activeTab, setActiveTab] = useState("ratings");  // State to track active tab
 	const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
 
 	const [shareOptions, setShareOptions] = useState(null); // Track the post for which share options are open
 
 
+	const [activeTab, setActiveTab] = useState("ratings"); // State to track active tab
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -48,6 +51,10 @@ export const Home = () => {
 				// Fetch saved posts
 				const savedPostsResponse = await axios.get(
 					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+				);
+				console.log(
+					"Fetched Saved Posts:",
+					savedPostsResponse.data.savedPosts
 				);
 				setSavedPosts(savedPostsResponse.data.savedPosts);
 			} catch (err) {
@@ -95,12 +102,14 @@ export const Home = () => {
 		}
 	
 		try {
-			const response = await axios.put("http://localhost:5000/polls/vote", {
-				pollID: pollId,
-				optionIndex: optionIndex,
-				userID: localStorage.getItem("userId"),
-			});
-	
+			const response = await axios.put(
+				"http://localhost:5000/polls/vote",
+				{
+					pollID: pollId,
+					optionIndex: optionIndex,
+				}
+			);
+
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
 	
@@ -136,28 +145,30 @@ export const Home = () => {
 		console.log(`Checking (${postType}, ${postId}):`, result);
 		return result;
 	};
-		
 
 	// Toggle save/unsave functionality
 	const handleSaveClick = async (postType, postId) => {
 		try {
 			const userID = localStorage.getItem("userId");
 			const isSaved = isPostSaved(postType, postId); // Check if it's saved or not
-	
 			if (isSaved) {
 				// Remove from saved posts
-				await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
-					postType,
-					postId,
-				});
-	
+				await axios.put(
+					`http://localhost:5000/auth/unsavePost?userID=${userID}`,
+					{
+						postType,
+						postId,
+					}
+				);
+
 				// Update the state
 				setSavedPosts((prev) =>
 					prev.filter(
 						(post) =>
-							post.postType !== postType ||
-							!post.postId ||
-							post.postId._id !== postId.toString()
+							!(
+								post.postType === postType &&
+								post.postId._id === postId.toString()
+							)
 					)
 				);
 			} else {
@@ -170,27 +181,28 @@ export const Home = () => {
 					// Update the state
 					setSavedPosts((prev) => [
 						...prev,
-						{ postType, postId: { _id: postId }, _id: response.data.savedPostId },
+						{
+							postType,
+							postId: { _id: postId },
+							_id: response.data.savedPostId,
+						},
 					]);
 				}
 			}
 		} catch (err) {
 			console.error("Failed to toggle save post:", err);
 		}
-	};	
-	
+	};
 
 	// Filters the ratings based on words in its name
-	const filteredRatings = ratings.filter(
-		(rating) =>
-			rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	const filteredRatings = ratings.filter((rating) =>
+		rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
 	);
 
 	// Filters the polls based on words in its question
-	const filteredPolls = polls.filter(
-		(poll) =>
-			poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
-	)
+	const filteredPolls = polls.filter((poll) =>
+		poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	);
 
 	// If the user presses "Enter", the search will go through
 	const handleKeyDown = (e) => {
@@ -208,14 +220,29 @@ export const Home = () => {
 	const clearSearch = () => {
 		setSearchQuery("");
 		setFinalSearchQuery("");
-	}
+	};
+
+	const copyToClipboard = (postType, postId) => {
+		const shareLink = `${window.location.origin}/${postType}/${postId}`;
+		navigator.clipboard.writeText(shareLink);
+		toast.success("Link copied to clipboard!", {
+			position: "bottom-right",
+			autoClose: 1500,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: false,
+			draggable: true,
+			progress: undefined,
+			theme: "light",
+		});
+	};
 
 	return (
 		<div className="home-container">
 			<div className="search-bar-container">
 				<input
 					type="text"
-					placeholder="Search" 
+					placeholder="Search"
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					onKeyDown={handleKeyDown}
@@ -229,9 +256,7 @@ export const Home = () => {
 
 			{/* Displays Clear Search button if final query is not empty */}
 			{finalSearchQuery && (
-				<button
-					className="clear-search-button" 
-					onClick={clearSearch}>
+				<button className="clear-search-button" onClick={clearSearch}>
 					Clear Search
 				</button>
 			)}
@@ -241,16 +266,20 @@ export const Home = () => {
 				{/* Tab Navigation */}
 				<div className="tabs">
 					<button
-						className={`tab ${activeTab === "ratings" ? "active" : ""}`}
+						className={`tab ${
+							activeTab === "ratings" ? "active" : ""
+						}`}
 						onClick={() => setActiveTab("ratings")}
 					>
-					Ratings
+						Ratings
 					</button>
 					<button
-						className={`tab ${activeTab === "polls" ? "active" : ""}`}
+						className={`tab ${
+							activeTab === "polls" ? "active" : ""
+						}`}
 						onClick={() => setActiveTab("polls")}
 					>
-					Polls
+						Polls
 					</button>
 				</div>
 
@@ -278,29 +307,37 @@ export const Home = () => {
 										<h1>{rating.name}</h1>
 									</div>
 									<div className="post-right">
-									{/* Share button */}
-										<button className="share-button" onClick={() => handleShareClick("rating", rating._id)}>
-											Share
-										</button>
-
-										{/* Share options (displayed when the Share button is clicked) */}
-										{shareOptions?.postId === rating._id && (
-											<div className="share-options">
-												<button onClick={() => shareToPlatform("facebook", "rating", rating._id)}>Facebook</button>
-												<button onClick={() => shareToPlatform("twitter", "rating", rating._id)}>Twitter</button>
-												<button onClick={() => shareToPlatform("linkedin", "rating", rating._id)}>LinkedIn</button>
-												<button onClick={() => shareToPlatform("email", "rating", rating._id)}>Email</button>
-											</div>
-										)}
+										<ExternalLink
+											onClick={() =>
+												copyToClipboard(
+													"rating",
+													rating._id
+												)
+											}
+											className="share-icon"
+											size={25}
+											style={{
+												cursor: "pointer",
+												color: "pink",
+											}}
+										/>
 										<img
 											src={
-												isPostSaved("rating", rating._id)
+												isPostSaved(
+													"rating",
+													rating._id
+												)
 													? "src/assets/heart.png" // Show filled heart if saved
 													: "src/assets/grayed-heart.png" // Show gray heart if not saved
 											}
 											alt="like-icon"
 											className="post-heart"
-											onClick={() => handleSaveClick("rating", rating._id)}
+											onClick={() =>
+												handleSaveClick(
+													"rating",
+													rating._id
+												)
+											}
 										/>
 									</div>
 								</div>
@@ -335,7 +372,6 @@ export const Home = () => {
 						))}
 					</div>
 				)}
-				
 
 				{/* Polls Tab */}
 				{activeTab === "polls" && (
@@ -358,22 +394,20 @@ export const Home = () => {
 										/>
 									</div>
 									<div className="poll-right">
-										{/* Show "Voted" badge only if user has voted */}
-										{poll.hasVoted && <span className="voted-badge">Voted</span>}
-										{/* Share button */}
-											<button className="share-button" onClick={() => handleShareClick("poll", poll._id)}>
-												Share
-											</button>
-
-											{/* Share options (displayed when the Share button is clicked) */}
-											{shareOptions?.postId === poll._id && (
-												<div className="share-options">
-													<button onClick={() => shareToPlatform("facebook", "poll", poll._id)}>Facebook</button>
-													<button onClick={() => shareToPlatform("twitter", "poll", poll._id)}>Twitter</button>
-													<button onClick={() => shareToPlatform("linkedin", "poll", poll._id)}>LinkedIn</button>
-													<button onClick={() => shareToPlatform("email", "poll", poll._id)}>Email</button>
-												</div>
-											)}
+										<ExternalLink
+											onClick={() =>
+												copyToClipboard(
+													"poll",
+													poll._id
+												)
+											}
+											className="share-icon"
+											size={25}
+											style={{
+												cursor: "pointer",
+												color: "pink",
+											}}
+										/>
 										<img
 											src={
 												isPostSaved("poll", poll._id)
@@ -382,7 +416,12 @@ export const Home = () => {
 											}
 											alt="like-icon"
 											className="post-heart"
-											onClick={() => handleSaveClick("poll", poll._id)}
+											onClick={() =>
+												handleSaveClick(
+													"poll",
+													poll._id
+												)
+											}
 										/>
 									</div>
 								</div>
@@ -391,7 +430,9 @@ export const Home = () => {
 										<h1>Poll: {poll.question}</h1>
 									</div>
 									{/* Poll Instructions */}
-									<p className="poll-instruction">Select one option:</p>
+									<p className="poll-instruction">
+										Select one option:
+									</p>
 
 									{/* Poll Options */}
 									<div className="poll-options">
@@ -428,19 +469,37 @@ export const Home = () => {
 												</div>
 											);
 										})}
+										{poll.options.map((option, index) => (
+											<button
+												key={index}
+												className="poll-option"
+												onClick={() =>
+													handleVoteClick(
+														poll._id,
+														index
+													)
+												} // Connect the poll voting handler
+											>
+												{option}
+											</button>
+										))}
 									</div>
 
 									{/* Poll Footer */}
 									<div className="poll-footer">
-										{/* Poll ended message */}
-										{new Date(poll.endDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? (
-											<p className="poll-ended-message">This poll has ended.</p>
-										) : (
-											// Still voting
-											<p>
-												{poll.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {new Date(poll.endDate).toLocaleDateString()}
-											</p>
-										)}
+										<p>
+											{/* Perform reduce only if poll.votes is not undefined */}
+											{poll.votes
+												? poll.votes.reduce(
+														(a, b) => a + b,
+														0
+												  )
+												: 0}{" "}
+											Votes - Poll ends{" "}
+											{new Date(
+												poll.endDate
+											).toLocaleDateString()}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -448,6 +507,7 @@ export const Home = () => {
 					</div>
 				)}
 			</div>
+			<ToastContainer />
 		</div>
 	);
 };

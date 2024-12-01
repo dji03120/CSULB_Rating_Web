@@ -516,3 +516,6 @@
 	margin: 0; 
 }
 
+.share-icon:hover {
+    color: #646cff;
+}
