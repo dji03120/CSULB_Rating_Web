@@ -5,44 +5,129 @@ import "./Bookmarks.css";
 // Component to access a user's saved posts
 const Bookmarks = () => {
     const [savedPosts, setSavedPosts] = useState([]);
+    const [savedRatings, setSavedRatings] = useState([]);
+    const [savedPolls, setSavedPolls] = useState([]);
     const [activeTab, setActiveTab] = useState("rating");  // State to track active tab
+    const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
 
     useEffect(() => {
-        // Fetches the user's saved posts
-        const fetchSavedPosts = async () => {
+        const fetchBookmarks = async () => {
             try {
                 const userID = localStorage.getItem("userId");
                 const response = await axios.get(`http://localhost:5000/auth/savedPosts?userID=${userID}`);
-                console.log("Fetched posts:", response.data.savedPosts);
                 setSavedPosts(response.data.savedPosts);
+    
+                const savedRatings = response.data.savedPosts.filter((post) => post.type === "rating");
+                setSavedRatings(savedRatings);
+    
+                const savedPolls = response.data.savedPosts.filter((post) => post.type === "poll");
+                setSavedPolls(savedPolls);
+    
+                if (savedPolls.length > 0) {
+                    const pollIDs = savedPolls.map((poll) => poll._id);
+                    const pollResponse = await axios.get("http://localhost:5000/polls", {
+                        params: { userID, pollIDs },
+                    });
+    
+                    const updatedPolls = pollResponse.data.map((poll) => ({
+                        ...poll,
+                        hasVoted: poll.voters.includes(userID),
+                    }));
+                    setSavedPolls(updatedPolls);
+                }
+    
+                const votedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+                setUserVotedPolls(votedPolls);
             } catch (err) {
-                console.error("Failed to fetch posts:", err);
+                console.error("Failed to fetch bookmarks:", err);
             }
         };
-        fetchSavedPosts();
+    
+        fetchBookmarks();
     }, []);
+    
 
-    const handleUnsaveClick = async (postType, postId) => {
+    const handleVoteClick = async (pollId, optionIndex) => {
+        if (userVotedPolls.includes(pollId)) {
+            alert("You have already voted on this poll.");
+            return;
+        }
+
         try {
-            const userID = localStorage.getItem("userId");
-
-            // Remove from saved posts
-            await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
-                postType,
-                postId,
+            const response = await axios.put("http://localhost:5000/polls/vote", {
+                pollID: pollId,
+                optionIndex: optionIndex,
+                userID: localStorage.getItem("userId"),
             });
 
-            // Update the state
-            setSavedPosts((prev) =>
-                prev.filter((post) => !(post.postType === postType && post.postId && post.postId._id === postId.toString()))
-            );
+            if (response.status === 200) {
+                const updatedPoll = response.data.updatedPoll;
+
+                alert("Vote submitted successfully!");
+
+                setSavedPolls((prevPolls) =>
+                    prevPolls.map((poll) =>
+                        poll._id === pollId
+                            ? { ...poll, votes: updatedPoll.votes, hasVoted: true }
+                            : poll
+                    )
+                );
+
+                const updatedVotedPolls = [...userVotedPolls, pollId];
+                setUserVotedPolls(updatedVotedPolls);
+                localStorage.setItem("userVotedPolls", JSON.stringify(updatedVotedPolls));
+            }
         } catch (err) {
-            console.error("Failed to unsave post:", err);
+            console.error("Failed to submit vote:", err);
+            alert("Failed to submit vote. Please try again.");
         }
     };
 
-    // Returns the user's saved posts based on active tab
+    const handleSaveClick = async (postType, postId) => {
+        try {
+            const userID = localStorage.getItem("userId");
+            const isSaved = savedPosts.some(
+                (post) =>
+                    post.postType === postType &&
+                    post.postId &&
+                    post.postId._id === postId.toString()
+            );
 
+            if (isSaved) {
+                await axios.put(`http://localhost:5000/auth/unsavePost?userID=${userID}`, {
+                    postType,
+                    postId,
+                });
+
+                setSavedPosts((prev) =>
+                    prev.filter(
+                        (post) =>
+                            post.postType !== postType ||
+                            !post.postId ||
+                            post.postId._id !== postId.toString()
+                    )
+                );
+            } else {
+                const response = await axios.put(
+                    `http://localhost:5000/auth/savePost?userID=${userID}`,
+                    { postType, postId }
+                );
+                if (response.status === 200) {
+                    setSavedPosts((prev) => [
+                        ...prev,
+                        { postType, postId: { _id: postId }, _id: response.data.savedPostId },
+                    ]);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to toggle save post:", err);
+        }
+    };
+    
+    
+    
+
+    // Returns the user's saved posts based on active tab
     const renderSavedPosts = () => {
         const filteredPosts = savedPosts.filter(
             (post) => post.postType === activeTab && post.postId
@@ -132,6 +217,8 @@ const Bookmarks = () => {
                                     />
                                 </div>
                                 <div className="poll-right">
+                                    {/* Show "Voted" badge only if user has voted */}
+									{postId.hasVoted && <span className="voted-badge">Voted</span>}
                                     <button>Share</button>
                                     <img
                                         src="src/assets/heart.png"
@@ -147,24 +234,52 @@ const Bookmarks = () => {
                                 </div>
                                 <p className="poll-instruction">Select one option:</p>
                                 <div className="poll-options">
-                                    {postId.options.map((option, index) => (
-                                        <button
-                                            key={index}
-                                            className="poll-option"
-                                        >
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
+                                    {postId.options.map((option, index) => {
+                                        const totalVotes = postId.votes.reduce((a, b) => a + b, 0); // Calculate total votes
+                                        const optionVotes = postId.votes[index]; // Get votes for the option
+                                        const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
 
-                                <div className="poll-footer">
-                                    <p>
-                                        {postId.votes
-                                            ? postId.votes.reduce((a, b) => a + b, 0)
-                                            : 0}{" "}
-                                        Votes - Poll ends {new Date(postId.endDate).toLocaleDateString()}
-                                    </p>
+                                        const now = new Date(); // Current time
+                                        const isPollEnded = new Date(postId.endDate) < now; // Check if poll is ended
+
+                                        return (
+                                            <div key={index} className="poll-option-container">
+                                                {/* Option Button */}
+                                                <button
+                                                    disabled={true} // button is always disabled
+                                                    onClick={() => handleVoteClick(postId._id, index)}
+                                                >
+                                                    {option}
+                                                </button>
+
+                                                {/* Show Results */}
+                                                <div className="poll-results">
+                                                    <div
+                                                        className="poll-bar"
+                                                        style={{
+                                                            width: `${Math.max(percentage, 1)}%`,
+                                                            background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
+                                                            height: "10px",
+                                                            marginTop: "5px",
+                                                        }}
+                                                    ></div>
+                                                    <span>{`${optionVotes} votes (${percentage}%)`}</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
+                                <div className="poll-footer">
+										{/* Poll ended message */}
+										{new Date(postId.endDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? (
+											<p className="poll-ended-message">This poll has ended.</p>
+										) : (
+											// Still voting
+											<p>
+												{postId.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {new Date(postId.endDate).toLocaleDateString()}
+											</p>
+										)}
+									</div>
                             </div>
                         </div>
                         )}

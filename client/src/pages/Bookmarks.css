@@ -27,16 +27,40 @@
 .saved-poll-card {
     display: flex;
     flex-direction: column;  /* Stack elements vertically */
-    align-items: center;
     justify-content: space-between;  /* This will ensure content is spaced out */
     width: 1000px;
-    border-radius: 25px;
 	min-height: auto;
     background-color: white;
     padding: 1rem;
     margin: 2rem;
+    border-radius: 35px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
+.poll-bar {
+    border-radius: 20px;
+    height: 8px;
+    margin-top: 5px;
+    background: linear-gradient(
+        to right,
+        rgba(253, 218, 236, 0.9),
+        rgba(189, 224, 254, 0.8),
+        rgba(255, 245, 204, 0.8)
+    ); /* pastel gradation */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* soft shadow */
+}
+
+.voted-badge {
+    background: linear-gradient(45deg, #FF7EB3, #FF758C, #FFC75F); /* background color */
+    color: #ffffff; /* whitle */
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0.4, 0.5); /* little bit of shadow */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0.4, 0.5); /* text shadow */
+}
 
 
