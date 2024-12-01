@@ -40,7 +40,7 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
 			<div className="navbar-content">
 				<h1 className="navbar-title" onClick={gotoHomepage}>
 					<img
-						src="src/assets/star.png"
+						src="/src/assets/star.png"
 						alt="Logo"
 						className="logo"
 					/>
