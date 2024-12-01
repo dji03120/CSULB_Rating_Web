@@ -386,6 +386,10 @@ export const Home = () => {
 										/>
 									</div>
 										<div className="poll-right">
+											{/* Voted Badge */}
+											{poll.hasVoted && (
+												<span className="voted-badge">Voted</span>
+											)}
 											<ExternalLink
 												onClick={() =>
 													copyToClipboard("poll", poll._id)
@@ -407,10 +411,6 @@ export const Home = () => {
 												className="post-heart"
 												onClick={() => handleSaveClick("poll", poll._id)}
 											/>
-											{/* Voted Badge */}
-											{poll.hasVoted && (
-												<span className="voted-badge">Voted</span>
-											)}
 										</div>
 									</div>
 									<div className="poll-content">
