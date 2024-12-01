@@ -102,14 +102,12 @@ export const Home = () => {
 		}
 	
 		try {
-			const response = await axios.put(
-				"http://localhost:5000/polls/vote",
-				{
-					pollID: pollId,
-					optionIndex: optionIndex,
-				}
-			);
-
+			const response = await axios.put("http://localhost:5000/polls/vote", {
+				pollID: pollId,
+				optionIndex: optionIndex,
+				userID: localStorage.getItem("userId"),
+			});
+	
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
 	
