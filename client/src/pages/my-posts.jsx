@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ExternalLink } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./MyPosts.css";
 
 // Component to access a user's posts
 const MyPosts = () => {
     const [userRatings, setUserRatings] = useState([]);
     const [userPolls, setUserPolls] = useState([]);
+    const [polls, setPolls] = useState([]); // State for poll data
     const [loading, setLoading] = useState(true);  // State to track loading status
     const [savedPosts, setSavedPosts] = useState([]);
     const [activeTab, setActiveTab] = useState("ratings"); // State to track the active tab
+    const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
 
     useEffect(() => {
         const userID = localStorage.getItem("userId");  // Gets the current user's id
@@ -94,6 +99,27 @@ const MyPosts = () => {
 		return result;
 	};
 
+    const copyToClipboard = (postType, postId) => {
+        const shareLink = `${window.location.origin}/${postType}/${postId}`;
+        navigator.clipboard
+            .writeText(shareLink)
+            .then(() => {
+                toast.success("Link copied to clipboard!", {
+                    position: "bottom-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            })
+            .catch((err) => {
+                console.error("Clipboard write failed:", err);
+            });
+    };
+    
     // Toggle save/unsave functionality
 	const handleSaveClick = async (postType, postId) => {
 		try {
@@ -135,6 +161,43 @@ const MyPosts = () => {
 			console.error("Failed to toggle save post:", err);
 		}
 	};
+
+    // Handler for voting on a poll option
+	const handleVoteClick = async (pollId, optionIndex) => {
+		if (userVotedPolls.includes(pollId)) {
+			alert("You have already voted on this poll.");
+			return;
+		}
+	
+		try {
+			const response = await axios.put("http://localhost:5000/polls/vote", {
+				pollID: pollId,
+				optionIndex: optionIndex,
+				userID: localStorage.getItem("userId"),
+			});
+	
+			if (response.status === 200) {
+				alert("Vote submitted successfully!");
+	
+				// Update polls state with new vote count and mark as voted
+				setPolls((prevPolls) =>
+					prevPolls.map((poll) =>
+						poll._id === pollId
+							? { ...poll, hasVoted: true, votes: response.data.updatedPoll.votes }
+							: poll
+					)
+				);
+	
+				// Update voted polls in localStorage and state
+				const updatedVotedPolls = [...userVotedPolls, pollId];
+				setUserVotedPolls(updatedVotedPolls);
+				localStorage.setItem("userVotedPolls", JSON.stringify(updatedVotedPolls));
+			}
+		} catch (err) {
+			console.error("Failed to submit vote:", err);
+			alert("Failed to submit vote. Please try again.");
+		}
+	};		
     
 
     // Returns the user's posts
@@ -183,7 +246,17 @@ const MyPosts = () => {
                                             <h1>{rating.name}</h1>
                                         </div>
                                         <div className="post-right">
-                                            <button>Share</button>
+                                            <ExternalLink
+                                                onClick={() =>
+                                                    copyToClipboard("rating", rating._id)
+                                                }
+                                                className="share-icon"
+                                                size={25}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "pink",
+                                                }}
+                                            />
                                             <img
                                                 src={
                                                     isPostSaved("rating", rating._id)
@@ -249,47 +322,95 @@ const MyPosts = () => {
                                                 style={{}}
                                             />
                                         </div>
-                                        <div className="poll-right">
-                                            <button>Share</button>
-                                            <img
-                                                src={
-                                                    isPostSaved("poll", poll._id)
-                                                        ? "src/assets/heart.png" // Show filled heart if saved
-                                                        : "src/assets/grayed-heart.png" // Show gray heart if not saved
-                                                }
-                                                alt="like-icon"
-                                                className="post-heart"
-                                                onClick={() => handleSaveClick("poll", poll._id)}
-                                            />
-                                            <button onClick={() => deletePoll(poll._id)}>Delete</button>
+                                            <div className="poll-right">
+                                                {/* Voted Badge */}
+                                                {poll.hasVoted && (
+                                                    <span className="voted-badge">Voted</span>
+                                                )}
+                                                <ExternalLink
+                                                    onClick={() =>
+                                                        copyToClipboard("poll", poll._id)
+                                                    }
+                                                    className="share-icon"
+                                                    size={25}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        color: "pink",
+                                                    }}
+                                                />
+                                                <img
+                                                    src={
+                                                        isPostSaved("poll", poll._id)
+                                                            ? "src/assets/heart.png" // Show filled heart if saved
+                                                            : "src/assets/grayed-heart.png" // Show gray heart if not saved
+                                                    }
+                                                    alt="like-icon"
+                                                    className="post-heart"
+                                                    onClick={() => handleSaveClick("poll", poll._id)}
+                                                />
+                                                <button onClick={() => deletePoll(poll._id)}>Delete</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="poll-content">
-                                        <div className="poll-title">
-                                            <h1>Poll: {poll.question}</h1>
-                                        </div>
+                                        <div className="poll-content">
+                                            <div className="poll-title">
+                                                <h1>Poll: {poll.question}</h1>
+                                            </div>
                                         {/* Poll Instructions */}
-                                        <p className="poll-instruction">Select one option:</p>
-            
+                                        <p className="poll-instruction">
+                                            Select one option:
+                                        </p>
+
                                         {/* Poll Options */}
                                         <div className="poll-options">
-                                            {poll.options.map((option, index) => (
-                                                <button
-                                                    key={index}
-                                                    className="poll-option"
-                                                    onClick={() => handleVoteClick(poll._id, index)} // Connect the poll voting handler
-                                                >
-                                                    {option}
-                                                </button>
-                                            ))}
+                                            {poll.options.map((option, index) => {
+                                                const totalVotes = poll.votes.reduce((a, b) => a + b, 0); // Calculate total votes
+                                                const optionVotes = poll.votes[index]; // Get votes for the option
+                                                const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
+
+                                                const now = new Date(); // Current time
+                                                const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
+
+                                                return (
+                                                    <div key={index} className="poll-option-container">
+                                                        {/* Option Button */}
+                                                        <button
+                                                            disabled={poll.hasVoted || isPollEnded} // disabled when it is voted or has ended
+                                                            onClick={() => handleVoteClick(poll._id, index)}>
+                                                            {option}
+                                                        </button>
+
+                                                        {/* Show Results */}
+                                                        <div className="poll-results">
+                                                            <div
+                                                                className="poll-bar"
+                                                                style={{
+                                                                    width: `${Math.max(percentage, 1)}%`,
+                                                                    background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
+                                                                    height: "10px",
+                                                                    marginTop: "5px",
+                                                                }}
+                                                            ></div>
+                                                            <span>{`${optionVotes} votes (${percentage}%)`}</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-            
+
                                         {/* Poll Footer */}
                                         <div className="poll-footer">
                                             <p>
                                                 {/* Perform reduce only if poll.votes is not undefined */}
-                                                {poll.votes ? poll.votes.reduce((a, b) => a + b, 0) : 0} Votes - Poll ends{" "}
-                                                {new Date(poll.endDate).toLocaleDateString()}
+                                                {poll.votes
+                                                    ? poll.votes.reduce(
+                                                            (a, b) => a + b,
+                                                            0
+                                                    )
+                                                    : 0}{" "}
+                                                Votes - Poll ends{" "}
+                                                {new Date(
+                                                    poll.endDate
+                                                ).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
@@ -297,6 +418,7 @@ const MyPosts = () => {
                             ))} 
                         </div>
                     )}
+                    <ToastContainer />
                 </div>
         </div>
     );
