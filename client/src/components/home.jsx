@@ -469,20 +469,6 @@ export const Home = () => {
 												</div>
 											);
 										})}
-										{poll.options.map((option, index) => (
-											<button
-												key={index}
-												className="poll-option"
-												onClick={() =>
-													handleVoteClick(
-														poll._id,
-														index
-													)
-												} // Connect the poll voting handler
-											>
-												{option}
-											</button>
-										))}
 									</div>
 
 									{/* Poll Footer */}
