@@ -15,6 +15,18 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/:id", async (req, res) => {
+    try {
+        const poll = await PollModel.findById(req.params.id);
+        if (!poll) {
+            return res.status(404).json({ message: "Poll not found" });
+        }
+        res.json(poll);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Route to create a new poll
 router.post("/", async (req, res) => {
     const { question, options, endDate, createdBy } = req.body;
