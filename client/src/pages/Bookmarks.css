@@ -1,27 +1,27 @@
 .bookmarks-page-title {
     text-align: center;
-	font-size: 40px;
-	font-family: "Playfair Display", serif;
-	padding: 20px;
-	background-color: rgba(227, 213, 243, 0.7);
-	border-radius: 35px;
+    font-size: 40px;
+    font-family: "Playfair Display", serif;
+    padding: 20px;
+    background-color: rgba(227, 213, 243, 0.7);
+    border-radius: 35px;
 }
 
 .saved-rating-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem;
-	margin: 2rem;
-	width: 1000px;
-	height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    margin: 2rem;
+    width: 1000px;
+    height: 600px;
     border-radius: 25px;
     background-color: white;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow for the post card */
     overflow: hidden;
     width: 1000px;
-	height: 600px;
+    height: 600px;
 }
 
 .saved-poll-card {
@@ -29,7 +29,7 @@
     flex-direction: column;  /* Stack elements vertically */
     justify-content: space-between;  /* This will ensure content is spaced out */
     width: 1000px;
-	min-height: auto;
+    min-height: auto;
     background-color: white;
     padding: 1rem;
     margin: 2rem;
@@ -37,22 +37,130 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
+.poll-header {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.poll-votes {
+    display: flex;
+}
+
+.poll-votes img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.poll-title {
+    display: block;
+    text-align: center;
+    font-size: 0.7rem;
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    word-wrap: break-word; /* Ensure the text breaks when necessary */
+    overflow-wrap: break-word; /* Handle long words and prevent overflow */
+    white-space: normal; /* Allow text to wrap to next line */
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.poll-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.poll-right button {
+    border-radius: 8px;
+    border: 1px solid black;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.poll-heart {
+    width: 46px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.poll-heart:hover,
+.poll-right button:hover {
+    transform: scale(1.05);
+    transition: ease-in-out 0.1s;
+}
+
+.poll-content {
+    flex-grow: 1; /* Allow content to take available space */
+}
+
+.poll-option-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.poll-option:disabled {
+    background-color: #ddd; /* Disable option background */
+    color: #888; /* Disable option text color */
+    cursor: not-allowed; /* Disable cursor */
+}
+
+.poll-results {
+    width: 100%;
+    max-width: 80%; /* Keep it proportional to the option width */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.poll-results span {
+    font-family: "Playfair Display", serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
 .poll-bar {
-    border-radius: 20px;
-    height: 8px;
-    margin-top: 5px;
-    background: linear-gradient(
-        to right,
-        rgba(253, 218, 236, 0.9),
-        rgba(189, 224, 254, 0.8),
-        rgba(255, 245, 204, 0.8)
-    ); /* pastel gradation */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* soft shadow */
+    height: 15px;
+    border-radius: 5px;
+    background-color: linear-gradient(
+        45deg,
+        rgba(253, 83, 111, 0.2),
+        rgba(255, 221, 0, 0.264),
+        rgba(5, 209, 245, 0.2)
+    );
+    transition: width 0.3s ease-in-out; /* Smooth transition */
+}
+
+.poll-footer {
+    font-size: 1rem; /* Font size for vote count and date */
+    font-weight: 400; /* Lighter font weight */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #777;
+    text-align: center;
+    font-family: "Playfair Display", serif;
 }
 
 .voted-badge {
     background: linear-gradient(45deg, #FF7EB3, #FF758C, #FFC75F); /* background color */
-    color: #ffffff; /* whitle */
+    color: #ffffff; /* white */
     font-size: 0.85rem;
     padding: 6px 12px;
     border-radius: 20px;
@@ -62,5 +170,3 @@
     box-shadow: 0px 2px 4px rgba(0, 0, 0.4, 0.5); /* little bit of shadow */
     text-shadow: 1px 1px 2px rgba(0, 0, 0.4, 0.5); /* text shadow */
 }
-
-
