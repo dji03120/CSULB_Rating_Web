@@ -246,7 +246,7 @@ const Bookmarks = () => {
                                             <div key={index} className="poll-option-container">
                                                 {/* Option Button */}
                                                 <button
-                                                    disabled={postId.hasVoted || isPollEnded} // Disabled when it is voted or has ended
+                                                    disabled={true} // button is always disabled
                                                     onClick={() => handleVoteClick(postId._id, index)}
                                                 >
                                                     {option}

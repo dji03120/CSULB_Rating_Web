@@ -48,7 +48,6 @@
         rgba(255, 245, 204, 0.8)
     ); /* 파스텔 그라데이션 */
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
-    transition: width 0.4s ease; /* 애니메이션 추가 */
 }
 
 .voted-badge {
