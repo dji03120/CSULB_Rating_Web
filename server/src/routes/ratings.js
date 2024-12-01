@@ -44,18 +44,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
-    try {
-        const rating = await RatingModel.findById(req.params.id);
-        if (!rating) {
-            return res.status(404).json({ message: "Rating not found" });
-        }
-        res.json(rating);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
 // Route to create a review 
 router.post("/", upload.single("image"), async (req, res) => {
     try {

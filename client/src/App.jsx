@@ -1,59 +1,51 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Home } from "./components/home";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import Navbar from "./components/navbar"; // Import Navbar
-import "./App.css";
-import CreateRating from "./pages/create-rating";
-import CreatePoll from "./pages/create-poll"; // Import the CreatePoll component
-import MyPosts from "./pages/my-posts";
-import Bookmarks from "./pages/bookmarks";
-import RatingPost from "./pages/RatingPost";
-import PollPost from "./pages/PollPost";
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Home } from './components/home';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import Navbar from './components/navbar'; // Import Navbar
+import './App.css';
+import CreateRating from './pages/create-rating'
+import CreatePoll from './pages/create-poll'; // Import the CreatePoll component
+import MyPosts from './pages/my-posts';
+import Bookmarks from './pages/bookmarks'
 
 function App() {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-	// Check for token in localStorage on initial render
-	useEffect(() => {
-		const token = localStorage.getItem("access_token");
-		if (token) {
-			setIsAuthenticated(true);
-		}
-	}, []);
+    // Check for token in localStorage on initial render
+    useEffect(() => {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+            setIsAuthenticated(true);
+        }
+    }, []);
 
-	// Function to handle logout
-	const handleLogout = () => {
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("userId");
-		setIsAuthenticated(false); // Update authentication state
-		window.location.href = "/"; // Redirect to home page and refresh
-	};
+    // Function to handle logout
+    const handleLogout = () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("userId");
+        setIsAuthenticated(false); // Update authentication state
+        window.location.href = "/"; // Redirect to home page and refresh
+    };
 
-	return (
-		<Router>
-			<Navbar
-				isAuthenticated={isAuthenticated}
-				handleLogout={handleLogout}
-			/>{" "}
-			{/* Pass props to Navbar */}
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route
-					path="/login"
-					element={<Login setIsAuthenticated={setIsAuthenticated} />} // Pass setIsAuthenticated to Login
-				/>
-				<Route path="/register" element={<Register />} />
-				<Route path="/create-rating" element={<CreateRating />} />
-				<Route path="/create-poll" element={<CreatePoll />} />
-				<Route path="/my-posts" element={<MyPosts />} />
-				<Route path="/bookmarks" element={<Bookmarks />} />
-				<Route path="/rating/:id" element={<RatingPost />} />
-				<Route path="/poll/:id" element={<PollPost />} />
-			</Routes>
-		</Router>
-	);
+    return (
+        <Router>
+            <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} /> {/* Pass props to Navbar */}
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route
+                    path="/login"
+                    element={<Login setIsAuthenticated={setIsAuthenticated} />} // Pass setIsAuthenticated to Login
+                />
+                <Route path="/register" element={<Register />} />
+                <Route path="/create-rating" element={<CreateRating />} />
+                <Route path="/create-poll" element={<CreatePoll />} />
+                <Route path="/my-posts" element={<MyPosts />} />
+                <Route path="/bookmarks" element={<Bookmarks />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
