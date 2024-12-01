@@ -25,12 +25,30 @@ const PollPost = () => {
 			);
 
 			if (response.status === 200) {
-				toast.success("Vote submitted successfully!");
+				toast.success("Vote submitted successfully!", {
+					position: "top-right",
+					autoClose: 1500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: false,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
 				setPoll(response.data.updatedPoll);
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
-			toast.error("Failed to submit vote. Please try again.");
+			toast.error("Failed to submit vote. Please try again.", {
+				position: "top-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 		}
 	};
 
@@ -105,8 +123,8 @@ const PollPost = () => {
 		const shareLink = window.location.href;
 		navigator.clipboard.writeText(shareLink);
 		toast.success("Link copied to clipboard!", {
-			position: "top-right",
-			autoClose: 100,
+			position: "bottom-right",
+			autoClose: 1500,
 			hideProgressBar: false,
 			closeOnClick: true,
 			pauseOnHover: false,

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Bookmarks.css";
+import { ExternalLink } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Component to access a user's saved posts
 const Bookmarks = () => {
@@ -290,30 +293,29 @@ const Bookmarks = () => {
     };
     
 
-    return (
-        <div className="my-posts-content">
-            <h1 className="bookmarks-page-title">Bookmarks</h1>
-            {/* Tab Navigation */}
-            <div className="tabs">
-                <button
-                    className={`tab ${activeTab === "rating" ? "active" : ""}`}
-                    onClick={() => setActiveTab("rating")}
-                >
-                    Ratings
-                </button>
-                <button
-                    className={`tab ${activeTab === "poll" ? "active" : ""}`}
-                    onClick={() => setActiveTab("poll")}
-                >
-                    Polls
-                </button>
-            </div>
+  return (
+    <div className="my-posts-content">
+      <h1 className="bookmarks-page-title">Bookmarks</h1>
+      {/* Tab Navigation */}
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === "rating" ? "active" : ""}`}
+          onClick={() => setActiveTab("rating")}
+        >
+          Ratings
+        </button>
+        <button
+          className={`tab ${activeTab === "poll" ? "active" : ""}`}
+          onClick={() => setActiveTab("poll")}
+        >
+          Polls
+        </button>
+      </div>
 
-            <div className="saved-posts-list">
-                {renderSavedPosts()}
-            </div>
-        </div>
-    );
+      <div className="saved-posts-list">{renderSavedPosts()}</div>
+    <ToastContainer />
+    </div>
+  );
 };
 
 export default Bookmarks;
