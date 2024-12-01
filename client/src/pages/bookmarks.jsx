@@ -112,7 +112,27 @@ const Bookmarks = () => {
             alert("Failed to submit vote. Please try again.");
         }
     };
-    
+
+    const copyToClipboard = (postType, postId) => {
+        const shareLink = `${window.location.origin}/${postType}/${postId}`;
+        navigator.clipboard
+            .writeText(shareLink)
+            .then(() => {
+                toast.success("Link copied to clipboard!", {
+                    position: "bottom-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            })
+            .catch((err) => {
+                console.error("Clipboard write failed:", err);
+            });
+    };
     
 
     // Returns the user's saved posts based on active tab
@@ -152,7 +172,17 @@ const Bookmarks = () => {
                                     <h1>{postId.name}</h1>
                                 </div>
                                 <div className="post-right">
-                                    <button>Share</button>
+                                    <ExternalLink
+                                        onClick={() =>
+                                            copyToClipboard("rating", postId._id)
+                                        }
+                                        className="share-icon"
+                                        size={25}
+                                        style={{
+                                            cursor: "pointer",
+                                            color: "pink",
+                                        }}
+                                    />
                                     <img
                                         src="src/assets/heart.png"
                                         alt="like-icon"
@@ -207,7 +237,17 @@ const Bookmarks = () => {
                                 <div className="poll-right">
                                     {/* Show "Voted" badge only if user has voted */}
 									{postId.hasVoted && <span className="voted-badge">Voted</span>}
-                                    <button>Share</button>
+                                    <ExternalLink
+                                        onClick={() =>
+                                            copyToClipboard("poll", postId._id)
+                                        }
+                                        className="share-icon"
+                                        size={25}
+                                        style={{
+                                            cursor: "pointer",
+                                            color: "pink",
+                                        }}
+                                    />
                                     <img
                                         src="src/assets/heart.png"
                                         alt="like-icon"
