@@ -122,13 +122,13 @@ const RatingPost = () => {
 					<div className="post-votes">
 						<img
 							id="upvote-arrow"
-							src="/src/assets/up-arrow.png"
+							src="/src/assets/grayed-up-arrow.png"
 							alt="upvote"
 							style={{ transform: "rotate(100)" }}
 						/>
 						<img
 							id="downvote-arrow"
-							src="/src/assets/down-arrow.png"
+							src="/src/assets/grayed-down-arrow.png"
 							alt="downvote"
 						/>
 					</div>

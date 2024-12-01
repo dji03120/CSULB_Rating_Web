@@ -160,17 +160,21 @@ const PollPost = () => {
 					<div className="poll-votes">
 						<img
 							id="upvote-arrow"
-							src="/src/assets/up-arrow.png"
+							src="/src/assets/grayed-up-arrow.png"
 							alt="upvote"
 							style={{ transform: "rotate(100)" }}
 						/>
 						<img
 							id="downvote-arrow"
-							src="/src/assets/down-arrow.png"
+							src="/src/assets/grayed-down-arrow.png"
 							alt="downvote"
 						/>
 					</div>
 					<div className="poll-right">
+						{/* Voted Badge */}
+						{poll.hasVoted && (
+							<span className="voted-badge">Voted</span>
+						)}
 						<ExternalLink
 							onClick={copyToClipboard}
 							className="share-icon"
@@ -195,15 +199,39 @@ const PollPost = () => {
 					</div>
 					<p className="poll-instruction">Select one option:</p>
 					<div className="poll-options">
-						{poll.options.map((option, index) => (
-							<button
-								key={index}
-								className="poll-option"
-								onClick={() => handleVoteClick(poll._id, index)}
-							>
-								{option}
-							</button>
-						))}
+						{poll.options.map((option, index) => {
+							const totalVotes = poll.votes.reduce((a, b) => a + b, 0); // Calculate total votes
+							const optionVotes = poll.votes[index]; // Get votes for the option
+							const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
+
+							const now = new Date(); // Current time
+							const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
+
+							return (
+								<div key={index} className="poll-option-container">
+									{/* Option Button */}
+									<button
+										disabled={poll.hasVoted || isPollEnded} // disabled when it is voted or has ended
+										onClick={() => handleVoteClick(poll._id, index)}>
+										{option}
+									</button>
+
+									{/* Show Results */}
+									<div className="poll-results">
+										<div
+											className="poll-bar"
+											style={{
+												width: `${Math.max(percentage, 1)}%`,
+												background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
+												height: "10px",
+												marginTop: "5px",
+											}}
+										></div>
+										<span>{`${optionVotes} votes (${percentage}%)`}</span>
+									</div>
+								</div>
+							);
+						})}
 					</div>
 					<div className="poll-footer">
 						<p>
