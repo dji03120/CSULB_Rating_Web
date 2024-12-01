@@ -167,6 +167,7 @@ export const Home = () => {
 						(post) =>
 							!(
 								post.postType === postType &&
+								post.postId && // Ensure postId is not null
 								post.postId._id === postId.toString()
 							)
 					)
