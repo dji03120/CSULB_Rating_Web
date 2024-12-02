@@ -49,7 +49,7 @@ const MyPosts = () => {
 
 		// Fetches the user's polls
 		const fetchUserPolls = async () => {
-			setLoading(true); // Sets loading to true before making the request
+			setLoading(true);
 			try {
 				const response = await axios.get(
 					"http://localhost:5000/polls/my-polls",
@@ -57,11 +57,21 @@ const MyPosts = () => {
 						params: { userID },
 					}
 				);
-				setUserPolls(response.data); // Sets the user's polls
+				// Get voted polls from localStorage
+				const userVotedPolls =
+					JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+
+				// Add hasVoted property to each poll
+				const updatedPolls = response.data.map((poll) => ({
+					...poll,
+					hasVoted: userVotedPolls.includes(poll._id),
+				}));
+
+				setUserPolls(updatedPolls);
 			} catch (err) {
 				console.error("Error fetching user polls:", err);
 			} finally {
-				setLoading(false); // Sets loading to false after the request is done
+				setLoading(false);
 			}
 		};
 		fetchUserPolls();
@@ -202,7 +212,16 @@ const MyPosts = () => {
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
 		if (userVotedPolls.includes(pollId)) {
-			alert("You have already voted on this poll.");
+			toast.error("You have already voted in this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 			return;
 		}
 
@@ -217,10 +236,7 @@ const MyPosts = () => {
 			);
 
 			if (response.status === 200) {
-				alert("Vote submitted successfully!");
-
-				// Update polls state with new vote count and mark as voted
-				setPolls((prevPolls) =>
+				setUserPolls((prevPolls) =>
 					prevPolls.map((poll) =>
 						poll._id === pollId
 							? {
@@ -241,8 +257,17 @@ const MyPosts = () => {
 				);
 			}
 		} catch (err) {
-			console.error("Failed to submit vote:", err);
-			alert("Failed to submit vote. Please try again.");
+			// console.error("Failed to submit vote:", err);
+			toast.error("You have already voted in this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 		}
 	};
 
@@ -469,14 +494,14 @@ const MyPosts = () => {
 										<img
 											id="upvote-arrow"
 											src={`src/assets/${
-												votedPosts[rating._id] === "up"
+												votedPosts[poll._id] === "up"
 													? "up-arrow.png"
 													: "grayed-up-arrow.png"
 											}`}
 											alt="upvote"
 											onClick={() =>
 												handleVote(
-													rating._id,
+													poll._id,
 													"poll",
 													"up"
 												)
@@ -489,15 +514,14 @@ const MyPosts = () => {
 										<img
 											id="downvote-arrow"
 											src={`src/assets/${
-												votedPosts[rating._id] ===
-												"down"
+												votedPosts[poll._id] === "down"
 													? "down-arrow.png"
 													: "grayed-down-arrow.png"
 											}`}
 											alt="downvote"
 											onClick={() =>
 												handleVote(
-													rating._id,
+													poll._id,
 													"poll",
 													"down"
 												)
@@ -587,10 +611,6 @@ const MyPosts = () => {
 												>
 													{/* Option Button */}
 													<button
-														disabled={
-															poll.hasVoted ||
-															isPollEnded
-														} // disabled when it is voted or has ended
 														onClick={() =>
 															handleVoteClick(
 																poll._id,
@@ -644,8 +664,8 @@ const MyPosts = () => {
 						))}
 					</div>
 				)}
-				<ToastContainer />
 			</div>
+			<ToastContainer />
 		</div>
 	);
 };

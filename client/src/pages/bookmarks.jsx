@@ -21,37 +21,41 @@ const Bookmarks = () => {
 				const response = await axios.get(
 					`http://localhost:5000/auth/savedPosts?userID=${userID}`
 				);
-				setSavedPosts(response.data.savedPosts);
 
-				const savedRatings = response.data.savedPosts.filter(
-					(post) => post.type === "rating"
+				// Get saved posts
+				const savedPollPosts = response.data.savedPosts.filter(
+					(post) => post.postType === "poll" && post.postId
 				);
-				setSavedRatings(savedRatings);
 
-				const savedPolls = response.data.savedPosts.filter(
-					(post) => post.type === "poll"
-				);
-				setSavedPolls(savedPolls);
+				// If there are saved polls, fetch their full data
+				if (savedPollPosts.length > 0) {
+					// Get voted polls from localStorage
+					const userVotedPolls =
+						JSON.parse(localStorage.getItem("userVotedPolls")) ||
+						[];
 
-				if (savedPolls.length > 0) {
-					const pollIDs = savedPolls.map((poll) => poll._id);
-					const pollResponse = await axios.get(
-						"http://localhost:5000/polls",
-						{
-							params: { userID, pollIDs },
+					// Update each poll with hasVoted property
+					const updatedSavedPosts = response.data.savedPosts.map(
+						(post) => {
+							if (post.postType === "poll" && post.postId) {
+								return {
+									...post,
+									postId: {
+										...post.postId,
+										hasVoted: userVotedPolls.includes(
+											post.postId._id
+										),
+									},
+								};
+							}
+							return post;
 						}
 					);
 
-					const updatedPolls = pollResponse.data.map((poll) => ({
-						...poll,
-						hasVoted: poll.voters.includes(userID),
-					}));
-					setSavedPolls(updatedPolls);
+					setSavedPosts(updatedSavedPosts);
+				} else {
+					setSavedPosts(response.data.savedPosts);
 				}
-
-				const votedPolls =
-					JSON.parse(localStorage.getItem("userVotedPolls")) || [];
-				setUserVotedPolls(votedPolls);
 			} catch (err) {
 				console.error("Failed to fetch bookmarks:", err);
 			}
@@ -102,7 +106,6 @@ const Bookmarks = () => {
 		}
 	};
 
-	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
 		if (userVotedPolls.includes(pollId)) {
 			alert("You have already voted on this poll.");
@@ -120,24 +123,22 @@ const Bookmarks = () => {
 			);
 
 			if (response.status === 200) {
-				alert("Vote submitted successfully!");
-
-				// Update polls state with new vote count and mark as voted
-				setSavedPolls((prevPolls) => {
-					const updatedPolls = prevPolls.map((poll) =>
-						poll._id === pollId
-							? {
-									...poll,
+				setSavedPosts((prev) =>
+					prev.map((post) => {
+						if (post.postId?._id === pollId) {
+							return {
+								...post,
+								postId: {
+									...post.postId,
 									hasVoted: true,
 									votes: response.data.updatedPoll.votes,
-							  }
-							: poll
-					);
-					console.log("Updated Polls:", updatedPolls); // Debugging state updates
-					return updatedPolls;
-				});
+								},
+							};
+						}
+						return post;
+					})
+				);
 
-				// Update userVotedPolls in localStorage and state
 				const updatedVotedPolls = [...userVotedPolls, pollId];
 				setUserVotedPolls(updatedVotedPolls);
 				localStorage.setItem(
@@ -214,7 +215,7 @@ const Bookmarks = () => {
 						)
 					);
 				} else {
-					setPolls((prev) =>
+					setSavedPolls((prev) =>
 						prev.map((poll) =>
 							poll._id === postId
 								? response.data.updatedPost
@@ -225,7 +226,7 @@ const Bookmarks = () => {
 			}
 		} catch (err) {
 			console.error("Failed to vote:", err);
-			toast.error("Failed to vote. Please try again.");
+			// toast.error("Failed to vote. Please try again.");
 		}
 	};
 
