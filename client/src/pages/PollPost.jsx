@@ -16,6 +16,23 @@ const PollPost = () => {
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
+		const userId = localStorage.getItem("userId"); // Check if user is logged in
+		// If the user is not logged in, show a toast notification and redirect to the login page.
+		if (!userId) {
+			toast.error("Please log in to vote on this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			navigate("/login"); // Redirect to login page
+			return;
+		}
+
 		try {
 			const response = await axios.put(
 				"http://localhost:5000/polls/vote",
@@ -40,8 +57,8 @@ const PollPost = () => {
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
-			toast.error("Failed to submit vote. Please try again.", {
-				position: "top-right",
+			toast.error("Failed to submit vote. You may have already voted on this poll.", {
+				position: "bottom-right",
 				autoClose: 1500,
 				hideProgressBar: false,
 				closeOnClick: true,
@@ -222,10 +239,10 @@ const PollPost = () => {
 
 	const formatPollDate = (dateString) => {
 		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric', 
-			month: 'numeric',
-			day: 'numeric',
-			timeZone: 'UTC' // Ensure consistent timezone handling
+			year: "numeric",
+			month: "numeric",
+			day: "numeric",
+			timeZone: "UTC", // Ensure consistent timezone handling
 		});
 	};
 
@@ -261,6 +278,9 @@ const PollPost = () => {
 						/>
 					</div>
 					<div className="post-right">
+						{poll.hasVoted && (
+							<span className="voted-badge">Voted</span>
+						)}
 						<ExternalLink
 							onClick={copyToClipboard}
 							className="share-icon"

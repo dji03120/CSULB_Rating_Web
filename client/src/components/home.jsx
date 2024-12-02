@@ -158,7 +158,7 @@ export const Home = () => {
 					userID: userId,
 				}
 			);
-			 // If the vote submission is successful, show a success toast notification.
+			// If the vote submission is successful, show a success toast notification.
 			if (response.status === 200) {
 				toast.success("Vote submitted successfully!", {
 					position: "bottom-right",
@@ -170,20 +170,20 @@ export const Home = () => {
 					progress: undefined,
 					theme: "light",
 				});
-	
+
 				// Update polls state with new vote count and mark as voted
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
 						poll._id === pollId
 							? {
-								  ...poll,
-								  hasVoted: true,
-								  votes: response.data.updatedPoll.votes,
+									...poll,
+									hasVoted: true,
+									votes: response.data.updatedPoll.votes,
 							  }
 							: poll
 					)
 				);
-	
+
 				// Update voted polls in localStorage and state
 				const updatedVotedPolls = [...userVotedPolls, pollId];
 				setUserVotedPolls(updatedVotedPolls);
@@ -206,7 +206,7 @@ export const Home = () => {
 				theme: "light",
 			});
 		}
-	};	
+	};
 
 	// Check if a post is saved
 	const isPostSaved = (postType, postId) => {
@@ -376,10 +376,21 @@ export const Home = () => {
 						)
 					);
 				} else {
+					// setPolls((prev) =>
+					// 	prev.map((poll) =>
+					// 		poll._id === postId
+					// 			? response.data.updatedPost
+					// 			: poll
+					// 	)
+					// );
 					setPolls((prev) =>
 						prev.map((poll) =>
 							poll._id === postId
-								? response.data.updatedPost
+								? {
+										...poll,
+										...response.data.updatedPost,
+										hasVoted: poll.hasVoted, // Preserve hasVoted
+								  }
 								: poll
 						)
 					);
@@ -457,8 +468,8 @@ export const Home = () => {
 					<label htmlFor="filter-toggle"></label>
 					<span>
 						{hideLowRatedPosts
-							? "Hide Posts with ≥3 Downvotes"
-							: "Show All Posts"}
+							? "Show All Posts"
+							: "Hide Posts with ≥3 Downvotes"}
 					</span>
 				</div>
 
@@ -754,10 +765,23 @@ export const Home = () => {
 									{/* Poll Footer */}
 									<div className="poll-footer">
 										<p>
-											{poll.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {formatPollDate(poll.endDate)}
+											{poll.votes.reduce(
+												(a, b) => a + b,
+												0
+											)}{" "}
+											Votes - Poll ends{" "}
+											{formatPollDate(poll.endDate)}
 										</p>
-										{new Date(poll.endDate) < new Date() && (
-											<p style={{ color: "red", fontWeight: "bold", fontSize: "17px", marginTop: "4px" }}>
+										{new Date(poll.endDate) <
+											new Date() && (
+											<p
+												style={{
+													color: "red",
+													fontWeight: "bold",
+													fontSize: "17px",
+													marginTop: "4px",
+												}}
+											>
 												Poll has ended
 											</p>
 										)}
