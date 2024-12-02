@@ -230,6 +230,15 @@ const Bookmarks = () => {
 		}
 	};
 
+	const formatPollDate = (dateString) => {
+		return new Date(dateString).toLocaleDateString(undefined, {
+			year: "numeric",
+			month: "numeric",
+			day: "numeric",
+			timeZone: "UTC", // Ensure consistent timezone handling
+		});
+	};
+
 	// Returns the user's saved posts based on active tab
 	const renderSavedPosts = () => {
 		const filteredPosts = savedPosts.filter(
@@ -523,15 +532,25 @@ const Bookmarks = () => {
 											</p>
 										) : (
 											// Still voting
+											// <p>
+											// 	{postId.votes.reduce(
+											// 		(a, b) => a + b,
+											// 		0
+											// 	)}{" "}
+											// 	Votes - Poll ends{" "}
+											// 	{new Date(
+											// 		postId.endDate
+											// 	).toLocaleDateString()}
+											// </p>
 											<p>
-												{postId.votes.reduce(
-													(a, b) => a + b,
-													0
-												)}{" "}
+												{postId.votes
+													? postId.votes.reduce(
+															(a, b) => a + b,
+															0
+													  )
+													: 0}{" "}
 												Votes - Poll ends{" "}
-												{new Date(
-													postId.endDate
-												).toLocaleDateString()}
+												{formatPollDate(postId.endDate)}
 											</p>
 										)}
 									</div>

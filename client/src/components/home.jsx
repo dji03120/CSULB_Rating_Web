@@ -117,7 +117,16 @@ export const Home = () => {
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
 		if (userVotedPolls.includes(pollId)) {
-			alert("You have already voted on this poll.");
+			toast.error("You have already voted on this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 			return;
 		}
 
@@ -132,7 +141,16 @@ export const Home = () => {
 			);
 
 			if (response.status === 200) {
-				alert("Vote submitted successfully!");
+				toast.success("Vote submitted successfully!", {
+					position: "bottom-right",
+					autoClose: 1500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: false,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
 
 				// Update polls state with new vote count and mark as voted
 				setPolls((prevPolls) =>
@@ -320,6 +338,15 @@ export const Home = () => {
 			console.error("Failed to vote:", err);
 			toast.error("Failed to vote. Please try again.");
 		}
+	};
+
+	const formatPollDate = (dateString) => {
+		return new Date(dateString).toLocaleDateString(undefined, {
+			year: "numeric",
+			month: "numeric",
+			day: "numeric",
+			timeZone: "UTC", // Ensure consistent timezone handling
+		});
 	};
 
 	return (
@@ -525,8 +552,7 @@ export const Home = () => {
 										<img
 											id="downvote-arrow"
 											src={`src/assets/${
-												votedPosts[poll._id] ===
-												"down"
+												votedPosts[poll._id] === "down"
 													? "down-arrow.png"
 													: "grayed-down-arrow.png"
 											}`}
@@ -657,7 +683,6 @@ export const Home = () => {
 									{/* Poll Footer */}
 									<div className="poll-footer">
 										<p>
-											{/* Perform reduce only if poll.votes is not undefined */}
 											{poll.votes
 												? poll.votes.reduce(
 														(a, b) => a + b,
@@ -665,9 +690,7 @@ export const Home = () => {
 												  )
 												: 0}{" "}
 											Votes - Poll ends{" "}
-											{new Date(
-												poll.endDate
-											).toLocaleDateString()}
+											{formatPollDate(poll.endDate)}
 										</p>
 									</div>
 								</div>

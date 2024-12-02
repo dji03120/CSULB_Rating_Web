@@ -220,6 +220,15 @@ const PollPost = () => {
 		}
 	};
 
+	const formatPollDate = (dateString) => {
+		return new Date(dateString).toLocaleDateString(undefined, {
+			year: 'numeric', 
+			month: 'numeric',
+			day: 'numeric',
+			timeZone: 'UTC' // Ensure consistent timezone handling
+		});
+	};
+
 	return (
 		<div className="poll-post-container">
 			<div className="poll-card">
@@ -333,8 +342,7 @@ const PollPost = () => {
 							{poll.votes
 								? poll.votes.reduce((a, b) => a + b, 0)
 								: 0}{" "}
-							Votes - Poll ends{" "}
-							{new Date(poll.endDate).toLocaleDateString()}
+							Votes - Poll ends {formatPollDate(poll.endDate)}
 						</p>
 					</div>
 				</div>

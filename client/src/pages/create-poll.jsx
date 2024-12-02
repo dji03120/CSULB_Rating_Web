@@ -56,6 +56,8 @@ const CreatePoll = () => {
 	
 		try {
 			setIsLoading(true); // Activate loading state
+			const selectedDate = new Date(endDate);
+			selectedDate.setHours(23, 59, 59, 999);
 			const response = await axios.post("http://localhost:5000/polls", {
 				question: pollQuestion,
 				options,

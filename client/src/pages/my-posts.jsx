@@ -328,6 +328,15 @@ const MyPosts = () => {
 		}
 	};
 
+	const formatPollDate = (dateString) => {
+		return new Date(dateString).toLocaleDateString(undefined, {
+			year: "numeric",
+			month: "numeric",
+			day: "numeric",
+			timeZone: "UTC", // Ensure consistent timezone handling
+		});
+	};
+
 	// Returns the user's posts
 	return (
 		<div className="my-posts-content">
@@ -646,7 +655,6 @@ const MyPosts = () => {
 									{/* Poll Footer */}
 									<div className="poll-footer">
 										<p>
-											{/* Perform reduce only if poll.votes is not undefined */}
 											{poll.votes
 												? poll.votes.reduce(
 														(a, b) => a + b,
@@ -654,9 +662,7 @@ const MyPosts = () => {
 												  )
 												: 0}{" "}
 											Votes - Poll ends{" "}
-											{new Date(
-												poll.endDate
-											).toLocaleDateString()}
+											{formatPollDate(poll.endDate)}
 										</p>
 									</div>
 								</div>
