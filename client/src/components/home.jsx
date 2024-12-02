@@ -644,10 +644,6 @@ export const Home = () => {
 												>
 													{/* Option Button */}
 													<button
-														disabled={
-															poll.hasVoted ||
-															isPollEnded
-														} // disabled when it is voted or has ended
 														onClick={() =>
 															handleVoteClick(
 																poll._id,

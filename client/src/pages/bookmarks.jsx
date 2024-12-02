@@ -108,7 +108,16 @@ const Bookmarks = () => {
 
 	const handleVoteClick = async (pollId, optionIndex) => {
 		if (userVotedPolls.includes(pollId)) {
-			alert("You have already voted on this poll.");
+			toast.error("You have already voted on this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 			return;
 		}
 
@@ -123,6 +132,17 @@ const Bookmarks = () => {
 			);
 
 			if (response.status === 200) {
+				toast.success("Vote submitted successfully!", {
+					position: "bottom-right",
+					autoClose: 1500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: false,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				
 				setSavedPosts((prev) =>
 					prev.map((post) => {
 						if (post.postId?._id === pollId) {
@@ -484,10 +504,6 @@ const Bookmarks = () => {
 												>
 													{/* Option Button */}
 													<button
-														disabled={
-															postId.hasVoted ||
-															isPollEnded
-														} // Disabled when it is voted or has ended
 														onClick={() =>
 															handleVoteClick(
 																postId._id,
