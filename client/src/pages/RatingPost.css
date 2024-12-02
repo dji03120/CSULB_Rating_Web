@@ -7,3 +7,24 @@
     padding: 20px;
 }
 
+.content-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.content-center .content-description {
+    width: 80%;
+    text-align: center;
+}
+
+.content-center .content-ratings {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}

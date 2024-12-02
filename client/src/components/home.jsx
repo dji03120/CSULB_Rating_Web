@@ -18,63 +18,79 @@ export const Home = () => {
 
 	const [shareOptions, setShareOptions] = useState(null); // Track the post for which share options are open
 
-
 	const [activeTab, setActiveTab] = useState("ratings"); // State to track active tab
 
 	useEffect(() => {
 		const fetchData = async () => {
-		  try {
-			const userID = localStorage.getItem("userId");
-	
-			// Fetch ratings
-			const ratingResponse = await axios.get("http://localhost:5000/ratings");
-			setRatings(ratingResponse.data);
-	
-			// Fetch polls
-			const pollResponse = await axios.get("http://localhost:5000/polls", {
-			  params: { userID },
-			});
-	
-			const updatedPolls = pollResponse.data.map((poll) => ({
-			  ...poll,
-			  hasVoted: poll.voters.includes(userID),
-			}));
-			setPolls(updatedPolls);
-	
-			// Retrieve voted polls from localStorage
-			const votedPolls = JSON.parse(localStorage.getItem("userVotedPolls")) || [];
-			setUserVotedPolls(votedPolls);
-	
-			// Fetch saved posts
-			const savedPostsResponse = await axios.get(
-			  `http://localhost:5000/auth/savedPosts?userID=${userID}`
-			);
-			setSavedPosts(savedPostsResponse.data.savedPosts);
-		  } catch (err) {
-			console.error("Failed to fetch data:", err);
-		  }
+			try {
+				const userID = localStorage.getItem("userId");
+
+				// Fetch ratings
+				const ratingResponse = await axios.get(
+					"http://localhost:5000/ratings"
+				);
+				setRatings(ratingResponse.data);
+
+				// Fetch polls
+				const pollResponse = await axios.get(
+					"http://localhost:5000/polls",
+					{
+						params: { userID },
+					}
+				);
+
+				const updatedPolls = pollResponse.data.map((poll) => ({
+					...poll,
+					hasVoted: poll.voters.includes(userID),
+				}));
+				setPolls(updatedPolls);
+
+				// Retrieve voted polls from localStorage
+				const votedPolls =
+					JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+				setUserVotedPolls(votedPolls);
+
+				// Fetch saved posts
+				const savedPostsResponse = await axios.get(
+					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+				);
+				setSavedPosts(savedPostsResponse.data.savedPosts);
+			} catch (err) {
+				console.error("Failed to fetch data:", err);
+			}
 		};
-	
+
 		fetchData();
-	  }, []);	
+	}, []);
 
 	const handleShareClick = (postType, postId) => {
-		setShareOptions(shareOptions?.postId === postId ? null : { postType, postId });
+		setShareOptions(
+			shareOptions?.postId === postId ? null : { postType, postId }
+		);
 	};
 
 	const shareToPlatform = (platform, postType, postId) => {
 		const shareUrl = `${window.location.origin}/${postType}/${postId}`;
 		const encodedUrl = encodeURIComponent(shareUrl);
-	
+
 		switch (platform) {
 			case "facebook":
-				window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank");
+				window.open(
+					`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+					"_blank"
+				);
 				break;
 			case "twitter":
-				window.open(`https://twitter.com/share?url=${encodedUrl}`, "_blank");
+				window.open(
+					`https://twitter.com/share?url=${encodedUrl}`,
+					"_blank"
+				);
 				break;
 			case "linkedin":
-				window.open(`https://www.linkedin.com/shareArticle?url=${encodedUrl}`, "_blank");
+				window.open(
+					`https://www.linkedin.com/shareArticle?url=${encodedUrl}`,
+					"_blank"
+				);
 				break;
 			case "email":
 				window.location.href = `mailto:?subject=Check this out&body=${encodedUrl}`;
@@ -82,10 +98,9 @@ export const Home = () => {
 			default:
 				alert("Unsupported platform");
 		}
-	
+
 		setShareOptions(null); // Close the share options after selecting a platform
 	};
-	
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
@@ -93,37 +108,46 @@ export const Home = () => {
 			alert("You have already voted on this poll.");
 			return;
 		}
-	
+
 		try {
-			const response = await axios.put("http://localhost:5000/polls/vote", {
-				pollID: pollId,
-				optionIndex: optionIndex,
-				userID: localStorage.getItem("userId"),
-			});
-	
+			const response = await axios.put(
+				"http://localhost:5000/polls/vote",
+				{
+					pollID: pollId,
+					optionIndex: optionIndex,
+					userID: localStorage.getItem("userId"),
+				}
+			);
+
 			if (response.status === 200) {
 				alert("Vote submitted successfully!");
-	
+
 				// Update polls state with new vote count and mark as voted
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
 						poll._id === pollId
-							? { ...poll, hasVoted: true, votes: response.data.updatedPoll.votes }
+							? {
+									...poll,
+									hasVoted: true,
+									votes: response.data.updatedPoll.votes,
+							  }
 							: poll
 					)
 				);
-	
+
 				// Update voted polls in localStorage and state
 				const updatedVotedPolls = [...userVotedPolls, pollId];
 				setUserVotedPolls(updatedVotedPolls);
-				localStorage.setItem("userVotedPolls", JSON.stringify(updatedVotedPolls));
+				localStorage.setItem(
+					"userVotedPolls",
+					JSON.stringify(updatedVotedPolls)
+				);
 			}
 		} catch (err) {
 			console.error("Failed to submit vote:", err);
 			alert("Failed to submit vote. Please try again.");
 		}
-	};		
-	
+	};
 
 	// Check if a post is saved
 	const isPostSaved = (postType, postId) => {
@@ -335,10 +359,21 @@ export const Home = () => {
 								</div>
 								<div className="post-content">
 									<div className="content-left">
-										<img
-											src={`http://localhost:5000${rating.imageUrl}`}
-											alt={rating.name}
-										/>
+										{rating.imageUrl ? (
+											<img
+												src={`http://localhost:5000${rating.imageUrl}`}
+												alt={rating.name}
+											/>
+										) : (
+											<img
+												src={`/src/assets/no-image-placeholder.png`}
+												alt={rating.name}
+												style={{
+													width: "80%",
+													objectFit: "contain",
+												}}
+											/>
+										)}
 									</div>
 									<div className="content-right">
 										<div className="content-ratings">
@@ -385,38 +420,48 @@ export const Home = () => {
 											style={{}}
 										/>
 									</div>
-										<div className="poll-right">
-											{/* Voted Badge */}
-											{poll.hasVoted && (
-												<span className="voted-badge">Voted</span>
-											)}
-											<ExternalLink
-												onClick={() =>
-													copyToClipboard("poll", poll._id)
-												}
-												className="share-icon"
-												size={25}
-												style={{
-													cursor: "pointer",
-													color: "pink",
-												}}
-											/>
-											<img
-												src={
-													isPostSaved("poll", poll._id)
-														? "src/assets/heart.png" // Show filled heart if saved
-														: "src/assets/grayed-heart.png" // Show gray heart if not saved
-												}
-												alt="like-icon"
-												className="post-heart"
-												onClick={() => handleSaveClick("poll", poll._id)}
-											/>
-										</div>
+									<div className="poll-right">
+										{/* Voted Badge */}
+										{poll.hasVoted && (
+											<span className="voted-badge">
+												Voted
+											</span>
+										)}
+										<ExternalLink
+											onClick={() =>
+												copyToClipboard(
+													"poll",
+													poll._id
+												)
+											}
+											className="share-icon"
+											size={25}
+											style={{
+												cursor: "pointer",
+												color: "pink",
+											}}
+										/>
+										<img
+											src={
+												isPostSaved("poll", poll._id)
+													? "src/assets/heart.png" // Show filled heart if saved
+													: "src/assets/grayed-heart.png" // Show gray heart if not saved
+											}
+											alt="like-icon"
+											className="post-heart"
+											onClick={() =>
+												handleSaveClick(
+													"poll",
+													poll._id
+												)
+											}
+										/>
 									</div>
-									<div className="poll-content">
-										<div className="poll-title">
-											<h1>Poll: {poll.question}</h1>
-										</div>
+								</div>
+								<div className="poll-content">
+									<div className="poll-title">
+										<h1>Poll: {poll.question}</h1>
+									</div>
 									{/* Poll Instructions */}
 									<p className="poll-instruction">
 										Select one option:
@@ -425,19 +470,44 @@ export const Home = () => {
 									{/* Poll Options */}
 									<div className="poll-options">
 										{poll.options.map((option, index) => {
-											const totalVotes = poll.votes.reduce((a, b) => a + b, 0); // Calculate total votes
-											const optionVotes = poll.votes[index]; // Get votes for the option
-											const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
+											const totalVotes =
+												poll.votes.reduce(
+													(a, b) => a + b,
+													0
+												); // Calculate total votes
+											const optionVotes =
+												poll.votes[index]; // Get votes for the option
+											const percentage =
+												totalVotes > 0
+													? (
+															(optionVotes /
+																totalVotes) *
+															100
+													  ).toFixed(1)
+													: "0.0"; // Calculate percentage
 
 											const now = new Date(); // Current time
-											const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
+											const isPollEnded =
+												new Date(poll.endDate) < now; // check if poll is ended
 
 											return (
-												<div key={index} className="poll-option-container">
+												<div
+													key={index}
+													className="poll-option-container"
+												>
 													{/* Option Button */}
 													<button
-														disabled={poll.hasVoted || isPollEnded} // disabled when it is voted or has ended
-														onClick={() => handleVoteClick(poll._id, index)}>
+														disabled={
+															poll.hasVoted ||
+															isPollEnded
+														} // disabled when it is voted or has ended
+														onClick={() =>
+															handleVoteClick(
+																poll._id,
+																index
+															)
+														}
+													>
 														{option}
 													</button>
 
@@ -446,10 +516,14 @@ export const Home = () => {
 														<div
 															className="poll-bar"
 															style={{
-																width: `${Math.max(percentage, 1)}%`,
+																width: `${Math.max(
+																	percentage,
+																	1
+																)}%`,
 																background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
 																height: "10px",
-																marginTop: "5px",
+																marginTop:
+																	"5px",
 															}}
 														></div>
 														<span>{`${optionVotes} votes (${percentage}%)`}</span>

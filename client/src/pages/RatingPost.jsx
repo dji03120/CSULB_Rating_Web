@@ -156,10 +156,18 @@ const RatingPost = () => {
 				</div>
 				<div className="post-content">
 					<div className="content-left">
-						<img
-							src={`http://localhost:5000${rating.imageUrl}`}
-							alt={rating.name}
-						/>
+						{rating.imageUrl ? (
+							<img
+								src={`http://localhost:5000${rating.imageUrl}`}
+								alt={rating.name}
+							/>
+						) : (
+							<img
+								src={`/src/assets/no-image-placeholder.png`}
+								alt={rating.name}
+								style={{ width: "80%", objectFit: "contain" }}
+							/>
+						)}
 					</div>
 					<div className="content-right">
 						<div className="content-ratings">
