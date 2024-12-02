@@ -117,6 +117,24 @@ export const Home = () => {
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
+		const userId = localStorage.getItem("userId"); // Check if user is logged in
+
+		// If the user is not logged in, show a toast notification and redirect to the login page.
+		if (!userId) {
+			toast.error("Please log in to vote on this poll.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			navigate("/login"); // Redirect to login page
+			return;
+		}
+		// If the user has already voted on this poll, show an error toast notification.
 		if (userVotedPolls.includes(pollId)) {
 			toast.error("You have already voted on this poll.", {
 				position: "bottom-right",
@@ -130,17 +148,17 @@ export const Home = () => {
 			});
 			return;
 		}
-
+		// Attempt to send the vote to the backend API.
 		try {
 			const response = await axios.put(
 				"http://localhost:5000/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
-					userID: localStorage.getItem("userId"),
+					userID: userId,
 				}
 			);
-
+			 // If the vote submission is successful, show a success toast notification.
 			if (response.status === 200) {
 				toast.success("Vote submitted successfully!", {
 					position: "bottom-right",
@@ -152,20 +170,20 @@ export const Home = () => {
 					progress: undefined,
 					theme: "light",
 				});
-
+	
 				// Update polls state with new vote count and mark as voted
 				setPolls((prevPolls) =>
 					prevPolls.map((poll) =>
 						poll._id === pollId
 							? {
-									...poll,
-									hasVoted: true,
-									votes: response.data.updatedPoll.votes,
+								  ...poll,
+								  hasVoted: true,
+								  votes: response.data.updatedPoll.votes,
 							  }
 							: poll
 					)
 				);
-
+	
 				// Update voted polls in localStorage and state
 				const updatedVotedPolls = [...userVotedPolls, pollId];
 				setUserVotedPolls(updatedVotedPolls);
@@ -175,10 +193,20 @@ export const Home = () => {
 				);
 			}
 		} catch (err) {
+			// Handle any errors that occur during the vote submission process.
 			console.error("Failed to submit vote:", err);
-			alert("Failed to submit vote. Please try again.");
+			toast.error("Failed to submit vote. Please try again.", {
+				position: "bottom-right",
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
 		}
-	};
+	};	
 
 	// Check if a post is saved
 	const isPostSaved = (postType, postId) => {
