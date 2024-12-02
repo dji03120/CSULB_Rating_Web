@@ -15,10 +15,9 @@ export const Home = () => {
 	const [finalSearchQuery, setFinalSearchQuery] = useState(""); // State for final search query that will be submitted
 	const [savedPosts, setSavedPosts] = useState([]);
 	const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
-
 	const [shareOptions, setShareOptions] = useState(null); // Track the post for which share options are open
-
 	const [activeTab, setActiveTab] = useState("ratings"); // State to track active tab
+	const [votedPosts, setVotedPosts] = useState({});
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -60,6 +59,19 @@ export const Home = () => {
 			}
 		};
 
+		const fetchVoteStates = async () => {
+			try {
+				const userID = localStorage.getItem("userId");
+				const response = await axios.get(
+					`http://localhost:5000/auth/votes?userID=${userID}`
+				);
+				setVotedPosts(response.data.votes);
+			} catch (err) {
+				console.error("Failed to fetch vote states:", err);
+			}
+		};
+
+		fetchVoteStates();
 		fetchData();
 	}, []);
 
@@ -157,7 +169,7 @@ export const Home = () => {
 				post.postId && // Ensure postId is not null
 				post.postId._id === postId.toString()
 		);
-		console.log(`Checking (${postType}, ${postId}):`, result);
+		// console.log(`Checking (${postType}, ${postId}):`, result);
 		return result;
 	};
 
@@ -253,6 +265,63 @@ export const Home = () => {
 		});
 	};
 
+	const handleVote = async (postId, postType, voteType) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const currentVote = votedPosts[postId];
+
+			// Determine new vote state
+			let newVoteType = null;
+			if (currentVote === voteType) {
+				// Clicking same button again removes vote
+				newVoteType = null;
+			} else {
+				// Set new vote type
+				newVoteType = voteType;
+			}
+
+			const response = await axios.put(
+				`http://localhost:5000/auth/vote`,
+				{
+					postId,
+					postType,
+					voteType: newVoteType,
+					userID,
+				}
+			);
+
+			if (response.status === 200) {
+				// Update local vote state
+				setVotedPosts((prev) => ({
+					...prev,
+					[postId]: newVoteType,
+				}));
+
+				// Update posts with new vote counts
+				if (postType === "rating") {
+					setRatings((prev) =>
+						prev.map((rating) =>
+							rating._id === postId
+								? response.data.updatedPost
+								: rating
+						)
+					);
+				} else {
+					setPolls((prev) =>
+						prev.map((poll) =>
+							poll._id === postId
+								? response.data.updatedPost
+								: poll
+						)
+					);
+				}
+			}
+		} catch (err) {
+			console.error("Failed to vote:", err);
+			toast.error("Failed to vote. Please try again.");
+		}
+	};
+
 	return (
 		<div className="home-container">
 			<div className="search-bar-container">
@@ -308,15 +377,41 @@ export const Home = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/grayed-up-arrow.png"
+											src={`src/assets/${
+												votedPosts[rating._id] === "up"
+													? "up-arrow.png"
+													: "grayed-up-arrow.png"
+											}`}
 											alt="upvote"
-											style={{ transform: "rotate(100)" }}
+											onClick={() =>
+												handleVote(
+													rating._id,
+													"rating",
+													"up"
+												)
+											}
+											style={{
+												transform: "rotate(100)",
+												cursor: "pointer",
+											}}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/grayed-down-arrow.png"
+											src={`src/assets/${
+												votedPosts[rating._id] ===
+												"down"
+													? "down-arrow.png"
+													: "grayed-down-arrow.png"
+											}`}
 											alt="downvote"
-											style={{}}
+											onClick={() =>
+												handleVote(
+													rating._id,
+													"rating",
+													"down"
+												)
+											}
+											style={{ cursor: "pointer" }}
 										/>
 									</div>
 									<div className="post-title">
@@ -406,18 +501,44 @@ export const Home = () => {
 						{filteredPolls.map((poll) => (
 							<div key={poll._id} className="poll-card">
 								<div className="poll-header">
-									<div className="poll-votes">
+									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/grayed-up-arrow.png"
+											src={`src/assets/${
+												votedPosts[poll._id] === "up"
+													? "up-arrow.png"
+													: "grayed-up-arrow.png"
+											}`}
 											alt="upvote"
-											style={{ transform: "rotate(100)" }}
+											onClick={() =>
+												handleVote(
+													poll._id,
+													"poll",
+													"up"
+												)
+											}
+											style={{
+												transform: "rotate(100)",
+												cursor: "pointer",
+											}}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/grayed-down-arrow.png"
+											src={`src/assets/${
+												votedPosts[poll._id] ===
+												"down"
+													? "down-arrow.png"
+													: "grayed-down-arrow.png"
+											}`}
 											alt="downvote"
-											style={{}}
+											onClick={() =>
+												handleVote(
+													poll._id,
+													"poll",
+													"down"
+												)
+											}
+											style={{ cursor: "pointer" }}
 										/>
 									</div>
 									<div className="poll-right">

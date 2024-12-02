@@ -12,6 +12,7 @@ const Bookmarks = () => {
 	const [savedPolls, setSavedPolls] = useState([]);
 	const [activeTab, setActiveTab] = useState("rating"); // State to track active tab
 	const [userVotedPolls, setUserVotedPolls] = useState([]); // Track polls user has voted in
+	const [votedPosts, setVotedPosts] = useState({});
 
 	useEffect(() => {
 		const fetchBookmarks = async () => {
@@ -56,6 +57,19 @@ const Bookmarks = () => {
 			}
 		};
 
+		const fetchVoteStates = async () => {
+			try {
+				const userID = localStorage.getItem("userId");
+				const response = await axios.get(
+					`http://localhost:5000/auth/votes?userID=${userID}`
+				);
+				setVotedPosts(response.data.votes);
+			} catch (err) {
+				console.error("Failed to fetch vote states:", err);
+			}
+		};
+
+		fetchVoteStates();
 		fetchBookmarks();
 	}, []);
 
@@ -158,6 +172,63 @@ const Bookmarks = () => {
 			});
 	};
 
+	const handleVote = async (postId, postType, voteType) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const currentVote = votedPosts[postId];
+
+			// Determine new vote state
+			let newVoteType = null;
+			if (currentVote === voteType) {
+				// Clicking same button again removes vote
+				newVoteType = null;
+			} else {
+				// Set new vote type
+				newVoteType = voteType;
+			}
+
+			const response = await axios.put(
+				`http://localhost:5000/auth/vote`,
+				{
+					postId,
+					postType,
+					voteType: newVoteType,
+					userID,
+				}
+			);
+
+			if (response.status === 200) {
+				// Update local vote state
+				setVotedPosts((prev) => ({
+					...prev,
+					[postId]: newVoteType,
+				}));
+
+				// Update posts with new vote counts
+				if (postType === "rating") {
+					setSavedPosts((prev) =>
+						prev.map((rating) =>
+							rating._id === postId
+								? response.data.updatedPost
+								: rating
+						)
+					);
+				} else {
+					setPolls((prev) =>
+						prev.map((poll) =>
+							poll._id === postId
+								? response.data.updatedPost
+								: poll
+						)
+					);
+				}
+			}
+		} catch (err) {
+			console.error("Failed to vote:", err);
+			toast.error("Failed to vote. Please try again.");
+		}
+	};
+
 	// Returns the user's saved posts based on active tab
 	const renderSavedPosts = () => {
 		const filteredPosts = savedPosts.filter(
@@ -181,14 +252,41 @@ const Bookmarks = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/grayed-up-arrow.png"
+											src={`src/assets/${
+												votedPosts[postId._id] === "up"
+													? "up-arrow.png"
+													: "grayed-up-arrow.png"
+											}`}
 											alt="upvote"
-											style={{ transform: "rotate(100)" }}
+											onClick={() =>
+												handleVote(
+													postId._id,
+													"rating",
+													"up"
+												)
+											}
+											style={{
+												transform: "rotate(100)",
+												cursor: "pointer",
+											}}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/grayed-down-arrow.png"
+											src={`src/assets/${
+												votedPosts[postId._id] ===
+												"down"
+													? "down-arrow.png"
+													: "grayed-down-arrow.png"
+											}`}
 											alt="downvote"
+											onClick={() =>
+												handleVote(
+													postId._id,
+													"rating",
+													"down"
+												)
+											}
+											style={{ cursor: "pointer" }}
 										/>
 									</div>
 									<div className="post-title">
@@ -266,17 +364,44 @@ const Bookmarks = () => {
 						{postType === "poll" && (
 							<div className="saved-poll-card">
 								<div className="poll-header">
-									<div className="poll-votes">
+									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src="src/assets/grayed-up-arrow.png"
+											src={`src/assets/${
+												votedPosts[postId._id] === "up"
+													? "up-arrow.png"
+													: "grayed-up-arrow.png"
+											}`}
 											alt="upvote"
-											style={{ transform: "rotate(100)" }}
+											onClick={() =>
+												handleVote(
+													postId._id,
+													"poll",
+													"up"
+												)
+											}
+											style={{
+												transform: "rotate(100)",
+												cursor: "pointer",
+											}}
 										/>
 										<img
 											id="downvote-arrow"
-											src="src/assets/grayed-down-arrow.png"
+											src={`src/assets/${
+												votedPosts[postId._id] ===
+												"down"
+													? "down-arrow.png"
+													: "grayed-down-arrow.png"
+											}`}
 											alt="downvote"
+											onClick={() =>
+												handleVote(
+													postId._id,
+													"poll",
+													"down"
+												)
+											}
+											style={{ cursor: "pointer" }}
 										/>
 									</div>
 									<div className="poll-right">

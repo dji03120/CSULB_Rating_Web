@@ -65,7 +65,7 @@ router.put("/savePost", async (req, res) => {
             return res.status(400).json({ error: "Post already saved" });
         }
 
-        user.savedPosts.push({ postType, postId});
+        user.savedPosts.push({ postType, postId });
         await user.save();
 
         res.json({ message: "Post saved successfully", savedPosts: user.savedPosts });
@@ -129,6 +129,73 @@ router.get("/savedPosts", async (req, res) => {
 
         res.json({ savedPosts });
     } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get user's votes
+router.get("/votes", async (req, res) => {
+    try {
+        const { userID } = req.query;
+        const user = await UserModel.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json({ votes: user.votes || {} });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Handle votes
+router.put("/vote", async (req, res) => {
+    try {
+        const { postId, postType, voteType, userID } = req.body;
+
+        const user = await UserModel.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Initialize votes Map if it doesn't exist
+        if (!user.votes) {
+            user.votes = new Map();
+        }
+
+        const Model = postType === 'rating' ? RatingModel : PollModel;
+        const post = await Model.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Get current vote
+        const currentVote = user.votes.get(postId);
+
+        // Remove old vote if exists
+        if (currentVote) {
+            post[currentVote + 'votes']--;
+        }
+
+        // Add new vote if not removing
+        if (voteType) {
+            post[voteType + 'votes']++;
+            user.votes.set(postId, voteType);
+        } else {
+            // Remove vote
+            user.votes.delete(postId);
+        }
+
+        await post.save();
+        await user.save();
+
+        res.json({
+            message: "Vote updated",
+            updatedPost: post,
+            votes: Object.fromEntries(user.votes)
+        });
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ message: err.message });
     }
 });

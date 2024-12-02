@@ -12,6 +12,7 @@ const PollPost = () => {
 	const [loading, setLoading] = useState(true);
 	const [isSaved, setIsSaved] = useState(false);
 	const { id } = useParams();
+	const [votedPosts, setVotedPosts] = useState({});
 
 	// Handler for voting on a poll option
 	const handleVoteClick = async (pollId, optionIndex) => {
@@ -59,15 +60,39 @@ const PollPost = () => {
 				const response = await axios.get(
 					`http://localhost:5000/auth/savedPosts?userID=${userID}`
 				);
-				const saved = response.data.savedPosts.some(
-					(post) => post.postType === "poll" && post.postId._id === id
-				);
+				// Add null checks for savedPosts and postId
+				const saved =
+					response.data.savedPosts?.some(
+						(post) =>
+							post.postType === "poll" &&
+							post.postId &&
+							post.postId._id === id
+					) || false;
 				setIsSaved(saved);
 			} catch (err) {
 				console.error("Error checking saved status:", err);
+				setIsSaved(false); // Set default state on error
 			}
 		};
-		checkIfSaved();
+
+		const fetchVoteStates = async () => {
+			try {
+				const userID = localStorage.getItem("userId");
+				const response = await axios.get(
+					`http://localhost:5000/auth/votes?userID=${userID}`
+				);
+				setVotedPosts(response.data.votes || {});
+			} catch (err) {
+				console.error("Failed to fetch vote states:", err);
+				setVotedPosts({}); // Set default state on error
+			}
+		};
+
+		if (localStorage.getItem("userId")) {
+			// Only fetch if user is logged in
+			fetchVoteStates();
+			checkIfSaved();
+		}
 	}, [id]);
 
 	const handleSaveClick = async () => {
@@ -153,28 +178,80 @@ const PollPost = () => {
 	if (loading) return <div>Loading...</div>;
 	if (!poll) return <div>Poll not found</div>;
 
+	const handleVote = async (postId, postType, voteType) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const currentVote = votedPosts[postId];
+
+			// Determine new vote state
+			let newVoteType = null;
+			if (currentVote === voteType) {
+				newVoteType = null;
+			} else {
+				newVoteType = voteType;
+			}
+
+			const response = await axios.put(
+				`http://localhost:5000/auth/vote`,
+				{
+					postId,
+					postType,
+					voteType: newVoteType,
+					userID,
+				}
+			);
+
+			if (response.status === 200) {
+				setVotedPosts((prev) => ({
+					...prev,
+					[postId]: newVoteType,
+				}));
+
+				// Update post data
+				if (postType === "rating") {
+					setRating(response.data.updatedPost);
+				} else {
+					setPoll(response.data.updatedPost);
+				}
+			}
+		} catch (err) {
+			console.error("Failed to vote:", err);
+			toast.error("Failed to vote. Please try again.");
+		}
+	};
+
 	return (
 		<div className="poll-post-container">
 			<div className="poll-card">
 				<div className="poll-header">
-					<div className="poll-votes">
+					<div className="post-votes">
 						<img
 							id="upvote-arrow"
-							src="/src/assets/grayed-up-arrow.png"
+							src={`/src/assets/${
+								votedPosts[id] === "up"
+									? "up-arrow.png"
+									: "grayed-up-arrow.png"
+							}`}
 							alt="upvote"
-							style={{ transform: "rotate(100)" }}
+							onClick={() => handleVote(id, "poll", "up")}
+							style={{
+								transform: "rotate(100)",
+								cursor: "pointer",
+							}}
 						/>
 						<img
 							id="downvote-arrow"
-							src="/src/assets/grayed-down-arrow.png"
+							src={`/src/assets/${
+								votedPosts[id] === "down"
+									? "down-arrow.png"
+									: "grayed-down-arrow.png"
+							}`}
 							alt="downvote"
+							onClick={() => handleVote(id, "poll", "down")}
+							style={{ cursor: "pointer" }}
 						/>
 					</div>
-					<div className="poll-right">
-						{/* Voted Badge */}
-						{poll.hasVoted && (
-							<span className="voted-badge">Voted</span>
-						)}
+					<div className="post-right">
 						<ExternalLink
 							onClick={copyToClipboard}
 							className="share-icon"
@@ -200,19 +277,34 @@ const PollPost = () => {
 					<p className="poll-instruction">Select one option:</p>
 					<div className="poll-options">
 						{poll.options.map((option, index) => {
-							const totalVotes = poll.votes.reduce((a, b) => a + b, 0); // Calculate total votes
+							const totalVotes = poll.votes.reduce(
+								(a, b) => a + b,
+								0
+							); // Calculate total votes
 							const optionVotes = poll.votes[index]; // Get votes for the option
-							const percentage = totalVotes > 0 ? ((optionVotes / totalVotes) * 100).toFixed(1) : "0.0"; // Calculate percentage
+							const percentage =
+								totalVotes > 0
+									? (
+											(optionVotes / totalVotes) *
+											100
+									  ).toFixed(1)
+									: "0.0"; // Calculate percentage
 
 							const now = new Date(); // Current time
 							const isPollEnded = new Date(poll.endDate) < now; // check if poll is ended
 
 							return (
-								<div key={index} className="poll-option-container">
+								<div
+									key={index}
+									className="poll-option-container"
+								>
 									{/* Option Button */}
 									<button
 										disabled={poll.hasVoted || isPollEnded} // disabled when it is voted or has ended
-										onClick={() => handleVoteClick(poll._id, index)}>
+										onClick={() =>
+											handleVoteClick(poll._id, index)
+										}
+									>
 										{option}
 									</button>
 
@@ -221,7 +313,10 @@ const PollPost = () => {
 										<div
 											className="poll-bar"
 											style={{
-												width: `${Math.max(percentage, 1)}%`,
+												width: `${Math.max(
+													percentage,
+													1
+												)}%`,
 												background: `linear-gradient(45deg, rgba(253, 18, 111, 0.2), rgba(255, 221, 0, 0.264), rgba(5, 209, 245, 0.2))`,
 												height: "10px",
 												marginTop: "5px",

@@ -12,6 +12,7 @@ const RatingPost = () => {
 	const [loading, setLoading] = useState(true);
 	const [isSaved, setIsSaved] = useState(false);
 	const { id } = useParams();
+	const [votedPosts, setVotedPosts] = useState({});
 
 	useEffect(() => {
 		const checkIfSaved = async () => {
@@ -29,6 +30,20 @@ const RatingPost = () => {
 				console.error("Error checking saved status:", err);
 			}
 		};
+
+		const fetchVoteStates = async () => {
+			try {
+				const userID = localStorage.getItem("userId");
+				const response = await axios.get(
+					`http://localhost:5000/auth/votes?userID=${userID}`
+				);
+				setVotedPosts(response.data.votes);
+			} catch (err) {
+				console.error("Failed to fetch vote states:", err);
+			}
+		};
+
+		fetchVoteStates();
 		checkIfSaved();
 	}, [id]);
 
@@ -115,6 +130,48 @@ const RatingPost = () => {
 	if (loading) return <div>Loading...</div>;
 	if (!rating) return <div>Rating not found</div>;
 
+	const handleVote = async (postId, postType, voteType) => {
+		try {
+			const userID = localStorage.getItem("userId");
+			const currentVote = votedPosts[postId];
+
+			// Determine new vote state
+			let newVoteType = null;
+			if (currentVote === voteType) {
+				newVoteType = null;
+			} else {
+				newVoteType = voteType;
+			}
+
+			const response = await axios.put(
+				`http://localhost:5000/auth/vote`,
+				{
+					postId,
+					postType,
+					voteType: newVoteType,
+					userID,
+				}
+			);
+
+			if (response.status === 200) {
+				setVotedPosts((prev) => ({
+					...prev,
+					[postId]: newVoteType,
+				}));
+
+				// Update post data
+				if (postType === "rating") {
+					setRating(response.data.updatedPost);
+				} else {
+					setPoll(response.data.updatedPost);
+				}
+			}
+		} catch (err) {
+			console.error("Failed to vote:", err);
+			toast.error("Failed to vote. Please try again.");
+		}
+	};
+
 	return (
 		<div className="rating-post-container">
 			<div className="post-card">
@@ -122,14 +179,28 @@ const RatingPost = () => {
 					<div className="post-votes">
 						<img
 							id="upvote-arrow"
-							src="/src/assets/grayed-up-arrow.png"
+							src={`/src/assets/${
+								votedPosts[id] === "up"
+									? "up-arrow.png"
+									: "grayed-up-arrow.png"
+							}`}
 							alt="upvote"
-							style={{ transform: "rotate(100)" }}
+							onClick={() => handleVote(id, "rating", "up")}
+							style={{
+								transform: "rotate(100)",
+								cursor: "pointer",
+							}}
 						/>
 						<img
 							id="downvote-arrow"
-							src="/src/assets/grayed-down-arrow.png"
+							src={`/src/assets/${
+								votedPosts[id] === "down"
+									? "down-arrow.png"
+									: "grayed-down-arrow.png"
+							}`}
 							alt="downvote"
+							onClick={() => handleVote(id, "rating", "down")}
+							style={{ cursor: "pointer" }}
 						/>
 					</div>
 					<div className="post-title">
