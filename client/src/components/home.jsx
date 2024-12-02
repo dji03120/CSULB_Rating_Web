@@ -18,6 +18,7 @@ export const Home = () => {
 	const [shareOptions, setShareOptions] = useState(null); // Track the post for which share options are open
 	const [activeTab, setActiveTab] = useState("ratings"); // State to track active tab
 	const [votedPosts, setVotedPosts] = useState({});
+	const [hideLowRatedPosts, setHideLowRatedPosts] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -241,14 +242,36 @@ export const Home = () => {
 	};
 
 	// Filters the ratings based on words in its name
-	const filteredRatings = ratings.filter((rating) =>
-		rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
-	);
+	// const filteredRatings = ratings.filter((rating) =>
+	// 	rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	// );
+
+	const filteredRatings = ratings
+		.filter((rating) =>
+			rating.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
+		)
+		.filter((rating) => {
+			if (hideLowRatedPosts) {
+				return rating.downvotes < 3;
+			}
+			return true;
+		});
 
 	// Filters the polls based on words in its question
-	const filteredPolls = polls.filter((poll) =>
-		poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
-	);
+	// const filteredPolls = polls.filter((poll) =>
+	// 	poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
+	// );
+
+	const filteredPolls = polls
+		.filter((poll) =>
+			poll.question.toLowerCase().includes(finalSearchQuery.toLowerCase())
+		)
+		.filter((poll) => {
+			if (hideLowRatedPosts) {
+				return poll.downvotes < 3;
+			}
+			return true;
+		});
 
 	// If the user presses "Enter", the search will go through
 	const handleKeyDown = (e) => {
@@ -394,12 +417,32 @@ export const Home = () => {
 						Polls
 					</button>
 				</div>
+				<div className="toggle-switch">
+					<input
+						type="checkbox"
+						id="filter-toggle"
+						checked={hideLowRatedPosts}
+						onChange={() =>
+							setHideLowRatedPosts(!hideLowRatedPosts)
+						}
+					/>
+					<label htmlFor="filter-toggle"></label>
+					<span>
+						{hideLowRatedPosts
+							? "Hide Posts with ≥3 Downvotes"
+							: "Show All Posts"}
+					</span>
+				</div>
 
 				{/* Ratings Tab */}
 				{activeTab === "ratings" && (
 					<div className="ratings-tab">
 						{filteredRatings.map((rating) => (
 							<div key={rating._id} className="post-card">
+								{/* <div className="vote-counts">
+									<span>Upvotes: {rating.upvotes}</span>
+									<span>Downvotes: {rating.downvotes}</span>
+								</div> */}
 								<div className="post-header">
 									<div className="post-votes">
 										<img
@@ -527,6 +570,10 @@ export const Home = () => {
 					<div className="polls-tab">
 						{filteredPolls.map((poll) => (
 							<div key={poll._id} className="poll-card">
+								{/* <div className="vote-counts">
+									<span>Upvotes: {poll.upvotes}</span>
+									<span>Downvotes: {poll.downvotes}</span>
+								</div> */}
 								<div className="poll-header">
 									<div className="post-votes">
 										<img

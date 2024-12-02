@@ -31,6 +31,8 @@ const PollSchema = new mongoose.Schema({
         type: Date,
         required: true, // Poll must have an end date
     },
+    upvotes: { type: Number, default: 0 },
+    downvotes: { type: Number, default: 0 },
 });
 
 export const PollModel = mongoose.model('polls', PollSchema);
