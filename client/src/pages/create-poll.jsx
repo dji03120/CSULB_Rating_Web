@@ -19,41 +19,41 @@ const CreatePoll = () => {
 		e.preventDefault();
 		setError(null); // Reset error message
 		setSuccess(false); // Reset success message
-
+	
 		// Validation
 		if (!pollQuestion.trim()) {
 			setError("Please provide a valid question."); // Return error if the question is empty
 			return;
 		}
-
+	
 		if (options.some((option) => !option.trim())) {
 			setError("Options cannot be empty."); // Return error if any option is empty
 			return;
 		}
-
+	
 		if (new Set(options).size !== options.length) {
 			setError("Options cannot be duplicate."); // Return error if options are duplicate
 			return;
 		}
-
+	
 		if (!endDate) {
 			setError("Please select a valid end date."); // Return error if end date is not selected
 			return;
 		}
-
+	
 		// Date comparison: Remove time information and compare only the date
 		const selectedDate = new Date(endDate);
 		const today = new Date();
 		selectedDate.setHours(0, 0, 0, 0); // Reset time for the selected date
 		today.setHours(0, 0, 0, 0); // Reset time for today's date
-
+	
 		if (selectedDate < today) {
 			setError("End date cannot be in the past."); // Return error if the end date is in the past
 			return;
 		}
-
+	
 		const userID = localStorage.getItem("userId");
-
+	
 		try {
 			setIsLoading(true); // Activate loading state
 			const response = await axios.post("http://localhost:5000/polls", {
@@ -62,13 +62,13 @@ const CreatePoll = () => {
 				createdBy: userID,
 				endDate: selectedDate.toISOString(), // Convert date to UTC
 			});
-
+	
 			if (response.status === 200) {
 				setSuccess(true); // Show success message
 				setPollQuestion(""); // Reset question
 				setOptions(["", ""]); // Reset options
 				setEndDate(""); // Reset end date
-
+	
 				// Redirect to the home page after 2 seconds
 				setTimeout(() => navigate("/"), 2000);
 			}

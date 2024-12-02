@@ -51,12 +51,22 @@ router.post("/", async (req, res) => {
         return res.status(400).json({ error: "Invalid end date. Ensure it is a valid date format." });
     }
 
+    const selectedDate = new Date(endDate);
+    selectedDate.setHours(23, 59, 59, 999); // UTC 기준 하루 끝으로 설정
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // UTC 기준 오늘의 시작
+
+    if (selectedDate < today) {
+        return res.status(400).json({ error: "End date cannot be in the past." });
+    }
+
     try {
         // Initialize an array of votes with zeros for each option
         const votes = Array(options.length).fill(0);
 
         // Create a new poll document
-        const newPoll = new PollModel({ question, options, endDate: new Date(endDate), votes, createdBy });
+        const newPoll = new PollModel({ question, options, endDate: selectedDate, votes, createdBy });
         const savedPoll = await newPoll.save(); // Save the poll to the database
 
         res.status(200).json(savedPoll);
@@ -64,6 +74,7 @@ router.post("/", async (req, res) => {
         res.status(500).json({ error: "Failed to create poll. Please try again later." });
     }
 });
+
 
 // Route to add a vote to a poll
 router.put("/vote", async (req, res) => {
@@ -78,6 +89,12 @@ router.put("/vote", async (req, res) => {
 
         if (!poll) {
             return res.status(404).json({ error: "Poll not found." });
+        }
+
+        // Check if poll has expired
+        const now = new Date();
+        if (now > new Date(poll.endDate)) {
+            return res.status(403).json({ error: "This poll has already ended." });
         }
 
         // Check if user has already voted
