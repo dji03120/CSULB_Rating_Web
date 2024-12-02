@@ -4,6 +4,7 @@ import filledStar from "../assets/star.png"; // Path to star image
 import emptyStar from "../assets/grayed-star.png"; // Path to empty star image
 import rightArrow from "../assets/right-arrow.png"; // Path to right arrow image
 import "./CreateRating.css";
+import { useNavigate } from "react-router-dom";
 
 // Component to create a rating
 const CreateRating = () => {
@@ -19,6 +20,7 @@ const CreateRating = () => {
 		rating: false,
 		reviewText: false,
 	});
+	const navigate = useNavigate(); // Hook for page navigation
 
 	// Handles submission of the rating
 	const handleSubmit = async (e) => {
@@ -61,18 +63,18 @@ const CreateRating = () => {
 			);
 
 			if (response.status === 200) {
-				setPopupMessage("Rating submitted successfully!");
+				setPopupMessage("Rating submitted successfully! Redirecting...");
 				setPopupType("success");
 				setName("");
 				setRating(0);
 				setReviewText("");
 				setImage(null);
 				setImageUrl("");
+				// Redirect to the home page after 2 seconds
+				setTimeout(() => navigate("/"), 2000);
 			}
 			setTouched({ name: false, rating: false, reviewText: false });
 		} catch (err) {
-			// setPopupMessage("Please fill out all required fields.");
-			// setPopupType("error");
 			setPopupMessage("An error occurred while submitting.");
 			setPopupType("error");
 		}

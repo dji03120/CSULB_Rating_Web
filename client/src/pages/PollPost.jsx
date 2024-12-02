@@ -264,7 +264,7 @@ const PollPost = () => {
 						<ExternalLink
 							onClick={copyToClipboard}
 							className="share-icon"
-							size={25}
+							size={40}
 							style={{ cursor: "pointer", color: "pink" }}
 						/>
 						<img

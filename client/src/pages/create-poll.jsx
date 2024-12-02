@@ -9,35 +9,42 @@ const CreatePoll = () => {
 	const [pollQuestion, setPollQuestion] = useState(""); // State for poll question
 	const [options, setOptions] = useState(["", ""]); // State for poll options
 	const [endDate, setEndDate] = useState(""); // State for poll end date
-	const [error, setError] = useState(null); // State for error message
-	const [success, setSuccess] = useState(false); // State for success message
 	const [isLoading, setIsLoading] = useState(false); // State for loading status
+	const [popupMessage, setPopupMessage] = useState(null); // For popup message of submission status
+	const [popupType, setPopupType] = useState(""); // 'success' or 'error'
 	const navigate = useNavigate(); // Hook for page navigation
 
 	// Handler for submitting the poll creation request
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setError(null); // Reset error message
-		setSuccess(false); // Reset success message
+		setPopupMessage(null);
 	
 		// Validation
 		if (!pollQuestion.trim()) {
-			setError("Please provide a valid question."); // Return error if the question is empty
+			setPopupMessage("Please provide a valid question."); // Return error if the question is empty
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
 			return;
 		}
 	
 		if (options.some((option) => !option.trim())) {
-			setError("Options cannot be empty."); // Return error if any option is empty
+			setPopupMessage("Options cannot be empty."); // Return error if any option is empty
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
 			return;
 		}
 	
 		if (new Set(options).size !== options.length) {
-			setError("Options cannot be duplicate."); // Return error if options are duplicate
+			setPopupMessage("Options cannot be duplicate."); // Return error if options are duplicate
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
 			return;
 		}
 	
 		if (!endDate) {
-			setError("Please select a valid end date."); // Return error if end date is not selected
+			setPopupMessage("Please select a valid end date."); // Return error if end date is not selected
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
 			return;
 		}
 	
@@ -48,7 +55,9 @@ const CreatePoll = () => {
 		today.setHours(0, 0, 0, 0); // Reset time for today's date
 	
 		if (selectedDate < today) {
-			setError("End date cannot be in the past."); // Return error if the end date is in the past
+			setPopupMessage("End date cannot be in the past."); // Return error if the end date is in the past
+			setPopupType("error");
+			setTimeout(() => setPopupMessage(null), 3000);
 			return;
 		}
 	
@@ -66,26 +75,31 @@ const CreatePoll = () => {
 			});
 	
 			if (response.status === 200) {
-				setSuccess(true); // Show success message
+				setPopupMessage("Poll submitted successfully! Redirecting...");
+				setPopupType("success");
 				setPollQuestion(""); // Reset question
 				setOptions(["", ""]); // Reset options
 				setEndDate(""); // Reset end date
-	
 				// Redirect to the home page after 2 seconds
 				setTimeout(() => navigate("/"), 2000);
 			}
 		} catch (err) {
 			console.error(err); // Log error
-			setError("An error occurred while submitting your poll."); // Display error message
+			setPopupMessage("An error occurred while submitting your poll."); // Display error message
+			setPopupType("error");
 		} finally {
 			setIsLoading(false); // Deactivate loading state
 		}
+
+		// Popup disappears after 3 seconds
+		setTimeout(() => setPopupMessage(null), 3000);
 	};
 
 	// Handler for adding a new option
 	const addOption = () => {
 		if (options.length >= 10) {
-			setError("You cannot add more than 10 options."); // Limit the number of options
+			setPopUpMessage("You cannot add more than 10 options."); // Limit the number of options
+			setPopupType("error");
 			return;
 		}
 		setOptions([...options, ""]); // Add a new empty option
@@ -105,6 +119,12 @@ const CreatePoll = () => {
 
 	return (
 		<div className="create-poll-wrapper">
+			{/* Popup Message of success status*/}
+			{popupMessage && (
+				<div className={`popup-message ${popupType}`}>
+					{popupMessage}
+				</div>
+			)}
 			<h1 className="page-title">Create a New Poll</h1>
 			<div className="create-poll-container">
 				<form onSubmit={handleSubmit} className="create-poll-form">
@@ -173,21 +193,6 @@ const CreatePoll = () => {
 							+
 						</button>
 					</div>
-					{/* Messages */}
-					{error && <p className="error-message">{error}</p>}{" "}
-					{/* Error message */}
-					{success && (
-						<p className="success-message">
-							Poll created successfully! Redirecting...
-						</p>
-					)}{" "}
-					{/* Success message */}
-					{isLoading && (
-						<p className="loading-message">
-							Submitting your poll...
-						</p>
-					)}{" "}
-					{/* Loading message */}
 					{/* Submit Button (Arrow) */}
 					<img
 						src={rightArrow}

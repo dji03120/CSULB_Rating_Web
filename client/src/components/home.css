@@ -516,7 +516,8 @@
 }
 
 .share-icon:hover {
-	color: #646cff;
+	transform: scale(1.05);
+	transition: ease-in-out 0.1s;
 }
 
 .filter-button {

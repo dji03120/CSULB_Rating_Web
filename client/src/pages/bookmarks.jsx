@@ -331,7 +331,7 @@ const Bookmarks = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",
@@ -449,7 +449,7 @@ const Bookmarks = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",

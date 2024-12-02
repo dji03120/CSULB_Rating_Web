@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ExternalLink } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./MyPosts.css";
@@ -417,7 +418,7 @@ const MyPosts = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",
@@ -441,13 +442,15 @@ const MyPosts = () => {
 												)
 											}
 										/>
-										<button
-											onClick={() =>
-												deleteRating(rating._id)
-											}
-										>
-											Delete
-										</button>
+										<Trash2
+											onClick={() => deleteRating(rating._id)}
+											className="delete-icon"
+											size={40}
+											style={{
+												cursor: "pointer",
+												color: "pink",
+											}}
+										/>
 									</div>
 								</div>
 								<div className="post-content">
@@ -553,7 +556,7 @@ const MyPosts = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",
@@ -574,11 +577,15 @@ const MyPosts = () => {
 												)
 											}
 										/>
-										<button
+										<Trash2
 											onClick={() => deletePoll(poll._id)}
-										>
-											Delete
-										</button>
+											className="delete-icon"
+											size={40}
+											style={{
+												cursor: "pointer",
+												color: "pink",
+											}}
+										/>
 									</div>
 								</div>
 								<div className="poll-content">

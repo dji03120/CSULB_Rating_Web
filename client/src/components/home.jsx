@@ -524,7 +524,7 @@ export const Home = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",
@@ -657,7 +657,7 @@ export const Home = () => {
 												)
 											}
 											className="share-icon"
-											size={25}
+											size={40}
 											style={{
 												cursor: "pointer",
 												color: "pink",
