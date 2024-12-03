@@ -97,13 +97,9 @@ const CreatePoll = () => {
 
 	// Handler for adding a new option
 	const addOption = () => {
-		if (options.length >= 10) {
-			setPopUpMessage("You cannot add more than 10 options."); // Limit the number of options
-			setPopupType("error");
-			return;
-		}
-		setOptions([...options, ""]); // Add a new empty option
+    setOptions([...options, ""]); // Add a new empty option
 	};
+
 
 	// Handler for removing an option
 	const removeOption = (index) => {
