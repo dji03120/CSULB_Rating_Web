@@ -456,22 +456,24 @@ export const Home = () => {
 						Polls
 					</button>
 				</div>
-				<div className="toggle-switch">
-					<input
-						type="checkbox"
-						id="filter-toggle"
-						checked={hideLowRatedPosts}
-						onChange={() =>
-							setHideLowRatedPosts(!hideLowRatedPosts)
-						}
-					/>
-					<label htmlFor="filter-toggle"></label>
-					<span>
-						{hideLowRatedPosts
-							? "Show All Posts"
-							: "Hide Posts with ≥3 Downvotes"}
-					</span>
-				</div>
+				{!finalSearchQuery && (
+					<div className="toggle-switch">
+						<input
+							type="checkbox"
+							id="filter-toggle"
+							checked={hideLowRatedPosts}
+							onChange={() =>
+								setHideLowRatedPosts(!hideLowRatedPosts)
+							}
+						/>
+						<label htmlFor="filter-toggle"></label>
+						<span>
+							{hideLowRatedPosts
+								? "Show All Posts"
+								: "Hide Posts with ≥3 Downvotes"}
+						</span>
+					</div>
+				)}
 
 				{/* Ratings Tab */}
 				{activeTab === "ratings" && (
