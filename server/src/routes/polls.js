@@ -52,10 +52,11 @@ router.post("/", async (req, res) => {
     }
 
     const selectedDate = new Date(endDate);
-    selectedDate.setHours(23, 59, 59, 999); // UTC 기준 하루 끝으로 설정
+    selectedDate.setHours(23, 59, 59, 999); // Set end date to the end of the day in UTC
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // UTC 기준 오늘의 시작
+    today.setHours(0, 0, 0, 0); // Set today's date to the start of the day in UTC
+
 
     if (selectedDate < today) {
         return res.status(400).json({ error: "End date cannot be in the past." });
