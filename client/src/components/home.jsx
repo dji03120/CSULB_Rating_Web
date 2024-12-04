@@ -754,15 +754,13 @@ export const Home = () => {
 									{/* Poll Footer */}
 									<div className="poll-footer">
 										<p>
-											{poll.votes
-												? poll.votes.reduce(
-														(a, b) => a + b,
-														0
-												  )
-												: 0}{" "}
-											Votes - Poll ends{" "}
-											{formatPollDate(poll.endDate)}
+											{poll.votes.reduce((a, b) => a + b, 0)} Votes - Poll ends {formatPollDate(poll.endDate)}
 										</p>
+										{new Date(poll.endDate) < new Date() && (
+											<p style={{ color: "red", fontWeight: "bold", fontSize: "17px", marginTop: "4px" }}>
+												Poll has ended
+											</p>
+										)}
 									</div>
 								</div>
 							</div>
