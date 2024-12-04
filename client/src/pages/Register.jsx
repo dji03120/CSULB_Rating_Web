@@ -41,6 +41,7 @@ export const Register = () => {
 		// Check for valid studentID
 		if  (!validateStudentID(studentId)) {
 			alert("Please enter a valid student ID.") // Popup alert for invalid student ID
+			return;
 		}
 
 		try {
