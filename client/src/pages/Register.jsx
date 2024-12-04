@@ -19,7 +19,7 @@ export const Register = () => {
 	// Function to validate student ID
 	// Checks if studentID is a 9-digit number
 	const validateStudentID = (studentID) => {
-		return studentID.length == 9 && /^\d+$/.test(str);
+		return studentID.length == 9 && /^\d+$/.test(studentID);
 	};
 
 	// Handles form submission for registration
