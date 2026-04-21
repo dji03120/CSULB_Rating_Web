@@ -52,7 +52,7 @@ const CreateRating = () => {
 
 		try {
 			const response = await axios.post(
-				"http://https://csulb-api.onrender.com/ratings",
+				"https://csulb-api.onrender.com/ratings",
 				formData,
 				{
 					headers: { "Content-Type": "multipart/form-data" },

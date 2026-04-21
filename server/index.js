@@ -24,7 +24,10 @@ if (!fs.existsSync(uploadsPath)) {
 //Configuration of the real-time server using Render
 const app = express();
 app.use(cors({
-  origin: "https://csulb-rating-web.vercel.app",
+  origin: [
+    "http://localhost:5173",
+    "https://csulb-api.onrender.com"
+  ],
   credentials: true
 }));
 app.use(express.json());

@@ -66,7 +66,7 @@ const CreatePoll = () => {
 			setIsLoading(true); // Activate loading state
 			const selectedDate = new Date(endDate);
 			selectedDate.setHours(23, 59, 59, 999);
-			const response = await axios.post("http://https://csulb-api.onrender.com/polls", {
+			const response = await axios.post("https://csulb-api.onrender.com/polls", {
 				question: pollQuestion,
 				options,
 				createdBy: userID,

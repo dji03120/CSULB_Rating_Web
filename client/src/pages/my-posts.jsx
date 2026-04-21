@@ -25,7 +25,7 @@ const MyPosts = () => {
 			setLoading(true); // Sets loading to true before making the request
 			try {
 				const response = await axios.get(
-					"http://https://csulb-api.onrender.com/ratings/my-ratings",
+					"https://csulb-api.onrender.com/ratings/my-ratings",
 					{
 						params: { userID },
 					}
@@ -33,7 +33,7 @@ const MyPosts = () => {
 				setUserRatings(response.data); // Sets the user's ratings
 
 				const savedPostsResponse = await axios.get(
-					`http://https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
 				);
 				console.log(
 					"Fetched Saved Posts:",
@@ -53,7 +53,7 @@ const MyPosts = () => {
 			setLoading(true);
 			try {
 				const response = await axios.get(
-					"http://https://csulb-api.onrender.com/polls/my-polls",
+					"https://csulb-api.onrender.com/polls/my-polls",
 					{
 						params: { userID },
 					}
@@ -81,7 +81,7 @@ const MyPosts = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://https://csulb-api.onrender.com/auth/votes?userID=${userID}`
+					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -102,7 +102,7 @@ const MyPosts = () => {
 		}
 
 		try {
-			await axios.delete(`http://https://csulb-api.onrender.com/ratings/${id}`);
+			await axios.delete(`https://csulb-api.onrender.com/ratings/${id}`);
 			setUserRatings((prevRatings) =>
 				prevRatings.filter((rating) => rating._id !== id)
 			);
@@ -120,7 +120,7 @@ const MyPosts = () => {
 			return; // Exit if user cancels
 		}
 		try {
-			await axios.delete(`http://https://csulb-api.onrender.com/polls/${id}`);
+			await axios.delete(`https://csulb-api.onrender.com/polls/${id}`);
 			setUserPolls((prevPolls) =>
 				prevPolls.filter((poll) => poll._id !== id)
 			);
@@ -171,7 +171,7 @@ const MyPosts = () => {
 			if (isSaved) {
 				// Remove from saved posts
 				await axios.put(
-					`http://https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
+					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType,
 						postId,
@@ -190,7 +190,7 @@ const MyPosts = () => {
 			} else {
 				// Add to saved posts
 				const response = await axios.put(
-					`http://https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
+					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{ postType, postId }
 				);
 				if (response.status === 200) {
@@ -228,7 +228,7 @@ const MyPosts = () => {
 
 		try {
 			const response = await axios.put(
-				"http://https://csulb-api.onrender.com/polls/vote",
+				"https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -288,7 +288,7 @@ const MyPosts = () => {
 			}
 
 			const response = await axios.put(
-				`http://https://csulb-api.onrender.com/auth/vote`,
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,
@@ -457,7 +457,7 @@ const MyPosts = () => {
 									<div className="content-left">
 										{rating.imageUrl ? (
 											<img
-												src={`http://https://csulb-api.onrender.com${rating.imageUrl}`}
+												src={`https://csulb-api.onrender.com${rating.imageUrl}`}
 												alt={rating.name}
 											/>
 										) : (

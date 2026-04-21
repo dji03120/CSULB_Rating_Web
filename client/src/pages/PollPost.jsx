@@ -35,7 +35,7 @@ const PollPost = () => {
 
 		try {
 			const response = await axios.put(
-				"http://https://csulb-api.onrender.com/polls/vote",
+				"https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -75,7 +75,7 @@ const PollPost = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
 				);
 				// Add null checks for savedPosts and postId
 				const saved =
@@ -96,7 +96,7 @@ const PollPost = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://https://csulb-api.onrender.com/auth/votes?userID=${userID}`
+					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes || {});
 			} catch (err) {
@@ -118,7 +118,7 @@ const PollPost = () => {
 			if (isSaved) {
 				// Unsave post
 				await axios.put(
-					`http://https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
+					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType: "poll",
 						postId: id,
@@ -137,7 +137,7 @@ const PollPost = () => {
 			} else {
 				// Save post
 				await axios.put(
-					`http://https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
+					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{
 						postType: "poll",
 						postId: id,
@@ -180,7 +180,7 @@ const PollPost = () => {
 		const fetchPoll = async () => {
 			try {
 				const response = await axios.get(
-					`http://https://csulb-api.onrender.com/polls/${id}`
+					`https://csulb-api.onrender.com/polls/${id}`
 				);
 				setPoll(response.data);
 			} catch (error) {
@@ -209,7 +209,7 @@ const PollPost = () => {
 			}
 
 			const response = await axios.put(
-				`http://https://csulb-api.onrender.com/auth/vote`,
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,
