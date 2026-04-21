@@ -147,7 +147,7 @@ const CreateRating = () => {
 							<img src={imageUrl} alt="uploaded image" />
 						) : (
 							<img
-								src="src/assets/emptyimage.png"
+								src="/assets/emptyimage.png"
 								alt="emptyimage"
 								style={{ width: "200px", height: "200px" }}
 							/>

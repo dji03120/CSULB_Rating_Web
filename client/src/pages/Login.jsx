@@ -51,14 +51,14 @@ export const Login = ({ setIsAuthenticated }) => {
 	return (
 		<div className="login-container">
 			<img
-				src="src/assets/icecream.png"
+				src="/assets/icecream.png"
 				alt="login-icecream"
 				// style={{ filter: "drop-shadow(0 0 3px rgba(0, 0, 0, 0))" }}
 			/>
 			<div className="login">
 				<div className="login-header">
 					<img
-						src="src/assets/star.png"
+						src="/assets/star.png"
 						alt="Logo"
 						className="logo"
 						style={{ width: "60px", height: "60px" }}

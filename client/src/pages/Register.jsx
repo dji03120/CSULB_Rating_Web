@@ -81,14 +81,14 @@ export const Register = () => {
 	return (
 		<div className="register-container">
 			<img
-				src="src/assets/drink.png"
+				src="/assets/drink.png"
 				alt="register-drink"
 				// style={{ filter: "drop-shadow(0 0 3px rgba(0, 0, 0, 0))" }}
 			/>
 			<div className="register">
 				<div className="register-header">
 					<img
-						src="src/assets/star.png"
+						src="/assets/star.png"
 						alt="Logo"
 						className="logo"
 						style={{ width: "60px", height: "60px" }}

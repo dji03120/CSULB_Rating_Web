@@ -253,7 +253,7 @@ const PollPost = () => {
 					<div className="post-votes">
 						<img
 							id="upvote-arrow"
-							src={`/src/assets/${
+							src={`//assets/${
 								votedPosts[id] === "up"
 									? "up-arrow.png"
 									: "grayed-up-arrow.png"
@@ -267,7 +267,7 @@ const PollPost = () => {
 						/>
 						<img
 							id="downvote-arrow"
-							src={`/src/assets/${
+							src={`//assets/${
 								votedPosts[id] === "down"
 									? "down-arrow.png"
 									: "grayed-down-arrow.png"
@@ -290,8 +290,8 @@ const PollPost = () => {
 						<img
 							src={
 								isSaved
-									? "/src/assets/heart.png"
-									: "/src/assets/grayed-heart.png"
+									? "//assets/heart.png"
+									: "//assets/grayed-heart.png"
 							}
 							alt="like-icon"
 							className="post-heart"
