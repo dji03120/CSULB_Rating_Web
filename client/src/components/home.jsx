@@ -423,7 +423,7 @@ export const Home = () => {
 				/>
 				<img
 					id="search-button"
-					src="src/assets/search.png"
+					src="/assets/search.png"
 					onClick={handleSearchClick}
 				/>
 			</div>
@@ -488,7 +488,7 @@ export const Home = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[rating._id] === "up"
 													? "up-arrow.png"
 													: "grayed-up-arrow.png"
@@ -508,7 +508,7 @@ export const Home = () => {
 										/>
 										<img
 											id="downvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[rating._id] ===
 												"down"
 													? "down-arrow.png"
@@ -549,8 +549,8 @@ export const Home = () => {
 													"rating",
 													rating._id
 												)
-													? "src/assets/heart.png" // Show filled heart if saved
-													: "src/assets/grayed-heart.png" // Show gray heart if not saved
+													? "/assets/heart.png" // Show filled heart if saved
+													: "/assets/grayed-heart.png" // Show gray heart if not saved
 											}
 											alt="like-icon"
 											className="post-heart"
@@ -572,7 +572,7 @@ export const Home = () => {
 											/>
 										) : (
 											<img
-												src={`/src/assets/no-image-placeholder.png`}
+												src={`/assets/no-image-placeholder.png`}
 												alt={rating.name}
 												style={{
 													width: "80%",
@@ -588,7 +588,7 @@ export const Home = () => {
 												(_, index) => (
 													<img
 														key={index}
-														src="src/assets/star.png"
+														src="/assets/star.png"
 														alt="star"
 														className="rating-star"
 													/>
@@ -619,7 +619,7 @@ export const Home = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[poll._id] === "up"
 													? "up-arrow.png"
 													: "grayed-up-arrow.png"
@@ -639,7 +639,7 @@ export const Home = () => {
 										/>
 										<img
 											id="downvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[poll._id] === "down"
 													? "down-arrow.png"
 													: "grayed-down-arrow.png"
@@ -679,8 +679,8 @@ export const Home = () => {
 										<img
 											src={
 												isPostSaved("poll", poll._id)
-													? "src/assets/heart.png" // Show filled heart if saved
-													: "src/assets/grayed-heart.png" // Show gray heart if not saved
+													? "/assets/heart.png" // Show filled heart if saved
+													: "/assets/grayed-heart.png" // Show gray heart if not saved
 											}
 											alt="like-icon"
 											className="post-heart"

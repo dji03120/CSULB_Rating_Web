@@ -179,7 +179,7 @@ const RatingPost = () => {
 					<div className="post-votes">
 						<img
 							id="upvote-arrow"
-							src={`/src/assets/${
+							src={`//assets/${
 								votedPosts[id] === "up"
 									? "up-arrow.png"
 									: "grayed-up-arrow.png"
@@ -193,7 +193,7 @@ const RatingPost = () => {
 						/>
 						<img
 							id="downvote-arrow"
-							src={`/src/assets/${
+							src={`//assets/${
 								votedPosts[id] === "down"
 									? "down-arrow.png"
 									: "grayed-down-arrow.png"
@@ -216,8 +216,8 @@ const RatingPost = () => {
 						<img
 							src={
 								isSaved
-									? "/src/assets/heart.png"
-									: "/src/assets/grayed-heart.png"
+									? "//assets/heart.png"
+									: "//assets/grayed-heart.png"
 							}
 							alt="like-icon"
 							className="post-heart"
@@ -234,7 +234,7 @@ const RatingPost = () => {
 							/>
 						) : (
 							<img
-								src={`/src/assets/no-image-placeholder.png`}
+								src={`//assets/no-image-placeholder.png`}
 								alt={rating.name}
 								style={{ width: "80%", objectFit: "contain" }}
 							/>
@@ -247,7 +247,7 @@ const RatingPost = () => {
 								(_, index) => (
 									<img
 										key={index}
-										src="/src/assets/star.png"
+										src="//assets/star.png"
 										alt="star"
 										className="rating-star"
 									/>

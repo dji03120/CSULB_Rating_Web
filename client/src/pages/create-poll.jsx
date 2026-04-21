@@ -1,7 +1,6 @@
 // Update CreatePoll.jsx
 import React, { useState } from "react";
 import axios from "axios";
-import rightArrow from "../assets/right-arrow.png"; // Path to right arrow image
 import "./CreatePoll.css"; // Custom CSS for CreatePoll
 import { useNavigate } from "react-router-dom";
 
@@ -191,12 +190,10 @@ const CreatePoll = () => {
 					</div>
 					{/* Submit Button (Arrow) */}
 					<img
-						src={rightArrow}
-						alt="Submit"
-						className={`submit-poll-button ${
-							isLoading ? "disabled" : ""
-						}`}
-						onClick={!isLoading ? handleSubmit : null} // Disable when loading
+					src="/assets/right-arrow.png"
+					alt="Submit"
+					className={`submit-poll-button ${isLoading ? "disabled" : ""}`}
+					onClick={!isLoading ? handleSubmit : null}
 					/>
 				</form>
 			</div>

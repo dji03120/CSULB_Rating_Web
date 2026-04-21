@@ -282,7 +282,7 @@ const Bookmarks = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[postId._id] === "up"
 													? "up-arrow.png"
 													: "grayed-up-arrow.png"
@@ -302,7 +302,7 @@ const Bookmarks = () => {
 										/>
 										<img
 											id="downvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[postId._id] ===
 												"down"
 													? "down-arrow.png"
@@ -338,7 +338,7 @@ const Bookmarks = () => {
 											}}
 										/>
 										<img
-											src="src/assets/heart.png"
+											src="/assets/heart.png"
 											alt="like-icon"
 											className="post-heart"
 											onClick={() =>
@@ -359,7 +359,7 @@ const Bookmarks = () => {
 											/>
 										) : (
 											<img
-												src={`/src/assets/no-image-placeholder.png`}
+												src={`//assets/no-image-placeholder.png`}
 												alt={postId.name}
 												style={{
 													width: "80%",
@@ -375,7 +375,7 @@ const Bookmarks = () => {
 												(_, index) => (
 													<img
 														key={index}
-														src="src/assets/star.png"
+														src="/assets/star.png"
 														alt="star"
 														className="rating-star"
 													/>
@@ -397,7 +397,7 @@ const Bookmarks = () => {
 									<div className="post-votes">
 										<img
 											id="upvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[postId._id] === "up"
 													? "up-arrow.png"
 													: "grayed-up-arrow.png"
@@ -417,7 +417,7 @@ const Bookmarks = () => {
 										/>
 										<img
 											id="downvote-arrow"
-											src={`src/assets/${
+											src={`/assets/${
 												votedPosts[postId._id] ===
 												"down"
 													? "down-arrow.png"
@@ -456,7 +456,7 @@ const Bookmarks = () => {
 											}}
 										/>
 										<img
-											src="src/assets/heart.png"
+											src="/assets/heart.png"
 											alt="like-icon"
 											className="post-heart"
 											onClick={() =>

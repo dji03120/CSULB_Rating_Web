@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import filledStar from "../assets/star.png"; // Path to star image
-import emptyStar from "../assets/grayed-star.png"; // Path to empty star image
-import rightArrow from "../assets/right-arrow.png"; // Path to right arrow image
 import "./CreateRating.css";
 import { useNavigate } from "react-router-dom";
 
@@ -147,7 +144,7 @@ const CreateRating = () => {
 							<img src={imageUrl} alt="uploaded image" />
 						) : (
 							<img
-								src="src/assets/emptyimage.png"
+								src="/assets/emptyimage.png"
 								alt="emptyimage"
 								style={{ width: "200px", height: "200px" }}
 							/>
@@ -158,7 +155,7 @@ const CreateRating = () => {
 				<div className="create-rating-right">
 					{/* Submit button */}
 					<img
-						src={rightArrow}
+						src="/assets/right-arrow.png"
 						className="submit-rating-button"
 						onClick={handleSubmit}
 					/>
@@ -177,7 +174,7 @@ const CreateRating = () => {
 								<img
 									key={star}
 									src={
-										star <= rating ? filledStar : emptyStar
+										star <= rating ? "/assets/star.png" : "/assets/grayed-star.png"
 									}
 									alt={`${star} star`}
 									onClick={() => handleStarClick(star)}
