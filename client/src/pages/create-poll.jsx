@@ -1,6 +1,6 @@
 // Update CreatePoll.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import { API } from "../api/api";
 import "./CreatePoll.css"; // Custom CSS for CreatePoll
 import { useNavigate } from "react-router-dom";
 
@@ -66,7 +66,7 @@ const CreatePoll = () => {
 			setIsLoading(true); // Activate loading state
 			const selectedDate = new Date(endDate);
 			selectedDate.setHours(23, 59, 59, 999);
-			const response = await axios.post("https://csulb-api.onrender.com/polls", {
+			const response = await API.post("/polls", {
 				question: pollQuestion,
 				options,
 				createdBy: userID,

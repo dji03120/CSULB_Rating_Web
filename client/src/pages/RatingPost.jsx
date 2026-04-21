@@ -1,7 +1,7 @@
 // RatingPost.jsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { API } from "../api/api";
 import { ExternalLink } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,8 +18,8 @@ const RatingPost = () => {
 		const checkIfSaved = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await axios.get(
-					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+				const response = await API.get(
+					`/auth/savedPosts?userID=${userID}`
 				);
 				const saved = response.data.savedPosts.some(
 					(post) =>
@@ -34,8 +34,8 @@ const RatingPost = () => {
 		const fetchVoteStates = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await axios.get(
-					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
+				const response = await API.get(
+					`/auth/savedPosts?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -52,8 +52,8 @@ const RatingPost = () => {
 			const userID = localStorage.getItem("userId");
 			if (isSaved) {
 				// Unsave post
-				await axios.put(
-					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
+				await API.put(
+					`/auth/unsavePost?userID=${userID}`,
 					{
 						postType: "rating",
 						postId: id,
@@ -71,8 +71,8 @@ const RatingPost = () => {
 				});
 			} else {
 				// Save post
-				await axios.put(
-					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
+				await API.put(
+					`/auth/unsavePost?userID=${userID}`,
 					{
 						postType: "rating",
 						postId: id,
@@ -114,8 +114,8 @@ const RatingPost = () => {
 	useEffect(() => {
 		const fetchRating = async () => {
 			try {
-				const response = await axios.get(
-					`https://csulb-api.onrender.com/ratings/${id}`
+				const response = await API.get(
+					`/ratings/${id}`
 				);
 				setRating(response.data);
 			} catch (error) {
@@ -143,8 +143,7 @@ const RatingPost = () => {
 				newVoteType = voteType;
 			}
 
-			const response = await axios.put(
-				`https://csulb-api.onrender.com/auth/vote`,
+			const response = await API.put(`/auth/vote`,
 				{
 					postId,
 					postType,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { API } from "../api/api";
 import "./CreateRating.css";
 import { useNavigate } from "react-router-dom";
 
@@ -51,13 +51,9 @@ const CreateRating = () => {
 		}
 
 		try {
-			const response = await axios.post(
-				"https://csulb-api.onrender.com/ratings",
-				formData,
-				{
-					headers: { "Content-Type": "multipart/form-data" },
-				}
-			);
+			const response = await API.post("/ratings", formData, {
+				headers: { "Content-Type": "multipart/form-data" },
+			});
 
 			if (response.status === 200) {
 				setPopupMessage("Rating submitted successfully! Redirecting...");

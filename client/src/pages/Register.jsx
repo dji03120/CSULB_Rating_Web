@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { API } from "../api/api";
 import { Form } from "../components/Form";
 import "./Register.css";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +45,7 @@ export const Register = () => {
 		}
 
 		try {
-			await axios.post("https://csulb-api.onrender.com/auth/register", {
+			await API.post("/auth/register", {
 				studentId,
 				email,
 				password,

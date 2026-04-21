@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { API } from "../api/api";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { Form } from "../components/Form";
@@ -24,8 +24,7 @@ export const Login = ({ setIsAuthenticated }) => {
 		event.preventDefault();
 
 		try {
-			const response = await axios.post(
-				"https://csulb-api.onrender.com/auth/login",
+			const response = await API.post("/auth/login",
 				{
 					studentId,
 					password,

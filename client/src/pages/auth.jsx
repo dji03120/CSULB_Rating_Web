@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from "axios";
+import { API } from "../api/api";
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,12 +22,13 @@ const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.post("https://csulb-api.onrender.com/auth/login", {
+            const response = await API.post("/auth/login", {
                 studentId,
                 password,
             });
 
             setCookies("access_token", response.data.token)
+            window.localStorage.setItem("access_token", response.data.token);
             window.localStorage.setItem("userId", response.data.user._id)
             navigate("/")
         } catch (error) {
@@ -57,7 +58,7 @@ const Register = () => {
         event.preventDefault();
 
         try {
-            await axios.post("https://csulb-api.onrender.com/auth/register", {
+            await API.post("/auth/register", {
                 studentId,
                 email,
                 password,
