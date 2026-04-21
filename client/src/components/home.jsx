@@ -572,7 +572,7 @@ export const Home = () => {
 											/>
 										) : (
 											<img
-												src={`//assets/no-image-placeholder.png`}
+												src={`/assets/no-image-placeholder.png`}
 												alt={rating.name}
 												style={{
 													width: "80%",
