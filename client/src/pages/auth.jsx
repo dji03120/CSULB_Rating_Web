@@ -19,23 +19,27 @@ const Login = () => {
     const navigate = useNavigate()
 
     const onSubmit = async (event) => {
-        event.preventDefault();
+	event.preventDefault();
 
-        try {
-            const response = await API.post("/auth/login", {
-                studentId,
-                password,
-            });
+	try {
+		const response = await API.post(
+			"/auth/login",
+			{
+				studentId,
+				password,
+			},
+			{
+				withCredentials: true, // Allow cookie from backend
+			}
+		);
 
-            setCookies("access_token", response.data.token)
-            window.localStorage.setItem("access_token", response.data.token);
-            window.localStorage.setItem("userId", response.data.user._id)
-            navigate("/")
-        } catch (error) {
-            console.error(error);
-            alert("Login failed");
-        }
-    };
+		window.localStorage.setItem("userId", response.data.user._id);
+		navigate("/");
+	} catch (error) {
+		console.error(error);
+		alert("Invalid credentials");
+	}
+};
 
     return (
         <Form 

@@ -20,25 +20,34 @@ export const Login = ({ setIsAuthenticated }) => {
 	}, [setIsAuthenticated]);
 
 	// Handles form submission for login
+	const [loading, setLoading] = useState(false); // Prevent multiple login requests
+
 	const onSubmit = async (event) => {
 		event.preventDefault();
 
+		if (loading) return; // Prevent duplicate submissions
+		setLoading(true); // Set loading state
+
 		try {
-			const response = await API.post("/auth/login",
+			const response = await API.post(
+				"/auth/login",
 				{
 					studentId,
 					password,
+				},
+				{
+					withCredentials: true, // Allow cookies to be sent and received
 				}
 			);
 
-			setCookies("access_token", response.data.token);
-			window.localStorage.setItem("access_token", response.data.token); // Store token in localStorage
-			window.localStorage.setItem("userId", response.data.user._id);
+			window.localStorage.setItem("userId", response.data.user._id); // Store userId only (not sensitive)
 			setIsAuthenticated(true); // Update authentication state
 			navigate("/"); // Redirect to home
 		} catch (error) {
 			console.error(error);
-			alert("Login failed");
+			alert("Invalid credentials"); // Avoid exposing detailed error info
+		} finally {
+			setLoading(false); // Reset loading state
 		}
 	};
 
