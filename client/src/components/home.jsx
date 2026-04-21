@@ -20,64 +20,63 @@ export const Home = () => {
 	const [votedPosts, setVotedPosts] = useState({});
 	const [hideLowRatedPosts, setHideLowRatedPosts] = useState(false);
 
-	useEffect(() => {
+		useEffect(() => {
+			console.log("API URL:", import.meta.env.VITE_API_URL);
 
-		console.log("API URL:", import.meta.env.VITE_API_URL);
+			const fetchData = async () => {
+				try {
+					const userID = localStorage.getItem("userId");
 
-		const fetchData = async () => {
-			try {
-				const userID = localStorage.getItem("userId");
+					// always bring data
+					const ratingResponse = await axios.get(
+						"https://csulb-api.onrender.com/ratings"
+					);
+					setRatings(ratingResponse.data);
 
-				// Fetch ratings
-				const ratingResponse = await axios.get(
-					"https://csulb-api.onrender.com/ratings"
-				);
-				setRatings(ratingResponse.data);
+					const pollResponse = await axios.get(
+						"https://csulb-api.onrender.com/polls"
+					);
 
-				// Fetch polls
-				const pollResponse = await axios.get(
-					"https://csulb-api.onrender.com/polls",
-					{
-						params: { userID },
+					const updatedPolls = pollResponse.data.map((poll) => ({
+						...poll,
+						hasVoted: userID ? poll.voters.includes(userID) : false,
+					}));
+					setPolls(updatedPolls);
+
+					// run only if logged in ⭐
+					if (userID) {
+						const votedPolls =
+							JSON.parse(localStorage.getItem("userVotedPolls")) || [];
+						setUserVotedPolls(votedPolls);
+
+						const savedPostsResponse = await axios.get(
+							`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+						);
+						setSavedPosts(savedPostsResponse.data.savedPosts);
 					}
-				);
+				} catch (err) {
+					console.error("Failed to fetch data:", err);
+				}
+			};
 
-				const updatedPolls = pollResponse.data.map((poll) => ({
-					...poll,
-					hasVoted: poll.voters.includes(userID),
-				}));
-				setPolls(updatedPolls);
+			const fetchVoteStates = async () => {
+				try {
+					const userID = localStorage.getItem("userId");
 
-				// Retrieve voted polls from localStorage
-				const votedPolls =
-					JSON.parse(localStorage.getItem("userVotedPolls")) || [];
-				setUserVotedPolls(votedPolls);
+					if (!userID) return; // ⭐ 핵심
 
-				// Fetch saved posts
-				const savedPostsResponse = await axios.get(
-					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
-				);
-				setSavedPosts(savedPostsResponse.data.savedPosts);
-			} catch (err) {
-				console.error("Failed to fetch data:", err);
-			}
-		};
+					const response = await axios.get(
+						`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
+					);
+					setVotedPosts(response.data.votes);
+				} catch (err) {
+					console.error("Failed to fetch vote states:", err);
+				}
+			};
 
-		const fetchVoteStates = async () => {
-			try {
-				const userID = localStorage.getItem("userId");
-				const response = await axios.get(
-					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
-				);
-				setVotedPosts(response.data.votes);
-			} catch (err) {
-				console.error("Failed to fetch vote states:", err);
-			}
-		};
-
-		fetchVoteStates();
-		fetchData();
-	}, []);
+			fetchData();
+			fetchVoteStates();
+		}, []);
 
 	const handleShareClick = (postType, postId) => {
 		setShareOptions(
