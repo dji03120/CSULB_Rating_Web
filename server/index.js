@@ -26,7 +26,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://csulb-api.onrender.com"
+    "https://csulb-api.onrender.com",
+    "https://csulb-rating-web.vercel.app"
   ],
   credentials: true
 }));
