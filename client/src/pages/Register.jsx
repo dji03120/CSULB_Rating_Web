@@ -45,7 +45,7 @@ export const Register = () => {
 		}
 
 		try {
-			await axios.post("http://localhost:5000/auth/register", {
+			await axios.post("https://csulb-api.onrender.com/auth/register", {
 				studentId,
 				email,
 				password,

@@ -27,13 +27,13 @@ export const Home = () => {
 
 				// Fetch ratings
 				const ratingResponse = await axios.get(
-					"http://localhost:5000/ratings"
+					"http://https://csulb-api.onrender.com/ratings"
 				);
 				setRatings(ratingResponse.data);
 
 				// Fetch polls
 				const pollResponse = await axios.get(
-					"http://localhost:5000/polls",
+					"http://https://csulb-api.onrender.com/polls",
 					{
 						params: { userID },
 					}
@@ -52,7 +52,7 @@ export const Home = () => {
 
 				// Fetch saved posts
 				const savedPostsResponse = await axios.get(
-					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+					`http://https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
 				);
 				setSavedPosts(savedPostsResponse.data.savedPosts);
 			} catch (err) {
@@ -64,7 +64,7 @@ export const Home = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://localhost:5000/auth/votes?userID=${userID}`
+					`http://https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -151,7 +151,7 @@ export const Home = () => {
 		// Attempt to send the vote to the backend API.
 		try {
 			const response = await axios.put(
-				"http://localhost:5000/polls/vote",
+				"http://https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -228,7 +228,7 @@ export const Home = () => {
 			if (isSaved) {
 				// Remove from saved posts
 				await axios.put(
-					`http://localhost:5000/auth/unsavePost?userID=${userID}`,
+					`http://https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType,
 						postId,
@@ -249,7 +249,7 @@ export const Home = () => {
 			} else {
 				// Add to saved posts
 				const response = await axios.put(
-					`http://localhost:5000/auth/savePost?userID=${userID}`,
+					`http://https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{ postType, postId }
 				);
 				if (response.status === 200) {
@@ -350,7 +350,7 @@ export const Home = () => {
 			}
 
 			const response = await axios.put(
-				`http://localhost:5000/auth/vote`,
+				`http://https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,
@@ -567,7 +567,7 @@ export const Home = () => {
 									<div className="content-left">
 										{rating.imageUrl ? (
 											<img
-												src={`http://localhost:5000${rating.imageUrl}`}
+												src={`http://https://csulb-api.onrender.com${rating.imageUrl}`}
 												alt={rating.name}
 											/>
 										) : (

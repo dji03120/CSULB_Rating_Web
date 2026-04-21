@@ -21,8 +21,12 @@ if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath);
 }
 
+//Configuration of the real-time server using Render
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://csulb-rating-web.vercel.app",
+  credentials: true
+}));
 app.use(express.json());
 
 // Database connection

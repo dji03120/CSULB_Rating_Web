@@ -22,7 +22,7 @@ const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:5000/auth/login", {
+            const response = await axios.post("http://https://csulb-api.onrender.com/auth/login", {
                 studentId,
                 password,
             });
@@ -57,7 +57,7 @@ const Register = () => {
         event.preventDefault();
 
         try {
-            await axios.post("http://localhost:5000/auth/register", {
+            await axios.post("http://https://csulb-api.onrender.com/auth/register", {
                 studentId,
                 email,
                 password,

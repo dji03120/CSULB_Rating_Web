@@ -25,7 +25,7 @@ export const Login = ({ setIsAuthenticated }) => {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/auth/login",
+				"https://csulb-api.onrender.com/auth/login",
 				{
 					studentId,
 					password,

@@ -19,7 +19,7 @@ const RatingPost = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://localhost:5000/auth/savedPosts?userID=${userID}`
+					`http://https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
 				);
 				const saved = response.data.savedPosts.some(
 					(post) =>
@@ -35,7 +35,7 @@ const RatingPost = () => {
 			try {
 				const userID = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://localhost:5000/auth/votes?userID=${userID}`
+					`http://https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -53,7 +53,7 @@ const RatingPost = () => {
 			if (isSaved) {
 				// Unsave post
 				await axios.put(
-					`http://localhost:5000/auth/unsavePost?userID=${userID}`,
+					`http://https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType: "rating",
 						postId: id,
@@ -72,7 +72,7 @@ const RatingPost = () => {
 			} else {
 				// Save post
 				await axios.put(
-					`http://localhost:5000/auth/savePost?userID=${userID}`,
+					`http://https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{
 						postType: "rating",
 						postId: id,
@@ -115,7 +115,7 @@ const RatingPost = () => {
 		const fetchRating = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/ratings/${id}`
+					`http://https://csulb-api.onrender.com/ratings/${id}`
 				);
 				setRating(response.data);
 			} catch (error) {
@@ -144,7 +144,7 @@ const RatingPost = () => {
 			}
 
 			const response = await axios.put(
-				`http://localhost:5000/auth/vote`,
+				`http://https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,
@@ -229,7 +229,7 @@ const RatingPost = () => {
 					<div className="content-left">
 						{rating.imageUrl ? (
 							<img
-								src={`http://localhost:5000${rating.imageUrl}`}
+								src={`http://https://csulb-api.onrender.com${rating.imageUrl}`}
 								alt={rating.name}
 							/>
 						) : (
