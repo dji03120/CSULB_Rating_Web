@@ -4,3 +4,8 @@ node_modules/
 # Ignore package-lock.json files
 package-lock.json
 client/package-lock.json
+
+#Ignore .env file
+.env
+.env.local
+.env.*
