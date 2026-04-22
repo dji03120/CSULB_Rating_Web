@@ -10,6 +10,13 @@ export const Register = () => {
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
 
+	const [passwordChecks, setPasswordChecks] = useState({
+	length: false,
+	letter: false,
+	number: false,
+	special: false,
+});
+
 	// Function to validate email format
 	const validateEmail = (email) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,7 +32,18 @@ export const Register = () => {
 	// Validates Pssword strength
 	const validatePassword = (password) => {
 	return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(password);
-};
+	};
+
+	const handlePasswordChange = (value) => {
+	setPassword(value);
+
+	setPasswordChecks({
+		length: value.length >= 8,
+		letter: /[A-Za-z]/.test(value),
+		number: /\d/.test(value),
+		special: /[@$!%*?&]/.test(value),
+		});
+	};
 
 	// Handles form submission for registration
 	const onSubmit = async (event) => {
@@ -109,10 +127,13 @@ export const Register = () => {
 						email={email}
 						setEmail={setEmail}
 						password={password}
-						setPassword={setPassword}
+						setPassword={handlePasswordChange}
+						passwordChecks={passwordChecks}
 						label="Register"
 						onSubmit={onSubmit}
 					/>
+
+					
 					<span className="register-bottom-prompt">
 						Already a Member?{" "}
 						<span

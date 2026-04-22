@@ -64,3 +64,43 @@
     transition: ease-in-out 0.3s;
     text-decoration: underline;
 }
+
+/* Password validation UI */
+.password-rules {
+	background: #f9f9f9;
+	border-radius: 12px;
+	padding: 14px 18px;
+	margin-top: 0.8rem;
+	width: 100%;
+
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+	font-size: 0.9rem;
+}
+
+/* title */
+.rules-title {
+	font-weight: 700;
+	margin-bottom: 8px;
+	font-size: 0.95rem;
+	color: #333;
+}
+
+/* each line */
+.rule-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 4px 0;
+	color: #444;
+}
+
+/* icon */
+.valid-icon {
+	color: #2e7d32;
+	font-weight: bold;
+}
+
+.invalid-icon {
+	color: #c62828;
+	font-weight: bold;
+}
