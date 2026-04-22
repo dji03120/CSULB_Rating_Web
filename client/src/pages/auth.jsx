@@ -21,27 +21,6 @@ const Login = () => {
     const onSubmit = async (event) => {
 	event.preventDefault();
 
-<<<<<<< HEAD
-	try {
-		const response = await API.post(
-			"/auth/login",
-			{
-				studentId,
-				password,
-			},
-			{
-				withCredentials: true, // Allow cookie from backend
-			}
-		);
-
-		window.localStorage.setItem("userId", response.data.user._id);
-		navigate("/");
-	} catch (error) {
-		console.error(error);
-		alert("Invalid credentials");
-	}
-};
-=======
         try {
             const response = await axios.post("https://csulb-api.onrender.com/auth/login", {
                 studentId,
@@ -56,7 +35,6 @@ const Login = () => {
             alert("Login failed");
         }
     };
->>>>>>> parent of 9d28427 (Change Api Calling axios Localhost to Api.js)
 
     return (
         <Form 
