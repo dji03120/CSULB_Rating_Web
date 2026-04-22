@@ -4,6 +4,7 @@ import multer from "multer";
 import path from "path";
 import { RatingModel } from "../models/Ratings.js";
 import { UserModel } from "../models/Users.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -13,7 +14,10 @@ const storage = multer.diskStorage({
         cb(null, "./uploads");
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname)
+        // 🔐 Use unique filename to prevent overwrite attack
+        const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueName + ext);
     }
 })
 
@@ -40,18 +44,18 @@ router.get("/", async (req, res) => {
         const response = await RatingModel.find({});  // Returns all the ratings
         res.json(response)
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // Route to get the user's ratings
-router.get("/my-ratings", async (req, res) => {
+router.get("/my-ratings", verifyToken, async (req, res) => {
     try {
-        const { userID } = req.query; // Getting userID from query params
-        const response = await RatingModel.find({ createdBy: userID });
+        // 🔐 use JWT instead of query
+        const response = await RatingModel.find({ createdBy: req.user.id });
         res.json(response);
     } catch (err) {
-        res.json(err)
+        res.status(500).json({ message: "Server error" });
     }
 });
 
@@ -63,82 +67,92 @@ router.get("/:id", async (req, res) => {
         }
         res.json(rating);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // Route to create a review 
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
-        const { name, rating, reviewText, createdBy } = req.body;
+        const { name, rating, reviewText } = req.body;
 
         // Image is optional
         let imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl || ""; 
 
+        // 🔐 Use authenticated user instead of client input
         const newRating = new RatingModel({
             name, 
             imageUrl: imagePath,
             rating, 
             reviewText,
-            createdBy,
+            createdBy: req.user.id,
         });
+
         const response = await newRating.save(); // Saves the rating
         res.json(response);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // Router to save the rating to the user's ratings
-router.put("/", async (req, res) => {
+router.put("/", verifyToken, async (req, res) => {
     try {
-        // Finds the rating and user
         const rating = await RatingModel.findById(req.body.ratingID);
-        const user = await UserModel.findById(req.body.userID);  
+        const user = await UserModel.findById(req.user.id);  
 
-        // Adds the rating to the user's ratings
         user.savedRatings.push(rating);
-        await user.save();  // Saves the user
-        res.json( { savedRatings: user.savedRatings });
+        await user.save();
+        res.json({ savedRatings: user.savedRatings });
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // Route to get the IDs of a user's ratings
-router.get("/savedRatings/ids", async (req, res) => {
+router.get("/savedRatings/ids", verifyToken, async (req, res) => {
     try {
-        const user = await UserModel.findById(req.body.userID);
+        const user = await UserModel.findById(req.user.id);
         res.json({ savedRatings: user?.savedRatings });
     } catch (err) {
-        res.json(err)
+        res.status(500).json({ message: "Server error" });
     }
 })
 
 // Route to get the details of a user's ratings
-router.get("/savedRatings", async (req, res) => {
+router.get("/savedRatings", verifyToken, async (req, res) => {
     try {
-        const user = await UserModel.findById(req.body.userID);
+        const user = await UserModel.findById(req.user.id);
         const savedRatings = await RatingModel.find({
             _id: { $in: user.savedRatings },
         });
         res.json({ savedRatings });
     } catch (err) {
-        res.json(err)
+        res.status(500).json({ message: "Server error" });
     }
 })
 
-
 // Route to delete a rating
-router.delete("/:id", async (req,res) => {
+router.delete("/:id", verifyToken, async (req,res) => {
     try {
         const { id } = req.params;
 
-        const deletedRating = await RatingModel.findByIdAndDelete(id);
-        res.json({ message: "Rating deleted successfully", deletedRating });
+        const rating = await RatingModel.findById(id);
+
+        if (!rating) {
+            return res.status(404).json({ message: "Rating not found" });
+        }
+
+        // 🔐 Only creator can delete
+        if (rating.createdBy.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+
+        await rating.deleteOne();
+        res.json({ message: "Rating deleted successfully", rating });
     } catch (err) {
-        res.json(err)
+        res.status(500).json({ message: "Server error" });
     }
 });
 
-export { router as ratingsRouter }; 
+export { router as ratingsRouter };
