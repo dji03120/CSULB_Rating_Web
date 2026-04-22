@@ -25,8 +25,13 @@ if (!fs.existsSync(uploadsPath)) {
 
 const app = express();
 
-// Security headers (protects against XSS, clickjacking, etc.)
-app.use(helmet());
+// Apply security headers (prevents XSS, clickjacking, etc.)
+// Modify cross-origin resource policy to allow images to be loaded from other domains
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // CORS configuration
 app.use(cors({
