@@ -22,6 +22,11 @@ export const Register = () => {
 		return studentID.length == 9 && /^\d+$/.test(studentID);
 	};
 
+	// Validates Pssword strength
+	const validatePassword = (password) => {
+	return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(password);
+};
+
 	// Handles form submission for registration
 	const onSubmit = async (event) => {
 		event.preventDefault();
@@ -44,6 +49,11 @@ export const Register = () => {
 			return;
 		}
 
+		if (!validatePassword(password)) {
+			alert("Password must be at least 8 characters and include letters, numbers, and special characters.");
+			return;
+		}
+
 		try {
 			await axios.post("https://csulb-api.onrender.com/auth/register", {
 				studentId,
@@ -52,26 +62,16 @@ export const Register = () => {
 			});
 			alert("Registration complete"); // Success popup
 			navigate("/login");
-		} catch (error) {
-			console.error(error);
+			} catch (error) {
+		console.error(error);
 
-			if (error.response) {
-				const { status } = error.response;
-
-				// Handle 400 and 500 status codes with the same message
-				if (status === 400 || status === 500) {
-					alert("This Student ID or email already exists.");
-				} else {
-					alert(
-						"An error occurred while registering. Please try again."
-					);
+		if (error.response) {
+			const message = error.response.data.message;
+			alert(message);
+		} else {
+			alert("A network or server error occurred. Please try again later.");
 				}
-			} else {
-				alert(
-					"A network or server error occurred. Please try again later."
-				);
-			}
-		}
+			}	
 	};
 
 	const goToLogin = () => {

@@ -1,38 +1,92 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import rateLimit from "express-rate-limit";
+import mongoSanitize from "express-mongo-sanitize";
+
 import { UserModel } from "../models/Users.js";
 import { RatingModel } from "../models/Ratings.js";
 import { PollModel } from "../models/Polls.js";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-    const { studentId, email, password } = req.body;
+// Rate Limit 설정
+const registerLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+});
 
+// Password Validation
+const validatePassword = (password) => {
+    return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(password);
+};
+
+// Email Validation
+const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+// Register
+router.post("/register", registerLimiter, async (req, res) => {
     try {
-        const user = await UserModel.findOne({ studentId });
-        // console.log(user);
-        if (user) {
-            return res.status(400).json({ message: "User already exists" });
+        let { studentId, email, password } = req.body;
+
+        // sanitize + normalize
+        studentId = studentId.trim();
+        email = email.trim().toLowerCase();
+
+        // validation
+        if (!studentId || !email || !password) {
+            return res.status(400).json({ message: "All fields required" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new UserModel({ studentId, email, password: hashedPassword, createdAt: new Date() });
+        if (!validateEmail(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        if (!validatePassword(password)) {
+            return res.status(400).json({
+                message: "Password must be 8+ chars with letters, numbers, special chars",
+            });
+        }
+
+        // studentId 중복
+        const existingUser = await UserModel.findOne({ studentId });
+        if (existingUser) {
+            return res.status(400).json({ message: "Student ID already exists" });
+        }
+
+        // email 중복
+        const existingEmail = await UserModel.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // password hashing (cost ↑)
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        const newUser = new UserModel({
+            studentId,
+            email,
+            password: hashedPassword,
+            createdAt: new Date(),
+        });
+
         await newUser.save();
 
         return res.status(201).json({ message: "User created successfully" });
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 });
 
+// Login
 router.post("/login", async (req, res) => {
-    const { studentId, password } = req.body;
-
     try {
+        const { studentId, password } = req.body;
+
         const user = await UserModel.findOne({ studentId });
+
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
@@ -43,10 +97,19 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        return res.status(200).json({ message: "User logged in successfully", token, user });
-    }
-    catch (error) {
+        // JWT 만료 추가
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        return res.status(200).json({
+            message: "Login successful",
+            token,
+            user,
+        });
+    } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 });

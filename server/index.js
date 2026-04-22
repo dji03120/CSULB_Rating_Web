@@ -4,61 +4,73 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path'; 
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+
 import { userRouter } from './src/routes/users.js';
 import { ratingsRouter } from './src/routes/ratings.js';
 import { pollsRouter } from './src/routes/polls.js';
 
-import dotenv from 'dotenv';
 dotenv.config();
 
-// Construct __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create the uploads directory if it doesn't exist
+// Create uploads directory if it does not exist
 const uploadsPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath);
 }
 
-//Configuration of the real-time server using Render
 const app = express();
+
+// Security headers (protects against XSS, clickjacking, etc.)
+app.use(helmet());
+
+// CORS configuration
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://csulb-api.onrender.com",
     "https://csulb-rating-web.vercel.app"
   ],
   credentials: true
 }));
-app.use(express.json());
 
-console.log("MONGO_URI:", process.env.MONGO_URI)
+// Limit JSON payload size (prevents DoS attacks)
+app.use(express.json({ limit: "10kb" }));
 
-// Database connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+// Prevent NoSQL injection
+app.use(mongoSanitize());
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-
-// API Routes
+// Base route
 app.get('/', (req, res) => {
     res.json({ message: 'Ratings API' });
 });
 
+// API routes
 app.use('/auth', userRouter);
 app.use('/ratings', ratingsRouter);
 app.use('/polls', pollsRouter);
-app.use('/uploads', express.static('uploads'));
 
+// Restrict access to uploads directory
+app.use('/uploads', express.static('uploads', {
+    dotfiles: "deny",
+    index: false
+}));
 
-// app.use('/posts', postRouter);
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: "Internal Server Error" });
+});
 
-
-// Start Server
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
