@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API } from "../api/api";
+import axios from "axios";
 import { ExternalLink } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,11 +24,17 @@ const MyPosts = () => {
 		const fetchUserRatings = async () => {
 			setLoading(true); // Sets loading to true before making the request
 			try {
-				const response = await API.get("/ratings/my-ratings", { params: { userID } });
+				const response = await axios.get(
+					"https://csulb-api.onrender.com/ratings/my-ratings",
+					{
+						params: { userID },
+					}
+				);
 				setUserRatings(response.data); // Sets the user's ratings
 
-				const savedPostsResponse = await API.get(`/auth/savedPosts?userID=${userID}`);
-
+				const savedPostsResponse = await axios.get(
+					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+				);
 				console.log(
 					"Fetched Saved Posts:",
 					savedPostsResponse.data.savedPosts
@@ -46,8 +52,10 @@ const MyPosts = () => {
 		const fetchUserPolls = async () => {
 			setLoading(true);
 			try {
-				const response = await API.get("/polls/my-polls", {
-					params: { userID },
+				const response = await axios.get(
+					"https://csulb-api.onrender.com/polls/my-polls",
+					{
+						params: { userID },
 					}
 				);
 				// Get voted polls from localStorage
@@ -72,8 +80,8 @@ const MyPosts = () => {
 		const fetchVoteStates = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await API.get(
-					`/auth/votes?userID=${userID}`
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -94,7 +102,7 @@ const MyPosts = () => {
 		}
 
 		try {
-			await API.delete(`/ratings/${id}`);
+			await axios.delete(`https://csulb-api.onrender.com/ratings/${id}`);
 			setUserRatings((prevRatings) =>
 				prevRatings.filter((rating) => rating._id !== id)
 			);
@@ -112,7 +120,7 @@ const MyPosts = () => {
 			return; // Exit if user cancels
 		}
 		try {
-			await API.delete(`/polls/${id}`);
+			await axios.delete(`https://csulb-api.onrender.com/polls/${id}`);
 			setUserPolls((prevPolls) =>
 				prevPolls.filter((poll) => poll._id !== id)
 			);
@@ -162,8 +170,8 @@ const MyPosts = () => {
 
 			if (isSaved) {
 				// Remove from saved posts
-				await API.put(
-					`/auth/unsavePost?userID=${userID}`,
+				await axios.put(
+					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType,
 						postId,
@@ -181,8 +189,8 @@ const MyPosts = () => {
 				);
 			} else {
 				// Add to saved posts
-				const response = await API.put(
-					`/auth/savePost?userID=${userID}`,
+				const response = await axios.put(
+					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{ postType, postId }
 				);
 				if (response.status === 200) {
@@ -219,12 +227,14 @@ const MyPosts = () => {
 		}
 
 		try {
-			const response = await API.put("/polls/vote", {
-				pollID: pollId,
-				optionIndex,
-				userID: localStorage.getItem("userId"),
-			});
-
+			const response = await axios.put(
+				"https://csulb-api.onrender.com/polls/vote",
+				{
+					pollID: pollId,
+					optionIndex: optionIndex,
+					userID: localStorage.getItem("userId"),
+				}
+			);
 
 			if (response.status === 200) {
 				setUserPolls((prevPolls) =>
@@ -277,7 +287,8 @@ const MyPosts = () => {
 				newVoteType = voteType;
 			}
 
-			const response = await API.put(`/auth/vote`,
+			const response = await axios.put(
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,

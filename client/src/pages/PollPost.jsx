@@ -1,7 +1,7 @@
 // PollPost.jsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { API } from "../api/api";
+import axios from "axios";
 import { ExternalLink } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -34,7 +34,8 @@ const PollPost = () => {
 		}
 
 		try {
-			const response = await API.put("/polls/vote",
+			const response = await axios.put(
+				"https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -73,8 +74,8 @@ const PollPost = () => {
 		const checkIfSaved = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await API.get(
-					`/auth/savedPosts?userID=${userID}`
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
 				);
 				// Add null checks for savedPosts and postId
 				const saved =
@@ -94,8 +95,8 @@ const PollPost = () => {
 		const fetchVoteStates = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await API.get(
-					`/auth/votes?userID=${userID}`
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes || {});
 			} catch (err) {
@@ -116,8 +117,8 @@ const PollPost = () => {
 			const userID = localStorage.getItem("userId");
 			if (isSaved) {
 				// Unsave post
-				await API.put(
-					`/auth/unsavePost?userID=${userID}`,
+				await axios.put(
+					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType: "poll",
 						postId: id,
@@ -135,8 +136,8 @@ const PollPost = () => {
 				});
 			} else {
 				// Save post
-				await API.put(
-					`/auth/savePost?userID=${userID}`,
+				await axios.put(
+					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{
 						postType: "poll",
 						postId: id,
@@ -178,8 +179,8 @@ const PollPost = () => {
 	useEffect(() => {
 		const fetchPoll = async () => {
 			try {
-				const response = await API.get(
-					`/polls/${id}`
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/polls/${id}`
 				);
 				setPoll(response.data);
 			} catch (error) {
@@ -207,7 +208,8 @@ const PollPost = () => {
 				newVoteType = voteType;
 			}
 
-			const response = await API.put( `/auth/vote`,
+			const response = await axios.put(
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,

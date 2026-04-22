@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { API } from "../api/api";
+import axios from "axios";
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ const Login = () => {
     const onSubmit = async (event) => {
 	event.preventDefault();
 
+<<<<<<< HEAD
 	try {
 		const response = await API.post(
 			"/auth/login",
@@ -40,6 +41,22 @@ const Login = () => {
 		alert("Invalid credentials");
 	}
 };
+=======
+        try {
+            const response = await axios.post("https://csulb-api.onrender.com/auth/login", {
+                studentId,
+                password,
+            });
+
+            setCookies("access_token", response.data.token)
+            window.localStorage.setItem("userId", response.data.user._id)
+            navigate("/")
+        } catch (error) {
+            console.error(error);
+            alert("Login failed");
+        }
+    };
+>>>>>>> parent of 9d28427 (Change Api Calling axios Localhost to Api.js)
 
     return (
         <Form 
@@ -62,7 +79,7 @@ const Register = () => {
         event.preventDefault();
 
         try {
-            await API.post("/auth/register", {
+            await axios.post("https://csulb-api.onrender.com/auth/register", {
                 studentId,
                 email,
                 password,

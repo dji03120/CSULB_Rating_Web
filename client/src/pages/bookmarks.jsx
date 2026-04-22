@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API } from "../api/api";
+import axios from "axios";
 import "./Bookmarks.css";
 import { ExternalLink } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
@@ -18,7 +18,9 @@ const Bookmarks = () => {
 		const fetchBookmarks = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await API.get(`/auth/savedPosts?userID=${userID}`);
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+				);
 
 				// Get saved posts
 				const savedPollPosts = response.data.savedPosts.filter(
@@ -62,7 +64,8 @@ const Bookmarks = () => {
 		const fetchVoteStates = async () => {
 			try {
 				const userID = localStorage.getItem("userId");
-				const response = await API.get(`/auth/votes?userID=${userID}`
+				const response = await axios.get(
+					`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
 				);
 				setVotedPosts(response.data.votes);
 			} catch (err) {
@@ -79,7 +82,8 @@ const Bookmarks = () => {
 			const userID = localStorage.getItem("userId");
 
 			// Remove from saved posts
-			await API.put(`/auth/unsavePost?userID=${userID}`,
+			await axios.put(
+				`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 				{
 					postType,
 					postId,
@@ -118,7 +122,8 @@ const Bookmarks = () => {
 		}
 
 		try {
-			const response = await API.put(`/auth/unsavePost?userID=${userID}`,
+			const response = await axios.put(
+				"https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -203,7 +208,8 @@ const Bookmarks = () => {
 				newVoteType = voteType;
 			}
 
-			const response = await API.put("/auth/vote",
+			const response = await axios.put(
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,

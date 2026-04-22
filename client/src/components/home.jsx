@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./home.css";
 import Navbar from "./navbar";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { API } from "../api/api";
 
 export const Home = () => {
 	const navigate = useNavigate();
@@ -28,10 +28,14 @@ export const Home = () => {
 					const userID = localStorage.getItem("userId");
 
 					// always bring data
-					const ratingResponse = await API.get("/ratings");
+					const ratingResponse = await axios.get(
+						"https://csulb-api.onrender.com/ratings"
+					);
 					setRatings(ratingResponse.data);
 
-					const pollResponse = await API.get("/polls");
+					const pollResponse = await axios.get(
+						"https://csulb-api.onrender.com/polls"
+					);
 
 					const updatedPolls = pollResponse.data.map((poll) => ({
 						...poll,
@@ -45,7 +49,9 @@ export const Home = () => {
 							JSON.parse(localStorage.getItem("userVotedPolls")) || [];
 						setUserVotedPolls(votedPolls);
 
-						const savedPostsResponse = await API.get(`/auth/savedPosts?userID=${userID}`);
+						const savedPostsResponse = await axios.get(
+							`https://csulb-api.onrender.com/auth/savedPosts?userID=${userID}`
+						);
 						setSavedPosts(savedPostsResponse.data.savedPosts);
 					}
 				} catch (err) {
@@ -57,11 +63,12 @@ export const Home = () => {
 				try {
 					const userID = localStorage.getItem("userId");
 
-					if (!userID) return; //if not logged in return Nothing
+					if (!userID) return; // ⭐ 핵심
 
-					const response = await API.get(`/auth/votes?userID=${userID}`);
+					const response = await axios.get(
+						`https://csulb-api.onrender.com/auth/votes?userID=${userID}`
+					);
 					setVotedPosts(response.data.votes);
-
 				} catch (err) {
 					console.error("Failed to fetch vote states:", err);
 				}
@@ -145,8 +152,8 @@ export const Home = () => {
 		}
 		// Attempt to send the vote to the backend API.
 		try {
-			const response = await API.put(
-				"/polls/vote",
+			const response = await axios.put(
+				"https://csulb-api.onrender.com/polls/vote",
 				{
 					pollID: pollId,
 					optionIndex: optionIndex,
@@ -222,7 +229,8 @@ export const Home = () => {
 			const isSaved = isPostSaved(postType, postId); // Check if it's saved or not
 			if (isSaved) {
 				// Remove from saved posts
-				await API.put(`/auth/unsavePost?userID=${userID}`,
+				await axios.put(
+					`https://csulb-api.onrender.com/auth/unsavePost?userID=${userID}`,
 					{
 						postType,
 						postId,
@@ -242,7 +250,8 @@ export const Home = () => {
 				);
 			} else {
 				// Add to saved posts
-				const response = await API.put(`/auth/savePost?userID=${userID}`,
+				const response = await axios.put(
+					`https://csulb-api.onrender.com/auth/savePost?userID=${userID}`,
 					{ postType, postId }
 				);
 				if (response.status === 200) {
@@ -342,7 +351,8 @@ export const Home = () => {
 				newVoteType = voteType;
 			}
 
-			const response = await API.put(`/auth/vote`,
+			const response = await axios.put(
+				`https://csulb-api.onrender.com/auth/vote`,
 				{
 					postId,
 					postType,
@@ -559,7 +569,7 @@ export const Home = () => {
 									<div className="content-left">
 										{rating.imageUrl ? (
 											<img
-												src={`${import.meta.env.VITE_API_URL}${rating.imageUrl}`}
+												src={`https://csulb-api.onrender.com${rating.imageUrl}`}
 												alt={rating.name}
 											/>
 										) : (
