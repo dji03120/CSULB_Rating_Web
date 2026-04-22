@@ -29,13 +29,8 @@ export const Login = ({ setIsAuthenticated }) => {
 		setLoading(true); // Set loading state
 
 		try {
-<<<<<<< HEAD
-			const response = await API.post(
-				"/auth/login",
-=======
 			const response = await axios.post(
 				"https://csulb-api.onrender.com/auth/login",
->>>>>>> parent of 9d28427 (Change Api Calling axios Localhost to Api.js)
 				{
 					studentId,
 					password,
